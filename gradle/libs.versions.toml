@@ -1,0 +1,24 @@
+[versions]
+compose-plugin = "1.6.11"
+kotlin = "2.0.0"
+ktor = "2.3.11"
+kotlinx-serialization = "1.7.0"
+navigationCompose = "2.8.0-alpha02"
+slf4j = "2.0.13"
+tomlkt = "0.2.0"
+
+[libraries]
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor"}
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor"}
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor"}
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose"}
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j"}
+slf4j-jdk14 = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j"}
+tomlkt = { module = "net.peanuuutz.tomlkt:tomlkt", version.ref = "tomlkt"}
+
+[plugins]
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
