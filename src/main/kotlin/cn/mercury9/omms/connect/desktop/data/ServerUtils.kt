@@ -1,16 +1,5 @@
 package cn.mercury9.omms.connect.desktop.data
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class OmmsServer(
-    var name: String,
-    var ip: String,
-    var port: Int,
-    var code: Int? = null,
-    var emoji: String? = null,
-)
-
 enum class NameLegalState {
     Legal,
     Blank
