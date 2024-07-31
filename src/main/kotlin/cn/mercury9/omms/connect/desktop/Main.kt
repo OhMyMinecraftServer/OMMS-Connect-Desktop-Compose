@@ -10,11 +10,13 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import cn.mercury9.compose.utils.painter
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.data.configs.appConfig
-import cn.mercury9.omms.connect.desktop.omms_connect_desktop_compose.generated.resources.Res
-import cn.mercury9.omms.connect.desktop.omms_connect_desktop_compose.generated.resources.appName
-import cn.mercury9.omms.connect.desktop.ui.Navigation
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.app_name
+import cn.mercury9.omms.connect.desktop.resources.ic_launcher
+import cn.mercury9.omms.connect.desktop.ui.screen.MainScreen
 import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
 import org.jetbrains.compose.resources.stringResource
 
@@ -45,7 +47,8 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
-        title = stringResource(Res.string.appName),
+        title = stringResource(Res.string.app_name),
+        icon = Res.drawable.ic_launcher.painter,
         onKeyEvent = {
             if (it.key == Key.Escape) {
                 if (enableBackHandler) {
@@ -57,8 +60,7 @@ fun main() = application {
         }
     ) {
         ThemeProvider(appTheme) {
-            Navigation()
+            MainScreen()
         }
     }
 }
-

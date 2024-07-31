@@ -35,15 +35,17 @@ val appConfig = AppConfig().apply {
 }
 
 class AppConfig(
-    private var initConfigData: AppConfigData = AppConfigData(),
     configFilePath: String = "./data",
     configFileName: String = "config.json",
-    private val serializer: StringFormat = Json { ignoreUnknownKeys = true; prettyPrint = true },
+    private val serializer: StringFormat = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+    },
     configManagerFactory: ConfigManagerFactory<AppConfigData>
         = DefaultConfigManager.Factory()
 ) {
     private val configManager =  configManagerFactory.create(
-        initConfigData,
+        AppConfigData(),
         configFilePath,
         configFileName,
         { serializer.encodeToString(it) },
@@ -51,13 +53,8 @@ class AppConfig(
     )
 
     var onSetConfigTheme: (AppTheme) -> Unit = {}
-    var configData: AppConfigData
-        get() {
-            return initConfigData
-        }
-        private set(value) {
-            initConfigData = value
-        }
+    var configData: AppConfigData = AppConfigData()
+        private set
     var configTheme: AppTheme
         get(): AppTheme {
             return AppTheme(

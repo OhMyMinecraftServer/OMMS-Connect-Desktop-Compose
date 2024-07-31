@@ -1,4 +1,102 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-    <string name="appName">OMMS Connect</string>
+    <string name="omms_server_list">OMMS Server List</string>
+    <string name="server_name">Name</string>
+    <string name="app_name" translatable="false">OMMS Connect</string>
+    <string name="code">Code</string>
+    <string name="ip" translatable="false">IP</string>
+    <string name="go">LINK START</string>
+    <string name="port">Port</string>
+    <string name="error_port_oob">Port must in 0-65535</string>
+    <string name="login_hint">Please login to continue.</string>
+    <string name="add_omms_server">Add Server</string>
+    <string name="login">LOGIN</string>
+    <string name="logout">LOGOUT</string>
+    <string name="welcome">Welcome to OMMS Connect!</string>
+    <string name="blank_line" />
+    <string name="remember_server">Remember this server</string>
+    <string name="remember_code">Remember this code</string>
+    <string name="success">Connected.</string>
+    <string name="fail">Cannot connect to server.</string>
+    <string name="empty">Please fill in all those text boxes.</string>
+    <string name="title_activity_session" translatable="false">OMMS Client Session</string>
+    <string name="working">Connecting…</string>
+    <string name="title_activity_session0" translatable="false">Session Activity</string>
+
+    <string name="title_server">Server</string>
+    <string name="title_whitelist">Whitelist</string>
+    <string name="title_broadcast">Announcement</string>
+    <string name="title_activity_whitelist_edit">Whitelist Edit</string>
+
+    <string name="wdnmd">" "</string>
+    <string name="player_name">Player Name</string>
+    <string name="whitelist">Whitelist</string>
+    <string name="todo">TODO</string>
+    <string name="server">Server</string>
+    <string name="title_activity_server_oscontrol">Server Control</string>
+
+    <string name="meme">MEME</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_minecraft_server_control" translatable="false">Minecraft Server Control</string>
+    <string name="whitelist_icon_desp">whitelist icon</string>
+    <string name="announcement">Announcement</string>
+    <string name="setting_button">setting button</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_util_command_edit">Util Command</string>
+    <string name="label_export_data">Export data</string>
+    <string name="import_data">Import Data</string>
+    <string name="status_waiting">Waiting for Status</string>
+    <string name="player_count">Player Count</string>
+    <string name="player_list">Player List</string>
+    <string name="fake_player_count" translatable="false">0/114514</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="command">Command</string>
+    <string name="memory">Memory</string>
+    <string name="swap">Swap</string>
+    <string name="load_average">Load Average:</string>
+
+    <string name="label_controller_count">%d controllers added to this server.</string>
+    <string name="label_whitelists_count">%d whitelists added to this server.</string>
+    <string name="label_announcements_count">%d announcements added to this server.</string>
+    <string name="label_server_os" translatable="false">Server OS</string>
+    <string name="label_loading">Loading</string>
+    <string name="label_wait">Please Wait…</string>
+
+    <string name="error_unknown_exception">Unexpected Error occurred, more information: %s</string>
+
+    <string name="error_controller_fetch_error">Cannot fetch controllers from server.\nCaused By: %s</string>
+    <string name="error_system_info_fetch_error">Cannot fetch system info from server.\nCaused By: %s</string>
+
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="error_unknown_error">An unexpected error occurred in server internal logic.</string>
+    <string name="error_code_error">This permission code was not registered in server.</string>
+    <string name="label_util_commands">Util Commands</string>
+    <string name="hint_server_ip_port">Enter your server ip and port here</string>
+    <string name="hint_permission_code">Enter your permission code here.</string>
+    <string name="label_state_running">Running</string>
+    <string name="label_state_stopped">Stopped</string>
+    <string name="label_state_not_queryable">not_queryable</string>
+    <string name="label_no_player">Nobody was here :(</string>
+    <string name="error_exception">Encountered exception while %s:%s</string>
+    <string name="label_whitelist_player_count">%s player was added to this whitelist</string>
+    <string name="hint_whitelist_player_removed">Successfully to removed %s</string>
+    <string name="hint_whitelist_remove_player_not_exist">Failed to remove %s \\n: Player Not Exist</string>
+    <string name="hint_whitelist_remove_permission_denied">Failed to remove %s from whitelist: Permission Denied</string>
+    <string name="error_controller_not_exist">Controller %s not exist, it might be removed from server.</string>
+    <string name="error_server_controller_auth_error">Central server cannot auth with controller, make sure that controller exists or it`s name correct.</string>
+    <string name="label_connect_console">Connect Console</string>
+    <string name="label_disconnect_console">Disconnect</string>
+    <string name="hint_console_exists">[Console Already Started]</string>
+    <string name="hint_console_not_exist">[Console Not Exist]</string>
+    <string name="hint_console_stopped">[Console Disconnected]</string>
+    <string name="label_console_auto_roll">Auto Roll to end when log prints</string>
+    <string name="console">Console</string>
+    <string name="general">General</string>
+    <string name="text_size">Text Size</string>
+    <string name="data">Data</string>
+    <string name="title_activity_announcement_edit" translatable="false">AnnouncementEditActivity</string>
+
+    <string name="label_add_custom_server_icon">Manage Custom Controller Icon</string>
+    <string name="title_custom_controller_icon">Custom Server Icon</string>
+
+
 </resources>

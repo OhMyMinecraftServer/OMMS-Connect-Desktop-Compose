@@ -7,13 +7,13 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-group = "cn.mercury9.omms.connect.desktop"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
+    maven {
+        url = uri("https://maven.takeneko.icu/releases")
+    }
 }
 
 dependencies {
@@ -27,6 +27,8 @@ dependencies {
 
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.omms.client.core)
 
     runtimeOnly(libs.slf4j.api)
     runtimeOnly(libs.slf4j.jdk14)
@@ -42,6 +44,12 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "cn.mercury9.omms.connect.desktop.resources"
+    generateResClass = always
 }
 
 tasks {

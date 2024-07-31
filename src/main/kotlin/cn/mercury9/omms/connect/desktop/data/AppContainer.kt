@@ -6,7 +6,7 @@ object AppContainer {
     var onChangeEnableBackHandler: (enableBackHandler: Boolean) -> Unit = {}
     var onBackKey: () -> Unit = {}
 
-    var navController: NavController? = null
+    lateinit var navController: NavController
 
     private var _enableBackHandler: Boolean = false
     var enableBackHandler: Boolean

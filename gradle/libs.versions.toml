@@ -6,6 +6,7 @@ kotlinx-serialization = "1.7.0"
 navigationCompose = "2.8.0-alpha02"
 slf4j = "2.0.13"
 tomlkt = "0.2.0"
+omms-client-core = "1.1.2"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
@@ -16,6 +17,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j"}
 slf4j-jdk14 = { module = "org.slf4j:slf4j-jdk14", version.ref = "slf4j"}
 tomlkt = { module = "net.peanuuutz.tomlkt:tomlkt", version.ref = "tomlkt"}
+omms-client-core = { module = "icu.takeneko:omms-client-core", version.ref = "omms-client-core"}
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
