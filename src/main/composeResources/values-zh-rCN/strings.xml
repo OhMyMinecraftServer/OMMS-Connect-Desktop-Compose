@@ -9,6 +9,7 @@
     <string name="error_blank">不能为空！</string>
     <string name="login_hint">登录到服务器</string>
     <string name="add_omms_server">添加服务器</string>
+    <string name="hint_add_omms_server">点击添加omms服务器 ↑</string>
     <string name="login">登录</string>
     <string name="logout">登出</string>
     <string name="welcome">欢迎使用</string>

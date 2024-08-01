@@ -32,12 +32,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cn.mercury9.compose.utils.painter
@@ -58,11 +59,13 @@ import cn.mercury9.omms.connect.desktop.resources.code
 import cn.mercury9.omms.connect.desktop.resources.dns_24px
 import cn.mercury9.omms.connect.desktop.resources.error_blank
 import cn.mercury9.omms.connect.desktop.resources.error_port_oob
+import cn.mercury9.omms.connect.desktop.resources.hint_add_omms_server
 import cn.mercury9.omms.connect.desktop.resources.ip
 import cn.mercury9.omms.connect.desktop.resources.omms_server_list
 import cn.mercury9.omms.connect.desktop.resources.port
 import cn.mercury9.omms.connect.desktop.resources.remember_code
 import cn.mercury9.omms.connect.desktop.resources.server_name
+import kotlinx.datetime.Clock
 
 @Composable
 fun OmmsServerSelector(
@@ -345,12 +348,12 @@ fun DialogAddOmmsServer(
                         enableButtonAddServer = false
                         onDismissRequest()
                         val ommsServer = OmmsServer(
+                            id = Clock.System.now().toEpochMilliseconds().toString(),
                             name = name,
                             ip = ip,
                             port = port.toInt(),
                             code = code.toIntOrNull(),
                         )
-                        print(ommsServer)
                         servers.get().apply {
                             add(ommsServer)
                         }.also {
@@ -366,27 +369,47 @@ fun DialogAddOmmsServer(
 }
 
 @Composable
-fun ExpandedOmmsServerList(
-) {
+fun ExpandedOmmsServerList() {
     val serverList = remember {
-        mutableStateListOf<OmmsServer>()
+        mutableStateMapOf<String, OmmsServer>()
+        // 有一个未知问题导致会重复添加，所以我把 `id` 作为 `map` 的 `key`，就会自动去重了哈哈哈
     }
     for (server in servers.get()) {
-        serverList += server
+        // 初始化
+        serverList += server.id to server
     }
     servers.onConfigChange += "OmmsServerSelector-ServerList" to {
+        // 更新
         serverList.clear()
-        for (server in it) {
-            serverList += server
+        for (server in servers.get()) {
+            serverList += server.id to server
         }
     }
-    LazyColumn {
-        items(
-            items = serverList,
-        ) { server ->
-            HorizontalDivider()
-            ExpandedOmmsServerItem(
-                server
+    if (serverList.isNotEmpty()) {
+        LazyColumn {
+            items(
+                items = serverList.values.toList(),
+                key = { server -> server.id }
+            ) { server ->
+                HorizontalDivider()
+                ExpandedOmmsServerItem(
+                    server
+                )
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                Res.string.hint_add_omms_server.string,
+                style = MaterialTheme.typography.labelSmall,
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.outline,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
             )
         }
     }

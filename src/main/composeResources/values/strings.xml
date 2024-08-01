@@ -9,6 +9,7 @@
     <string name="error_port_oob">Port must in 0-65535</string>
     <string name="login_hint">Please login to continue.</string>
     <string name="add_omms_server">Add Server</string>
+    <string name="hint_add_omms_server">Click to add OMMS Server ↑</string>
     <string name="login">LOGIN</string>
     <string name="logout">LOGOUT</string>
     <string name="welcome">Welcome to OMMS Connect!</string>

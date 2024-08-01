@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OmmsServer(
+    val id: String,
     var name: String,
     var ip: String,
     var port: Int,
