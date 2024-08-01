@@ -3,6 +3,7 @@ package cn.mercury9.omms.connect.desktop.ui.screen
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
@@ -20,7 +21,8 @@ fun MainScreen(
         Row {
             OmmsServerSelector(
                 modifier = Modifier
-                    .sizeIn(maxWidth = 250.dp),
+                    .sizeIn(maxWidth = 250.dp)
+                    .wrapContentWidth(),
             )
             VerticalDivider()
             Spacer(Modifier.weight(9f))

@@ -1,8 +1,10 @@
 package cn.mercury9.omms.connect.desktop.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +14,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -28,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,16 +44,18 @@ import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.string
 import cn.mercury9.omms.connect.desktop.data.IpLegalState
 import cn.mercury9.omms.connect.desktop.data.NameLegalState
-import cn.mercury9.omms.connect.desktop.data.OmmsServer
 import cn.mercury9.omms.connect.desktop.data.PortLegalState
 import cn.mercury9.omms.connect.desktop.data.checkIp
 import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
-import cn.mercury9.omms.connect.desktop.data.configs.ommsServerListConfig
+import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
+import cn.mercury9.omms.connect.desktop.data.configs.servers
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_24px
 import cn.mercury9.omms.connect.desktop.resources.add_omms_server
+import cn.mercury9.omms.connect.desktop.resources.cancel_24px
 import cn.mercury9.omms.connect.desktop.resources.code
+import cn.mercury9.omms.connect.desktop.resources.dns_24px
 import cn.mercury9.omms.connect.desktop.resources.error_blank
 import cn.mercury9.omms.connect.desktop.resources.error_port_oob
 import cn.mercury9.omms.connect.desktop.resources.ip
@@ -61,24 +68,74 @@ import cn.mercury9.omms.connect.desktop.resources.server_name
 fun OmmsServerSelector(
     modifier: Modifier = Modifier
 ) {
+    var isServerSelectorCollapsed by remember { mutableStateOf(false) }
     Surface(
         color = MaterialTheme.colorScheme.background,
         modifier = modifier
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
+        AnimatedVisibility(
+            visible = !isServerSelectorCollapsed,
+            enter = expandIn(expandFrom = Alignment.Center),
+            exit = shrinkOut(shrinkTowards = Alignment.Center)
         ) {
-            OmmsServerListTopBar()
-            HorizontalDivider()
-            OmmsServerList()
+            ExpandedOmmsServerSelector(
+                onCollapse = { isServerSelectorCollapsed = true }
+            )
+        }
+        AnimatedVisibility(
+            visible = isServerSelectorCollapsed,
+            enter = expandIn(expandFrom = Alignment.Center),
+            exit = shrinkOut(shrinkTowards = Alignment.Center)
+        ) {
+            CollapsedOmmsServerSelector {
+                isServerSelectorCollapsed = false
+            }
         }
     }
 }
 
 @Composable
-fun OmmsServerListTopBar() {
+fun ExpandedOmmsServerSelector(
+    onCollapse: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        ExpandedOmmsServerListTopBar(
+            onCollapse = onCollapse
+        )
+        HorizontalDivider()
+        ExpandedOmmsServerList()
+    }
+}
+
+@Composable
+fun CollapsedOmmsServerSelector(
+    onExpand: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .wrapContentWidth()
+            .sizeIn(maxWidth = 64.dp)
+    ) {
+        IconButton(
+            onExpand,
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            Icon(Res.drawable.dns_24px.painter, null)
+        }
+        HorizontalDivider()
+    }
+}
+
+@Composable
+fun ExpandedOmmsServerListTopBar(
+    onCollapse: () -> Unit,
+) {
     var flagOpenAddOmmsServerDialog by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier
@@ -89,12 +146,19 @@ fun OmmsServerListTopBar() {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text(
-                Res.string.omms_server_list.string,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(8.dp),
-            )
+            ) {
+                IconButton(
+                    onCollapse
+                ) {
+                    Icon(Res.drawable.dns_24px.painter, null)
+                }
+                Text(Res.string.omms_server_list.string)
+            }
             IconButton(
                 { flagOpenAddOmmsServerDialog = true },
                 modifier = Modifier
@@ -111,7 +175,7 @@ fun OmmsServerListTopBar() {
 
     AnimatedVisibility(
         visible = flagOpenAddOmmsServerDialog,
-        enter = EnterTransition.None,
+        enter = fadeIn(),
         exit = fadeOut()
     ) {
         DialogAddOmmsServer(
@@ -194,14 +258,12 @@ fun DialogAddOmmsServer(
                             IpLegalState.Legal -> false
                             else -> true
                         },
-                        supportingText = {
-                            Text(
-                                when (ipLegalState) {
-                                    IpLegalState.Legal -> ""
-                                    IpLegalState.Blank -> Res.string.error_blank.string
-                                }
-                            )
-                        },
+                        supportingText = { Text(
+                            when (ipLegalState) {
+                                IpLegalState.Legal -> ""
+                                IpLegalState.Blank -> Res.string.error_blank.string
+                            }
+                        ) },
                         singleLine = true,
                         modifier = Modifier
                             .weight(4f)
@@ -264,32 +326,38 @@ fun DialogAddOmmsServer(
                     Text(Res.string.remember_code.string)
                 }
 
-                Button(
-                    onClick = {
-                        if (
-                            run {
-                                nameLegalState = checkName(name)
-                                nameLegalState == NameLegalState.Legal
-                            } && run {
-                                ipLegalState = checkIp(ip)
-                                ipLegalState == IpLegalState.Legal
-                            } && run {
-                                portLegalState = checkPort(port)
-                                portLegalState == PortLegalState.Legal
-                            }
-                        ) {
-                            val ommsServer = OmmsServer(
-                                name = name,
-                                ip = ip,
-                                port = port.toInt(),
-                                code = code.toIntOrNull(),
-                            )
-                            ommsServerListConfig.add(ommsServer)
-                            ommsServerListConfig.saveConfig()
-                            onDismissRequest()
+                var enableButtonAddServer by remember { mutableStateOf(true) }
+                Button( {
+                    if (
+                        run {
+                            nameLegalState = checkName(name)
+                            nameLegalState != NameLegalState.Legal
+                        } || run {
+                            ipLegalState = checkIp(ip)
+                            ipLegalState != IpLegalState.Legal
+                        } || run {
+                            portLegalState = checkPort(port)
+                            portLegalState != PortLegalState.Legal
+                        }
+                    ) return@Button
+
+                    if (enableButtonAddServer) {
+                        enableButtonAddServer = false
+                        onDismissRequest()
+                        val ommsServer = OmmsServer(
+                            name = name,
+                            ip = ip,
+                            port = port.toInt(),
+                            code = code.toIntOrNull(),
+                        )
+                        print(ommsServer)
+                        servers.get().apply {
+                            add(ommsServer)
+                        }.also {
+                            servers.set(it)
                         }
                     }
-                ) {
+                } ) {
                     Text(Res.string.add_omms_server.string)
                 }
             }
@@ -298,40 +366,67 @@ fun DialogAddOmmsServer(
 }
 
 @Composable
-fun OmmsServerList() {
-    var serverList by remember { mutableStateOf(
-        ommsServerListConfig.configData
-    ) }
-    ommsServerListConfig.onUpdateList = {
-        serverList = it
+fun ExpandedOmmsServerList(
+) {
+    val serverList = remember {
+        mutableStateListOf<OmmsServer>()
+    }
+    for (server in servers.get()) {
+        serverList += server
+    }
+    servers.onConfigChange += "OmmsServerSelector-ServerList" to {
+        serverList.clear()
+        for (server in it) {
+            serverList += server
+        }
     }
     LazyColumn {
         items(
-            serverList,
+            items = serverList,
         ) { server ->
             HorizontalDivider()
-            OmmsServerItem(server)
+            ExpandedOmmsServerItem(
+                server
+            )
         }
     }
 }
 
 @Composable
-fun OmmsServerItem(
+fun ExpandedOmmsServerItem(
     server: OmmsServer
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .padding(8.dp)
+            .fillMaxWidth()
     ) {
-        Text(
-            server.name,
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            "${server.ip} : ${server.port}", style = MaterialTheme.typography.bodyMedium,
+        Column(
             modifier = Modifier
-                .padding(start = 8.dp)
-        )
+                .align(Alignment.CenterStart)
+        ) {
+            Text(
+                server.name,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                "${server.ip} : ${server.port}", style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            )
+        }
+        IconButton(
+            onClick = {
+                servers.get().apply {
+                    remove(server)
+                }.also {
+                    servers.set(it)
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+        ) {
+            Icon(Res.drawable.cancel_24px.painter, null)
+        }
     }
-
 }

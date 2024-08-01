@@ -12,7 +12,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.data.configs.appConfig
+import cn.mercury9.omms.connect.desktop.data.configs.config
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.app_name
 import cn.mercury9.omms.connect.desktop.resources.ic_launcher
@@ -25,17 +25,20 @@ fun main() = application {
 
     val isSystemInDarkTheme = isSystemInDarkTheme()
     var appTheme by remember { mutableStateOf(
-        appConfig.configTheme(
-            darkTheme = if (appConfig.configData.setupThemeBySystemDarkTheme) {
-                isSystemInDarkTheme
-            } else {
-                appConfig.configTheme.darkTheme
+        config.get().theme.appTheme().apply {
+            if (config.get().setupThemeBySystemDarkTheme) {
+                darkTheme = isSystemInDarkTheme
             }
-        )
+        }
     ) }
 
-    appConfig.setAppTheme(appTheme)
-    appConfig.onSetConfigTheme = { appTheme = it }
+    config.onConfigChange += "MainWindow_ApplyAppTheme" to {
+        appTheme = config.get().theme.appTheme().apply {
+            if (config.get().setupThemeBySystemDarkTheme) {
+                darkTheme = isSystemInDarkTheme
+            }
+        }
+    }
 
     var enableBackHandler by remember { mutableStateOf(
         AppContainer.enableBackHandler
