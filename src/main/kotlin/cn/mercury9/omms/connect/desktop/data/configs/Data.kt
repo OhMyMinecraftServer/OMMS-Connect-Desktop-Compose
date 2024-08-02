@@ -1,7 +1,8 @@
 package cn.mercury9.omms.connect.desktop.data.configs
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -29,9 +30,22 @@ val config = Data(
 )
 val servers = Data(
     dataDir.resolve("servers.json"),
-    mutableListOf(),
-    ListSerializer(OmmsServer.serializer()) as KSerializer<MutableList<OmmsServer>>
-)
+    mutableMapOf(),
+    MapSerializer(String.serializer(), OmmsServer.serializer())
+            as KSerializer<MutableMap<String, OmmsServer>>
+).apply {
+    for (server in get()) {
+        if (server.key != server.value.id) {
+            this.set(
+                this.get().apply {
+                    put(server.key, server.value.apply {
+                        id = server.key
+                    })
+                }
+            )
+        }
+    }
+}
 
 class Data<T : Any>(
     private val filePath: Path,

@@ -7,6 +7,9 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+group = "cn.mercury9.omms.connect.desktop"
+version = "1.0-SNAPSHOT"
+
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
@@ -29,7 +32,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.timedate)
 
-    implementation(libs.omms.client.core)
+//    implementation(libs.omms.client.core)
 
     runtimeOnly(libs.slf4j.api)
     runtimeOnly(libs.slf4j.jdk14)
@@ -37,7 +40,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "cn.mercury9.omms.connect.desktop.MainKt"
+        mainClass = "$group.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

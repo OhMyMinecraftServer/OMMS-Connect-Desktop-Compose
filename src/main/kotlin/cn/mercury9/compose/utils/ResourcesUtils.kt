@@ -22,6 +22,11 @@ val StringResource.string
     @Composable
     get() = stringResource(this)
 
+@Composable
+fun StringResource.string(vararg formatArgs: Any): String {
+    return stringResource(this, *formatArgs)
+}
+
 val StringArrayResource.stringArray
     @Composable
     get() = stringArrayResource(this)
