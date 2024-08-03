@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.org.apache.commons.io.output.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -103,5 +104,35 @@ tasks {
             "Replace \"@android:color/white\" " +
                     "in vector drawables that download from Google Icons " +
             "to \"#ffffff\""
+    }
+
+    val countKtSourceFileLinesAndWriteToREADME by creating {
+        doLast {
+            val out = ByteArrayOutputStream()
+            val commandCountKt = "git ls-files '*.kt' | xargs cat | wc -l"
+
+            exec {
+                standardOutput = out
+                workingDir = projectDir
+                commandLine("sh", "-c", commandCountKt)
+            }
+
+            val ktLines = out.toString(Charsets.UTF_8).filterNot {
+                it.isWhitespace()
+            }
+            println("$ktLines lines kt")
+
+            val readmeFile = project.file("README.md")
+
+            readmeFile.readText().apply {
+                replace(
+                    this.lines()[2],
+                "[![Kotlin](https://img.shields.io/badge/${ktLines}_lines-Kotlin-7954F6)](https://kotlinlang.org/)"
+                ).also {
+                    readmeFile.writeText(it)
+                }
+            }
+
+        }
     }
 }

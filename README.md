@@ -1,5 +1,6 @@
 # OMMS Connect Desktop Compose
 
-连接到OMMS的桌面客户端
+[![Kotlin](https://img.shields.io/badge/1338_lines-Kotlin-7954F6)](https://kotlinlang.org/)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform_UI-5383EC)](https://www.jetbrains.com/lp/compose-multiplatform/)
 
-使用 `compose desktop` 编写
+连接到OMMS的桌面客户端
