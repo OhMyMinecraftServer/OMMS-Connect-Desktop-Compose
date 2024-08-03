@@ -4,7 +4,9 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+import org.jetbrains.skiko.hostOs
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
@@ -12,9 +14,14 @@ import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-private val dataDir = Path.of("./data").also {
-    if (it.notExists())
-        it.createDirectories()
+private val dataDir = Path(
+    System.getProperty("user.home") + if (hostOs.isMacOS) {
+        "/.config/cn.mercury9.omms.connect.desktop"
+    } else {
+        "/.OmmsConnectDesktop"
+    }
+).also {
+    it.createDirectories()
 }
 
 private val json = Json {
@@ -28,6 +35,8 @@ val config = Data(
     AppConfig(),
     AppConfig.serializer()
 )
+
+@Suppress("UNCHECKED_CAST")
 val servers = Data(
     dataDir.resolve("servers.json"),
     mutableMapOf(),

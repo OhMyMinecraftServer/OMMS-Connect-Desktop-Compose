@@ -32,10 +32,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.timedate)
 
-//    implementation(libs.omms.client.core)
+    implementation(libs.omms.client.core)
+    implementation(libs.gson)
 
-    runtimeOnly(libs.slf4j.api)
-    runtimeOnly(libs.slf4j.jdk14)
 }
 
 compose.desktop {
@@ -44,15 +43,32 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "OMMS-Connect-Desktop-Compose"
+
+            packageName = "OMMS Connect Desktop"
             packageVersion = "1.0.0"
+            copyright = "© 2024 OhMyMinecraftServer"
+            licenseFile.set(project.file("LICENSE"))
+
+            windows {
+                iconFile.set(project.file("icon.ico"))
+                dirChooser = true
+                menuGroup = "OhMyMinecraftServer"
+            }
+
+            macOS {
+                iconFile.set(project.file("icon.icns"))
+            }
+
+            linux {
+                iconFile.set(project.file("icon.png"))
+            }
         }
     }
 }
 
 compose.resources {
     publicResClass = true
-    packageOfResClass = "cn.mercury9.omms.connect.desktop.resources"
+    packageOfResClass = "$group.resources"
     generateResClass = always
 }
 
