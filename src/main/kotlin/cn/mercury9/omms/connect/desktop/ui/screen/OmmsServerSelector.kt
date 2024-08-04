@@ -492,19 +492,18 @@ fun ExpandedOmmsServerItem(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(16.dp, 16.dp, 0.dp, 16.dp)
                     .fillMaxWidth()
             ) {
                 Column(
                     verticalArrangement = Arrangement.Top,
                     modifier = Modifier
                         .align(Alignment.TopStart)
+                        .widthIn(max = 172.dp)
                 ) {
                     Text(
                         server.name,
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .widthIn(max = (250 - 64).dp)
                     )
                     Text(
                         "${server.ip} : ${server.port}", style = MaterialTheme.typography.bodyMedium,
