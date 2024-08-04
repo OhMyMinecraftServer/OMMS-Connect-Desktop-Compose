@@ -15,9 +15,10 @@
     <string name="cancel">取消</string>
     <string name="title_edit_omms_server">编辑服务器</string>
     <string name="title_delete_omms_server">删除服务器</string>
-    <string name="hint_confirm_delete">确定要删除“%1$s”吗？</string>
+    <string name="hint_confirm_delete">确定要删除 “ %1$s ” 吗？</string>
     <string name="save">保存</string>
     <string name="hint_add_omms_server">点击添加omms服务器 ↑</string>
+    <string name="hint_choose_omms_server">请选择一个omms服务器</string>
     <string name="login">登录</string>
     <string name="logout">登出</string>
     <string name="welcome">欢迎使用</string>
@@ -26,7 +27,7 @@
     <string name="success">已连接</string>
     <string name="fail">无法连接至服务器</string>
     <string name="empty">请填写完整登录信息</string>
-    <string name="working">正在连接</string>
+    <string name="working">正在连接 %1$s ...</string>
     <string name="blank_line">" "</string>
     <string name="title_server">服务器</string>
     <string name="title_whitelist">白名单</string>

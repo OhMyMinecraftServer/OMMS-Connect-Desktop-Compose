@@ -1,6 +1,7 @@
 package cn.mercury9.omms.connect.desktop.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -49,6 +51,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.string
+import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.data.IpLegalState
 import cn.mercury9.omms.connect.desktop.data.NameLegalState
 import cn.mercury9.omms.connect.desktop.data.PortLegalState
@@ -56,6 +59,8 @@ import cn.mercury9.omms.connect.desktop.data.checkIp
 import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
+import cn.mercury9.omms.connect.desktop.data.configs.OmmsServerListSortBy
+import cn.mercury9.omms.connect.desktop.data.configs.config
 import cn.mercury9.omms.connect.desktop.data.configs.servers
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_24px
@@ -71,11 +76,13 @@ import cn.mercury9.omms.connect.desktop.resources.hint_add_omms_server
 import cn.mercury9.omms.connect.desktop.resources.hint_confirm_delete
 import cn.mercury9.omms.connect.desktop.resources.ip
 import cn.mercury9.omms.connect.desktop.resources.label_no_more
+import cn.mercury9.omms.connect.desktop.resources.login
 import cn.mercury9.omms.connect.desktop.resources.more_vert_24px
 import cn.mercury9.omms.connect.desktop.resources.omms_server_list
 import cn.mercury9.omms.connect.desktop.resources.port
 import cn.mercury9.omms.connect.desktop.resources.remember_code
 import cn.mercury9.omms.connect.desktop.resources.save
+import cn.mercury9.omms.connect.desktop.resources.send_24px
 import cn.mercury9.omms.connect.desktop.resources.server_name
 import cn.mercury9.omms.connect.desktop.resources.title_delete_omms_server
 import cn.mercury9.omms.connect.desktop.resources.title_edit_omms_server
@@ -403,18 +410,39 @@ fun ExpandedOmmsServerList() {
         }
     }
     if (serverList.isNotEmpty()) {
+
+        var sortBy by remember { mutableStateOf(config.get().ommsServerListSortBy) }
+        config.onConfigChange += "OmmsServerSelector-ServerList-SortBy" to {
+            sortBy = config.get().ommsServerListSortBy
+        }
+
+        var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServer?.id) }
+        AppContainer.onCurrentOmmsServerChange += "OmmsServerList-CurrentOmmsServerId" to {
+            currentOmmsServerId = AppContainer.currentOmmsServer?.id
+        }
+
         LazyColumn {
             items(
-                items = serverList.values.toList(),
+                items = serverList.values.toList()
+                    .sortedBy(
+                        when (sortBy) {
+                            OmmsServerListSortBy.Id -> { it ->
+                                it.id
+                            }
+
+                            OmmsServerListSortBy.Name -> { it ->
+                                it.name
+                            }
+                        }
+                    ),
                 key = { server -> server.id }
             ) { server ->
-                HorizontalDivider()
                 ExpandedOmmsServerItem(
-                    server
+                    server,
+                    currentOmmsServerId,
                 )
             }
             item {
-                HorizontalDivider()
                 Text(
                     Res.string.label_no_more.string,
                     fontStyle = FontStyle.Italic,
@@ -445,47 +473,78 @@ fun ExpandedOmmsServerList() {
 
 @Composable
 fun ExpandedOmmsServerItem(
-    server: OmmsServer
+    server: OmmsServer,
+    currentServerId: String?,
 ) {
-    Box(
+    val surfaceColor by animateColorAsState(
+        targetValue =  if (server.id == currentServerId) {
+                MaterialTheme.colorScheme.secondary
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+    )
+    ElevatedCard(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
+            .padding(8.dp, 8.dp, 8.dp, 0.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
+        Surface(
+            color = surfaceColor,
         ) {
-            Text(
-                server.name,
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Text(
-                "${server.ip} : ${server.port}", style = MaterialTheme.typography.bodyMedium,
+            Box(
                 modifier = Modifier
-                    .padding(start = 8.dp)
-            )
-        }
-        var flagPopupMenu by remember { mutableStateOf(false) }
-        IconButton(
-            onClick = {
-                flagPopupMenu = true
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-        ) {
-            Icon(Res.drawable.more_vert_24px.painter, null)
-            AnimatedVisibility(visible = flagPopupMenu) {
-                Popup(
-                    Alignment.TopStart,
-                    onDismissRequest = { flagPopupMenu = false }
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
                 ) {
-                    OmmsServerItemMenu(
-                        server.id,
+                    Text(
+                        server.name,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .sizeIn(maxWidth = 100.dp)
+                            .widthIn(max = (250 - 64).dp)
+                    )
+                    Text(
+                        "${server.ip} : ${server.port}", style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline,
+                    )
+                }
+                var flagPopupMenu by remember { mutableStateOf(false) }
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                ) {
+                    IconButton(
+                        enabled = server.id != currentServerId,
+                        onClick = {
+                            AppContainer.currentOmmsServer = server
+                        }
                     ) {
-                        flagPopupMenu = false
+                        Icon(Res.drawable.send_24px.painter, Res.string.login.string)
+                    }
+                    IconButton(
+                        enabled = server.id != currentServerId,
+                        onClick = {
+                            flagPopupMenu = true
+                        },
+                    ) {
+                        Icon(Res.drawable.more_vert_24px.painter, null)
+                    }
+                    AnimatedVisibility(visible = flagPopupMenu) {
+                        Popup(
+                            Alignment.TopStart,
+                            onDismissRequest = { flagPopupMenu = false }
+                        ) {
+                            OmmsServerItemMenu(
+                                server.id,
+                                modifier = Modifier
+                                    .sizeIn(maxWidth = 100.dp)
+                            ) {
+                                flagPopupMenu = false
+                            }
+                        }
                     }
                 }
             }
@@ -571,7 +630,10 @@ fun DialogDeleteOmmsServer(
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-        ElevatedCard {
+        ElevatedCard(
+            modifier = Modifier
+                .width(((servers.get()[serverId]!!.name.length+10)*16).dp)
+        ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -579,15 +641,19 @@ fun DialogDeleteOmmsServer(
                 Text(
                     Res.string.title_delete_omms_server.string,
                     style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .padding(8.dp)
                 )
                 Text(
                     Res.string.hint_confirm_delete.string(
                         servers.get()[serverId]!!.name
                     ),
+                    modifier = Modifier
+                        .padding(8.dp)
                 )
                 HorizontalDivider(
                     modifier = Modifier
-                        .width(201.dp)
+                        .padding(top = 8.dp)
                 )
                 Row {
                     Box(
@@ -595,7 +661,8 @@ fun DialogDeleteOmmsServer(
                             .clickable {
                                 onDismissRequest()
                             }
-                            .size(100.dp, 40.dp)
+                            .height(40.dp)
+                            .weight(1f)
                     ) {
                         Text(
                             Res.string.cancel.string,
@@ -617,7 +684,8 @@ fun DialogDeleteOmmsServer(
                                     servers.set(it)
                                 }
                             }
-                            .size(100.dp, 40.dp)
+                            .height(40.dp)
+                            .weight(1f)
                     ) {
                         Text(
                             Res.string.delete.string,

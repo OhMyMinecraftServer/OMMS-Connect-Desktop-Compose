@@ -3,11 +3,12 @@ package cn.mercury9.omms.connect.desktop.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import cn.mercury9.omms.connect.desktop.ui.theme.amazingOrange.AmazingOrangeTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ThemeType {
-    Default
+    Default, AmazingOrange
 }
 
 data class AppTheme(
@@ -38,6 +39,7 @@ fun ThemeProvider(
 ) {
     val theme = when (themeType) {
         ThemeType.Default -> DefaultTheme
+        ThemeType.AmazingOrange -> AmazingOrangeTheme
     }
     val colorScheme = theme.colorScheme(darkTheme, contrastType)
 

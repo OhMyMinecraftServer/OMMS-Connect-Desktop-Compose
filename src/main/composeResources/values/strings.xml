@@ -18,6 +18,7 @@
     <string name="hint_confirm_delete">Confirm to DELETE "%1$s" ?</string>
     <string name="save">Save</string>
     <string name="hint_add_omms_server">Click to add OMMS Server ↑</string>
+    <string name="hint_choose_omms_server">← Choose an OMMS Server here.</string>
     <string name="login">LOGIN</string>
     <string name="logout">LOGOUT</string>
     <string name="welcome">Welcome to OMMS Connect!</string>
@@ -28,7 +29,7 @@
     <string name="fail">Cannot connect to server.</string>
     <string name="empty">Please fill in all those text boxes.</string>
     <string name="title_activity_session" translatable="false">OMMS Client Session</string>
-    <string name="working">Connecting…</string>
+    <string name="working">Connecting %1$s ...</string>
     <string name="title_activity_session0" translatable="false">Session Activity</string>
 
     <string name="title_server">Server</string>
