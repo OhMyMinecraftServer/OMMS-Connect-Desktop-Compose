@@ -8,6 +8,8 @@
     <string name="go">LINK START</string>
     <string name="port">Port</string>
     <string name="error_port_oob">Port must in 0-65535</string>
+    <string name="error_blank">Can not be blank!</string>
+    <string name="error_name_too_long">Name can not be longer than 64!</string>
     <string name="login_hint">Please login to continue.</string>
     <string name="add_omms_server">Add Server</string>
     <string name="delete">Delete</string>

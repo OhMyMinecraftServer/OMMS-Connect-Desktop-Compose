@@ -8,6 +8,7 @@
     <string name="port">端口</string>
     <string name="error_port_oob">端口必须在 0-65535</string>
     <string name="error_blank">不能为空！</string>
+    <string name="error_name_too_long">名称不能超过64个字符！</string>
     <string name="login_hint">登录到服务器</string>
     <string name="add_omms_server">添加服务器</string>
     <string name="delete">删除</string>

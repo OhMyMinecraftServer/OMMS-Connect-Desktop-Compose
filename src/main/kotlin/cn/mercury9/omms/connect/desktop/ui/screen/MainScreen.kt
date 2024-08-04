@@ -7,14 +7,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 
 @Composable
-fun MainScreen(
+fun MainScreen() {
+    var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
+    AppContainer.onChangeCurrentOmmsServer += "MainScreen-CurrentOmmsServerId" to {
+        currentOmmsServerId = AppContainer.currentOmmsServerId
+    }
 
-) {
     Surface(
         color = MaterialTheme.colorScheme.background,
     ) {
@@ -26,7 +33,7 @@ fun MainScreen(
             )
             VerticalDivider()
             OmmsServerScreen(
-                ommsServer = AppContainer.currentOmmsServer
+                ommsServerId = currentOmmsServerId
             )
         }
     }

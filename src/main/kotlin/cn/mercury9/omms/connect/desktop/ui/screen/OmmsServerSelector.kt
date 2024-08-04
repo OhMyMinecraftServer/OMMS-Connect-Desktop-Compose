@@ -11,8 +11,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
@@ -71,6 +74,7 @@ import cn.mercury9.omms.connect.desktop.resources.delete
 import cn.mercury9.omms.connect.desktop.resources.dns_24px
 import cn.mercury9.omms.connect.desktop.resources.edit
 import cn.mercury9.omms.connect.desktop.resources.error_blank
+import cn.mercury9.omms.connect.desktop.resources.error_name_too_long
 import cn.mercury9.omms.connect.desktop.resources.error_port_oob
 import cn.mercury9.omms.connect.desktop.resources.hint_add_omms_server
 import cn.mercury9.omms.connect.desktop.resources.hint_confirm_delete
@@ -255,8 +259,12 @@ fun DialogAddOmmsServer(
                     supportingText = {
                         Text(
                             when (nameLegalState) {
-                                NameLegalState.Legal -> ""
-                                NameLegalState.Blank -> Res.string.error_blank.string
+                                NameLegalState.Legal ->
+                                    ""
+                                NameLegalState.Blank ->
+                                    Res.string.error_blank.string
+                                NameLegalState.TooLong ->
+                                    Res.string.error_name_too_long.string
                             }
                         )
                     },
@@ -325,6 +333,7 @@ fun DialogAddOmmsServer(
 
                 OutlinedTextField(
                     value = code,
+                    enabled = saveCode,
                     onValueChange = {
                         code = it.filter { symbol ->
                             symbol.isDigit()
@@ -373,7 +382,7 @@ fun DialogAddOmmsServer(
                             name = name,
                             ip = ip,
                             port = port.toInt(),
-                            code = code.toIntOrNull(),
+                            code = if (saveCode) code.toIntOrNull() else null,
                         )
                         servers.get().apply {
                             put(
@@ -402,7 +411,7 @@ fun ExpandedOmmsServerList() {
         // 初始化
         serverList[server.key] = server.value
     }
-    servers.onConfigChange += "OmmsServerSelector-ServerList" to {
+    servers.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-ServerList" to {
         // 更新
         serverList.clear()
         for (server in servers.get()) {
@@ -412,13 +421,13 @@ fun ExpandedOmmsServerList() {
     if (serverList.isNotEmpty()) {
 
         var sortBy by remember { mutableStateOf(config.get().ommsServerListSortBy) }
-        config.onConfigChange += "OmmsServerSelector-ServerList-SortBy" to {
+        config.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-SortBy" to {
             sortBy = config.get().ommsServerListSortBy
         }
 
-        var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServer?.id) }
-        AppContainer.onCurrentOmmsServerChange += "OmmsServerList-CurrentOmmsServerId" to {
-            currentOmmsServerId = AppContainer.currentOmmsServer?.id
+        var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
+        AppContainer.onChangeCurrentOmmsServer += "OmmsServerList-CurrentOmmsServerId" to {
+            currentOmmsServerId = AppContainer.currentOmmsServerId
         }
 
         LazyColumn {
@@ -518,7 +527,7 @@ fun ExpandedOmmsServerItem(
                     IconButton(
                         enabled = server.id != currentServerId,
                         onClick = {
-                            AppContainer.currentOmmsServer = server
+                            AppContainer.currentOmmsServerId = server.id
                         }
                     ) {
                         Icon(Res.drawable.send_24px.painter, Res.string.login.string)
@@ -629,13 +638,12 @@ fun DialogDeleteOmmsServer(
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-        ElevatedCard(
-            modifier = Modifier
-                .width(((servers.get()[serverId]!!.name.length+10)*16).dp)
-        ) {
+        ElevatedCard{
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
             ) {
                 Text(
                     Res.string.title_delete_omms_server.string,
@@ -648,19 +656,22 @@ fun DialogDeleteOmmsServer(
                         servers.get()[serverId]!!.name
                     ),
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(16.dp, 8.dp)
                 )
                 HorizontalDivider(
                     modifier = Modifier
                         .padding(top = 8.dp)
                 )
-                Row {
+                Row(
+                    modifier = Modifier
+                        .height(40.dp)
+                ) {
                     Box(
                         modifier = Modifier
                             .clickable {
                                 onDismissRequest()
                             }
-                            .height(40.dp)
+                            .fillMaxHeight()
                             .weight(1f)
                     ) {
                         Text(
@@ -669,10 +680,7 @@ fun DialogDeleteOmmsServer(
                                 .align(Alignment.Center)
                         )
                     }
-                    VerticalDivider(
-                        modifier = Modifier
-                            .height(40.dp)
-                    )
+                    VerticalDivider()
                     Box(
                         modifier = Modifier
                             .clickable {
@@ -683,7 +691,7 @@ fun DialogDeleteOmmsServer(
                                     servers.set(it)
                                 }
                             }
-                            .height(40.dp)
+                            .fillMaxHeight()
                             .weight(1f)
                     ) {
                         Text(
@@ -699,7 +707,6 @@ fun DialogDeleteOmmsServer(
     }
 }
 
-
 @Composable
 fun DialogEditOmmsServer(
     serverId: String,
@@ -709,7 +716,7 @@ fun DialogEditOmmsServer(
     var ip by remember { mutableStateOf(servers.get()[serverId]!!.ip) }
     var port by remember { mutableStateOf(servers.get()[serverId]!!.port.toString()) }
     var code by remember { mutableStateOf(servers.get()[serverId]!!.code?.toString() ?: "") }
-    var saveCode by remember { mutableStateOf(servers.get()[serverId]!!.code == null) }
+    var saveCode by remember { mutableStateOf(servers.get()[serverId]!!.code != null) }
 
     val width = 400.dp
 
@@ -745,8 +752,12 @@ fun DialogEditOmmsServer(
                     supportingText = {
                         Text(
                             when (nameLegalState) {
-                                NameLegalState.Legal -> ""
-                                NameLegalState.Blank -> Res.string.error_blank.string
+                                NameLegalState.Legal ->
+                                    ""
+                                NameLegalState.Blank ->
+                                    Res.string.error_blank.string
+                                NameLegalState.TooLong ->
+                                    Res.string.error_name_too_long.string
                             }
                         )
                     },
@@ -815,6 +826,7 @@ fun DialogEditOmmsServer(
 
                 OutlinedTextField(
                     value = code,
+                    enabled = saveCode,
                     onValueChange = {
                         code = it.filter { symbol ->
                             symbol.isDigit()
@@ -863,7 +875,7 @@ fun DialogEditOmmsServer(
                             name = name,
                             ip = ip,
                             port = port.toInt(),
-                            code = code.toIntOrNull(),
+                            code = if (saveCode) code.toIntOrNull() else null,
                         )
                         servers.get().apply {
                             replace(serverId, ommsServer)

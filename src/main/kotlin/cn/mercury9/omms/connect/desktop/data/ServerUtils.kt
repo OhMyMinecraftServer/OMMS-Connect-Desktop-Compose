@@ -2,7 +2,8 @@ package cn.mercury9.omms.connect.desktop.data
 
 enum class NameLegalState {
     Legal,
-    Blank
+    Blank,
+    TooLong
 }
 
 enum class IpLegalState {
@@ -19,6 +20,8 @@ enum class PortLegalState {
 fun checkName(name: String): NameLegalState {
     if (name.isEmpty()) {
         return NameLegalState.Blank
+    } else if (name.length > 64) {
+        return NameLegalState.TooLong
     }
     return NameLegalState.Legal
 }
