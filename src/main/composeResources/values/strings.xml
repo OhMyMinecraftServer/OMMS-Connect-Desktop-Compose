@@ -15,6 +15,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="title_edit_omms_server">Edit Server</string>
     <string name="title_delete_omms_server">Delete Server</string>
     <string name="hint_confirm_delete">Confirm to DELETE "%1$s" ?</string>

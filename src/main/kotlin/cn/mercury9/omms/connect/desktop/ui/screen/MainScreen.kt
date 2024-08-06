@@ -17,11 +17,6 @@ import cn.mercury9.omms.connect.desktop.data.AppContainer
 
 @Composable
 fun MainScreen() {
-    var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
-    AppContainer.onChangeCurrentOmmsServer += "MainScreen-CurrentOmmsServerId" to {
-        currentOmmsServerId = AppContainer.currentOmmsServerId
-    }
-
     Surface(
         color = MaterialTheme.colorScheme.background,
     ) {
@@ -32,9 +27,7 @@ fun MainScreen() {
                     .wrapContentWidth(),
             )
             VerticalDivider()
-            OmmsServerScreen(
-                ommsServerId = currentOmmsServerId
-            )
+            OmmsServerScreen()
         }
     }
 }

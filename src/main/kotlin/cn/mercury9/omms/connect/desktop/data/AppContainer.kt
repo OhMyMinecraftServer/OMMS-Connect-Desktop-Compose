@@ -1,10 +1,10 @@
 package cn.mercury9.omms.connect.desktop.data
 
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.navigation.NavController
+import icu.takeneko.omms.client.session.ClientSession
 
 object AppContainer {
-    var onChangeEnableBackHandler: (enableBackHandler: Boolean) -> Unit = {}
-    var onBackKey: () -> Unit = {}
 
     lateinit var navController: NavController
 
@@ -17,9 +17,7 @@ object AppContainer {
             }
         }
 
-    var enableBackHandler: Boolean = false
-        set(value) {
-            field = value
-            onChangeEnableBackHandler(value)
-        }
+    var onKeyEvent: MutableMap<String, (KeyEvent) -> Boolean> = mutableMapOf()
+
+    var sessions: MutableMap<String, ClientSession> = mutableMapOf()
 }

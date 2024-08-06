@@ -40,26 +40,17 @@ fun main() = application {
         }
     }
 
-    var enableBackHandler by remember { mutableStateOf(
-        AppContainer.enableBackHandler
-    ) }
-    AppContainer.onChangeEnableBackHandler = {
-        enableBackHandler = it
-    }
-
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
         title = stringResource(Res.string.app_name),
         icon = Res.drawable.ic_launcher.painter,
         onKeyEvent = {
-            if (it.key == Key.Escape) {
-                if (enableBackHandler) {
-                    AppContainer.onBackKey()
-                    return@Window true
-                }
+            var flag = false
+            for (handler in AppContainer.onKeyEvent.values) {
+                if (handler(it)) flag = true
             }
-            return@Window false
+            return@Window flag
         }
     ) {
         ThemeProvider(appTheme) {

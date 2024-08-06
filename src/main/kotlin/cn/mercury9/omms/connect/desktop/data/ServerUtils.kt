@@ -17,6 +17,11 @@ enum class PortLegalState {
     OutOfRange
 }
 
+enum class CodeLegalState {
+    Legal,
+    Blank,
+}
+
 fun checkName(name: String): NameLegalState {
     if (name.isEmpty()) {
         return NameLegalState.Blank
@@ -41,4 +46,10 @@ fun checkPort(port: String): PortLegalState {
         }
     }
     return PortLegalState.Legal
+}
+fun checkCode(code: String): CodeLegalState {
+    if (code.isBlank()) {
+        return CodeLegalState.Blank
+    }
+    return CodeLegalState.Legal
 }

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
@@ -47,8 +48,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
@@ -91,6 +95,8 @@ import cn.mercury9.omms.connect.desktop.resources.server_name
 import cn.mercury9.omms.connect.desktop.resources.title_delete_omms_server
 import cn.mercury9.omms.connect.desktop.resources.title_edit_omms_server
 import kotlinx.datetime.Clock
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 @Composable
 fun OmmsServerSelector(
@@ -231,7 +237,58 @@ fun DialogAddOmmsServer(
     var ipLegalState by remember { mutableStateOf(IpLegalState.Legal) }
     var portLegalState by remember { mutableStateOf(PortLegalState.Legal) }
 
-    Dialog(onDismissRequest = onDismissRequest) {
+
+    var enableButtonAddServer by remember { mutableStateOf(true) }
+    fun onConfirm() {
+        if (
+            run {
+                nameLegalState = checkName(name)
+                nameLegalState != NameLegalState.Legal
+            } || run {
+                ipLegalState = checkIp(ip)
+                ipLegalState != IpLegalState.Legal
+            } || run {
+                portLegalState = checkPort(port)
+                portLegalState != PortLegalState.Legal
+            }
+        ) return
+
+        if (enableButtonAddServer) {
+            enableButtonAddServer = false
+            onDismissRequest()
+            val ommsServer = OmmsServer(
+                id = Clock.System.now().toEpochMilliseconds().toString(),
+                name = name,
+                ip = ip,
+                port = port.toInt(),
+                code = if (saveCode) code.toIntOrNull() else null,
+            )
+            servers.get().apply {
+                put(
+                    ommsServer.id,
+                    ommsServer
+                )
+            }.also {
+                servers.set(it)
+            }
+        }
+    }
+
+    val onKeyEventName = "OmmsServerSelector-DialogAddOmmsServer-OnConfirm"
+    AppContainer.onKeyEvent += onKeyEventName to {
+        if (it.key == Key.Enter && it.type == KeyEventType.KeyUp) {
+            onConfirm()
+            AppContainer.onKeyEvent.remove(onKeyEventName)
+            true
+        } else false
+    }
+
+    Dialog(
+        onDismissRequest = {
+            AppContainer.onKeyEvent.remove(onKeyEventName)
+            onDismissRequest()
+        }
+    ) {
         ElevatedCard {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -359,41 +416,7 @@ fun DialogAddOmmsServer(
                     Text(Res.string.remember_code.string)
                 }
 
-                var enableButtonAddServer by remember { mutableStateOf(true) }
-                Button( {
-                    if (
-                        run {
-                            nameLegalState = checkName(name)
-                            nameLegalState != NameLegalState.Legal
-                        } || run {
-                            ipLegalState = checkIp(ip)
-                            ipLegalState != IpLegalState.Legal
-                        } || run {
-                            portLegalState = checkPort(port)
-                            portLegalState != PortLegalState.Legal
-                        }
-                    ) return@Button
-
-                    if (enableButtonAddServer) {
-                        enableButtonAddServer = false
-                        onDismissRequest()
-                        val ommsServer = OmmsServer(
-                            id = Clock.System.now().toEpochMilliseconds().toString(),
-                            name = name,
-                            ip = ip,
-                            port = port.toInt(),
-                            code = if (saveCode) code.toIntOrNull() else null,
-                        )
-                        servers.get().apply {
-                            put(
-                                ommsServer.id,
-                                ommsServer
-                            )
-                        }.also {
-                            servers.set(it)
-                        }
-                    }
-                } ) {
+                Button(::onConfirm) {
                     Text(Res.string.add_omms_server.string)
                 }
             }
@@ -654,6 +677,9 @@ fun DialogDeleteOmmsServer(
                 Text(
                     Res.string.hint_confirm_delete.string(
                         servers.get()[serverId]!!.name
+                    ).replace(
+                        "吗",
+                        if (Random.nextInt(0..99) == 0) { "🐴" } else "吗"
                     ),
                     modifier = Modifier
                         .padding(16.dp, 8.dp)
@@ -724,7 +750,55 @@ fun DialogEditOmmsServer(
     var ipLegalState by remember { mutableStateOf(IpLegalState.Legal) }
     var portLegalState by remember { mutableStateOf(PortLegalState.Legal) }
 
-    Dialog(onDismissRequest = onDismissRequest) {
+    var enableButtonAddServer by remember { mutableStateOf(true) }
+
+    fun onConfirm() {
+        if (
+            run {
+                nameLegalState = checkName(name)
+                nameLegalState != NameLegalState.Legal
+            } || run {
+                ipLegalState = checkIp(ip)
+                ipLegalState != IpLegalState.Legal
+            } || run {
+                portLegalState = checkPort(port)
+                portLegalState != PortLegalState.Legal
+            }
+        ) return
+
+        if (enableButtonAddServer) {
+            enableButtonAddServer = false
+            onDismissRequest()
+            val ommsServer = OmmsServer(
+                id = serverId,
+                name = name,
+                ip = ip,
+                port = port.toInt(),
+                code = if (saveCode) code.toIntOrNull() else null,
+            )
+            servers.get().apply {
+                replace(serverId, ommsServer)
+            }.also {
+                servers.set(it)
+            }
+        }
+    }
+
+    val onKeyEventName = "OmmsServerSelector-DialogEditOmmsServer-OnConfirm"
+    AppContainer.onKeyEvent += onKeyEventName to {
+        if (it.key == Key.Enter && it.type == KeyEventType.KeyUp) {
+            onConfirm()
+            AppContainer.onKeyEvent.remove(onKeyEventName)
+            true
+        } else false
+    }
+
+    Dialog(
+        onDismissRequest = {
+            AppContainer.onKeyEvent.remove(onKeyEventName)
+            onDismissRequest()
+        }
+    ) {
         ElevatedCard {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -852,38 +926,7 @@ fun DialogEditOmmsServer(
                     Text(Res.string.remember_code.string)
                 }
 
-                var enableButtonAddServer by remember { mutableStateOf(true) }
-                Button( {
-                    if (
-                        run {
-                            nameLegalState = checkName(name)
-                            nameLegalState != NameLegalState.Legal
-                        } || run {
-                            ipLegalState = checkIp(ip)
-                            ipLegalState != IpLegalState.Legal
-                        } || run {
-                            portLegalState = checkPort(port)
-                            portLegalState != PortLegalState.Legal
-                        }
-                    ) return@Button
-
-                    if (enableButtonAddServer) {
-                        enableButtonAddServer = false
-                        onDismissRequest()
-                        val ommsServer = OmmsServer(
-                            id = serverId,
-                            name = name,
-                            ip = ip,
-                            port = port.toInt(),
-                            code = if (saveCode) code.toIntOrNull() else null,
-                        )
-                        servers.get().apply {
-                            replace(serverId, ommsServer)
-                        }.also {
-                            servers.set(it)
-                        }
-                    }
-                } ) {
+                Button(::onConfirm) {
                     Text(Res.string.save.string)
                 }
             }
