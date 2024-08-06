@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 sealed interface FetchControllersState {
-    data object Idle : FetchControllersState
     data object Fetching : FetchControllersState
     data class Error(val e: Throwable) : FetchControllersState
     data class Success(val controllers: Map<String, Controller>) : FetchControllersState
@@ -19,7 +18,6 @@ suspend fun fetchControllersFormServer(
     session: ClientSession,
     stateListener: (FetchControllersState) -> Unit
 ) {
-    stateListener(FetchControllersState.Fetching)
     withContext(Dispatchers.IO) {
         try {
             ensureActive()

@@ -49,7 +49,7 @@ object AppContainer {
         if (flag) set(map)
     }
 
-    var onChangeCurrentOmmsServer: MutableMap<String, (String?) -> Unit> = mutableMapOf()
+    val onChangeCurrentOmmsServer: MutableMap<String, (String?) -> Unit> = mutableMapOf()
     var currentOmmsServerId: String? = null
         set(value) {
             field = value
@@ -58,7 +58,7 @@ object AppContainer {
             }
         }
 
-    var onKeyEvent: MutableMap<String, (KeyEvent) -> Boolean> = mutableMapOf()
+    val onKeyEvent: MutableMap<String, (KeyEvent) -> Boolean> = mutableMapOf()
 
-    var sessions: MutableMap<String, ClientSession> = mutableMapOf()
+    val sessions: MutableMap<String, ClientSession> = mutableMapOf()
 }

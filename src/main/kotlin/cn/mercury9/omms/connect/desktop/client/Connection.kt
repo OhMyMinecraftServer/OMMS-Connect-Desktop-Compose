@@ -1,6 +1,5 @@
 package cn.mercury9.omms.connect.desktop.client
 
-import cn.mercury9.omms.connect.desktop.data.AppContainer
 import icu.takeneko.omms.client.session.ClientInitialSession
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
@@ -49,9 +48,11 @@ fun getServerName(
 
 fun endOmmsServerConnection(
     session: ClientSession,
-    callback: () -> Unit
+    callback: (String) -> Unit
 ) {
-    session.close {
-        callback()
+    try {
+        session.close(callback)
+    } catch (e: Exception) {
+        callback(e.localizedMessage)
     }
 }

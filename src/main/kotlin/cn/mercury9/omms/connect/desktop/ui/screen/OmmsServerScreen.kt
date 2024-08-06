@@ -1,5 +1,8 @@
 package cn.mercury9.omms.connect.desktop.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +33,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -113,9 +117,16 @@ fun OmmsServerScreen() {
         color = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize(),
     ) {
-        if (connectionState !is ConnectionState.Success) {
-            Welcome(connectionState)
-        } else {
+        Welcome(connectionState)
+        AnimatedVisibility (
+            connectionState is ConnectionState.Success,
+            enter = slideIn {
+                IntOffset(-it.width, 0)
+            },
+            exit = slideOut {
+                IntOffset(-it.width, 0)
+            }
+        ) {
             OmmsServerNavigateScreen()
         }
     }

@@ -1,11 +1,11 @@
 <resources>
+    <string name="app_name" translatable="false">OMMS Connect</string>
+
     <string name="omms_server_list">OMMS Server List</string>
     <string name="label_no_more">There is no more here...</string>
     <string name="server_name">Name</string>
-    <string name="app_name" translatable="false">OMMS Connect</string>
     <string name="code">Code</string>
     <string name="ip" translatable="false">IP</string>
-    <string name="go">LINK START</string>
     <string name="port">Port</string>
     <string name="error_port_oob">Port must in 0-65535</string>
     <string name="error_blank">Can not be blank!</string>
@@ -25,22 +25,20 @@
     <string name="login">LOGIN</string>
     <string name="logout">LOGOUT</string>
     <string name="welcome">Welcome to OMMS Connect!</string>
-    <string name="blank_line" />
+    <string name="blank_line" translatable="false"/>
     <string name="remember_server">Remember this server</string>
     <string name="remember_code">Remember this code</string>
     <string name="success">Connected.</string>
     <string name="fail">Cannot connect to server.</string>
-    <string name="empty">Please fill in all those text boxes.</string>
-    <string name="title_activity_session" translatable="false">OMMS Client Session</string>
     <string name="working">Connecting %1$s ...</string>
-    <string name="title_activity_session0" translatable="false">Session Activity</string>
 
     <string name="title_server">Server</string>
     <string name="title_whitelist">Whitelist</string>
     <string name="title_broadcast">Announcement</string>
     <string name="title_activity_whitelist_edit">Whitelist Edit</string>
 
-    <string name="wdnmd">" "</string>
+    <string name="label_controller_type">Type: %1$s</string>
+
     <string name="player_name">Player Name</string>
     <string name="whitelist">Whitelist</string>
     <string name="todo">TODO</string>

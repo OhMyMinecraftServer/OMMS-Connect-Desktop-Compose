@@ -36,7 +36,9 @@ import cn.mercury9.omms.connect.desktop.resources.logout_24px
 import cn.mercury9.omms.connect.desktop.resources.monitor_24px
 import cn.mercury9.omms.connect.desktop.resources.notifications_24px
 import cn.mercury9.omms.connect.desktop.resources.sensor_window_24px
-import cn.mercury9.omms.connect.desktop.resources.server
+import cn.mercury9.omms.connect.desktop.resources.title_broadcast
+import cn.mercury9.omms.connect.desktop.resources.title_server
+import cn.mercury9.omms.connect.desktop.resources.title_whitelist
 
 data object OmmsServerNavRoute {
     const val CONTROLLERS_SCREEN = "CONTROLLERS_SCREEN"
@@ -55,6 +57,12 @@ fun OmmsServerNavigateScreen() {
             startDestination = OmmsServerNavRoute.CONTROLLERS_SCREEN
         ) {
             composable(OmmsServerNavRoute.CONTROLLERS_SCREEN) {
+                OmmsControllersScreen()
+            }
+            composable(OmmsServerNavRoute.WHITELIST_SCREEN) {
+                Text("TODO")
+            }
+            composable(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN) {
                 Text("TODO")
             }
         }
@@ -80,7 +88,9 @@ fun OmmsServerScreenTopBar(
                 val id = AppContainer.currentOmmsServerId!!
                 val session = AppContainer.sessions[id]!!
                 endOmmsServerConnection(session) {
-                    navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
+                    try {
+                        navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
+                    } catch (_: Throwable) {}
                     AppContainer.sessions.remove(id)
                     AppContainer.currentOmmsServerId = null
                 }
@@ -127,11 +137,11 @@ fun OmmsServerScreenTopBarNavigateButtons(
             icon = {
                 Icon(
                     Res.drawable.monitor_24px.painter,
-                    Res.string.server.string
+                    Res.string.title_server.string
                 )
             },
             label = {
-                Text(Res.string.server.string)
+                Text(Res.string.title_server.string)
             }
         )
         NavigationBarItem(
@@ -143,11 +153,11 @@ fun OmmsServerScreenTopBarNavigateButtons(
             icon = {
                 Icon(
                     Res.drawable.sensor_window_24px.painter,
-                    Res.string.server.string
+                    Res.string.title_whitelist.string
                 )
             },
             label = {
-                Text(Res.string.server.string)
+                Text(Res.string.title_whitelist.string)
             }
         )
         NavigationBarItem(
@@ -159,11 +169,11 @@ fun OmmsServerScreenTopBarNavigateButtons(
             icon = {
                 Icon(
                     Res.drawable.notifications_24px.painter,
-                    Res.string.server.string
+                    Res.string.title_broadcast.string
                 )
             },
             label = {
-                Text(Res.string.server.string)
+                Text(Res.string.title_broadcast.string)
             }
         )
     }

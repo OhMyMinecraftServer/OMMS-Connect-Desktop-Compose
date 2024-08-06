@@ -4,7 +4,6 @@
     <string name="label_no_more">没有更多了...</string>
     <string name="server_name">名称</string>
     <string name="code">权限代码</string>
-    <string name="go">连接！</string>
     <string name="port">端口</string>
     <string name="error_port_oob">端口必须在 0-65535</string>
     <string name="error_blank">不能为空！</string>
@@ -28,14 +27,15 @@
     <string name="remember_code">记住权限代码</string>
     <string name="success">已连接</string>
     <string name="fail">无法连接至服务器</string>
-    <string name="empty">请填写完整登录信息</string>
     <string name="working">正在连接 %1$s ...</string>
-    <string name="blank_line">" "</string>
+
     <string name="title_server">服务器</string>
     <string name="title_whitelist">白名单</string>
     <string name="title_broadcast">公告</string>
     <string name="title_activity_whitelist_edit">白名单编辑</string>
-    <string name="wdnmd">" "</string>
+
+    <string name="label_controller_type">类型：%1$s</string>
+
     <string name="player_name">玩家名</string>
     <string name="whitelist">白名单</string>
     <string name="todo">正在开发中</string>
