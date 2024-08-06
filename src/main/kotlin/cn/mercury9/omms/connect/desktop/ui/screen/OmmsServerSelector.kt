@@ -7,8 +7,13 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -27,9 +33,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,6 +61,8 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
@@ -99,65 +111,108 @@ fun OmmsServerSelector(
     modifier: Modifier = Modifier
 ) {
     var isServerSelectorCollapsed by remember { mutableStateOf(false) }
-    Surface(
-        color = MaterialTheme.colorScheme.background,
-        modifier = modifier
+    AnimatedVisibility(
+        !isServerSelectorCollapsed,
+        enter = slideIn {
+            IntOffset(-it.width, 0)
+        } + expandIn(expandFrom = Alignment.CenterStart) {
+            IntSize(0, it.height)
+        },
+        exit = slideOut {
+            IntOffset(-it.width, 0)
+        } + shrinkOut(shrinkTowards = Alignment.CenterStart) {
+            IntSize(0, it.height)
+        }
     ) {
-        OmmsServerSelector(
-            isServerSelectorCollapsed
+        Row {
+            Surface(
+                color = MaterialTheme.colorScheme.background,
+                modifier = modifier
+            ) {
+                OmmsServerSelector {
+                    isServerSelectorCollapsed = !isServerSelectorCollapsed
+                }
+            }
+            VerticalDivider()
+        }
+    }
+    val interactionSourceRange = remember { MutableInteractionSource() }
+    val hoverOnRange by interactionSourceRange.collectIsHoveredAsState()
+    val interactionSourceRangeCenter = remember { MutableInteractionSource() }
+    val hoverOnRangeCenter by interactionSourceRangeCenter.collectIsHoveredAsState()
+    val interactionSourceButton = remember { MutableInteractionSource() }
+    val hoverOnButton by interactionSourceButton.collectIsHoveredAsState()
+    val buttonOffsetX = animateDpAsState(
+        if (hoverOnButton) 8.dp
+        else if (hoverOnRangeCenter) (-4).dp
+        else if (hoverOnRange) (-32).dp
+        else (-64).dp
+    )
+    val buttonShapeCorner = animateDpAsState(
+        if (hoverOnButton) 32.dp
+        else 16.dp
+    )
+    if (isServerSelectorCollapsed) {
+        Popup(
+            Alignment.CenterStart
         ) {
-            isServerSelectorCollapsed = !isServerSelectorCollapsed
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .height(AppContainer.mainWindowState.size.height - 130.dp)
+                    .width(64.dp)
+                    .hoverable(interactionSourceRange)
+//                    .offset(y=64.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp, 128.dp)
+                        .hoverable(interactionSourceRangeCenter)
+                ) {
+                    FloatingActionButton(
+                        onClick =  {
+                            isServerSelectorCollapsed = false
+                        },
+                        shape = RoundedCornerShape(buttonShapeCorner.value),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .offset(x = buttonOffsetX.value, y = 0.dp)
+                            .hoverable(interactionSourceButton)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, null)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 fun OmmsServerSelector(
-    isCollapsed: Boolean,
     onClickCEButton: () -> Unit
 ) {
-    val width = animateDpAsState(
-        if (isCollapsed) 64.dp else 250.dp
-    )
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .width(width.value)
+            .width(250.dp)
     ) {
         OmmsServerListTopBar(
-            isCollapsed,
             onClickCEButton
         )
         HorizontalDivider()
-        AnimatedVisibility(
-            !isCollapsed,
-            enter = expandIn(
-                expandFrom = Alignment.TopStart
-            ),
-            exit = shrinkOut(
-                shrinkTowards = Alignment.TopStart
-            )
-        ) {
-            ExpandedOmmsServerList()
-        }
+        OmmsServerList()
     }
 }
 
 @Composable
 fun OmmsServerListTopBar(
-    isCollapsed: Boolean,
     onClickCEButton: () -> Unit,
 ) {
     var flagOpenAddOmmsServerDialog by remember { mutableStateOf(false) }
     Surface(
-        modifier = if (isCollapsed) {
-            Modifier
-                .size(64.dp)
-        } else {
-            Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-        }
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
     ) {
         Box(
             modifier = Modifier
@@ -175,30 +230,18 @@ fun OmmsServerListTopBar(
                 ) {
                     Icon(Res.drawable.dns_24px.painter, null)
                 }
-                AnimatedVisibility(
-                    !isCollapsed,
-                    enter = expandIn(
-                        expandFrom = Alignment.CenterStart
-                    ),
-                    exit = shrinkOut(
-                        shrinkTowards = Alignment.CenterStart
-                    )
-                ) {
-                    Text(Res.string.omms_server_list.string)
-                }
+                Text(Res.string.omms_server_list.string)
             }
-            if (!isCollapsed) {
-                IconButton({
-                    flagOpenAddOmmsServerDialog = true
-                },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                ) {
-                    Icon(
-                        Res.drawable.add_24px.painter,
-                        Res.string.add_omms_server.string
-                    )
-                }
+            IconButton({
+                flagOpenAddOmmsServerDialog = true
+            },
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    Res.drawable.add_24px.painter,
+                    Res.string.add_omms_server.string
+                )
             }
         }
     }
@@ -421,7 +464,7 @@ fun DialogAddOmmsServer(
 }
 
 @Composable
-fun ExpandedOmmsServerList() {
+fun OmmsServerList() {
     val serverList = remember {
         mutableStateMapOf<String, OmmsServer>()
         // 有一个未知问题导致会重复添加，所以我把 `id` 作为 `map` 的 `key`，就会自动去重了哈哈哈
@@ -465,7 +508,7 @@ fun ExpandedOmmsServerList() {
                     ),
                 key = { server -> server.id }
             ) { server ->
-                ExpandedOmmsServerItem(
+                OmmsServerItem(
                     server,
                     currentOmmsServerId,
                 )
@@ -500,7 +543,7 @@ fun ExpandedOmmsServerList() {
 }
 
 @Composable
-fun ExpandedOmmsServerItem(
+fun OmmsServerItem(
     server: OmmsServer,
     currentServerId: String?,
 ) {

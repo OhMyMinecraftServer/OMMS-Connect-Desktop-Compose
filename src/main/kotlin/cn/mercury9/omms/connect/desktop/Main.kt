@@ -19,6 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 
 fun main() = application {
     val windowState = rememberWindowState()
+    AppContainer.mainWindowState = windowState
 
     val isSystemInDarkTheme = isSystemInDarkTheme()
     var appTheme by remember { mutableStateOf(

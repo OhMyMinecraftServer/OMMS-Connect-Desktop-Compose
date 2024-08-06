@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -66,7 +67,10 @@ fun OmmsControllersScreen() {
 fun OmmsServerControllerList(
     controllers: Map<String, Controller>
 ) {
-    Surface {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Adaptive(250.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -1,6 +1,7 @@
 package cn.mercury9.omms.connect.desktop.data
 
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.window.WindowState
 import cn.mercury9.omms.connect.desktop.data.configs.AppConfig
 import cn.mercury9.omms.connect.desktop.data.configs.Data
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
@@ -48,6 +49,8 @@ object AppContainer {
         }
         if (flag) set(map)
     }
+
+    lateinit var mainWindowState: WindowState
 
     val onChangeCurrentOmmsServer: MutableMap<String, (String?) -> Unit> = mutableMapOf()
     var currentOmmsServerId: String? = null

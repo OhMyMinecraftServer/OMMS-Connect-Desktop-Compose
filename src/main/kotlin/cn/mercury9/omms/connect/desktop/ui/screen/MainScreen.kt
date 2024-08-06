@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,6 @@ fun MainScreen() {
                     .sizeIn(maxWidth = 250.dp)
                     .wrapContentWidth(),
             )
-            VerticalDivider()
             OmmsServerScreen()
         }
     }
