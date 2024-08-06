@@ -1,68 +1,27 @@
 package cn.mercury9.omms.connect.desktop.data.configs
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.StringFormat
 import kotlinx.serialization.json.Json
-import org.jetbrains.skiko.hostOs
 import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-private val dataDir = Path(
-    System.getProperty("user.home") + if (hostOs.isMacOS) {
-        "/.config/cn.mercury9.omms.connect.desktop"
-    } else {
-        "/.OmmsConnectDesktop"
-    }
-).also {
-    it.createDirectories()
-}
-
-private val json = Json {
-    encodeDefaults = true
-    ignoreUnknownKeys = true
-    prettyPrint = true
-}
-
-val config = Data(
-    dataDir.resolve("config.json"),
-    AppConfig(),
-    AppConfig.serializer()
-)
-
-@Suppress("UNCHECKED_CAST")
-val servers = Data(
-    dataDir.resolve("servers.json"),
-    mutableMapOf(),
-    MapSerializer(String.serializer(), OmmsServer.serializer())
-            as KSerializer<MutableMap<String, OmmsServer>>
-).apply {
-    for (server in get()) {
-        if (server.key != server.value.id) {
-            this.set(
-                this.get().apply {
-                    put(server.key, server.value.apply {
-                        id = server.key
-                    })
-                }
-            )
-        }
-    }
-}
-
 class Data<T : Any>(
-    private val filePath: Path,
+    val filePath: Path,
     private val defaultConfig: T,
-    private val serializer: KSerializer<T>
+    private val serializer: KSerializer<T>,
+    private val stringFormat: StringFormat = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+        prettyPrint = true
+    },
 ) {
 
-    private var config: T? = null
+    private var config: T = load()
 
     var onConfigChange: MutableMap<String, (T) -> Unit> = mutableMapOf()
     private fun callOnConfigChange(value: T) {
@@ -79,7 +38,7 @@ class Data<T : Any>(
                     write(it)
                 }
             } else {
-                json.decodeFromString(serializer, filePath.readText()).also {
+                stringFormat.decodeFromString(serializer, filePath.readText()).also {
                     config = it
                 }
             }
@@ -94,14 +53,14 @@ class Data<T : Any>(
     fun write(config: T?) {
         filePath.deleteIfExists()
         filePath.createFile()
-        filePath.writeText(json.encodeToString(serializer, config?:defaultConfig))
+        filePath.writeText(stringFormat.encodeToString(serializer, config?:defaultConfig))
     }
     fun write() {
         write(config)
     }
 
     fun get(): T {
-        return config ?: load()
+        return config
     }
     fun set(value: T) {
         config = value

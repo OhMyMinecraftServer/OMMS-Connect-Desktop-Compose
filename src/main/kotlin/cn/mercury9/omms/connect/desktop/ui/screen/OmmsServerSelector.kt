@@ -24,9 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -67,8 +65,6 @@ import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServerListSortBy
-import cn.mercury9.omms.connect.desktop.data.configs.config
-import cn.mercury9.omms.connect.desktop.data.configs.servers
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_24px
 import cn.mercury9.omms.connect.desktop.resources.add_omms_server
@@ -263,13 +259,13 @@ fun DialogAddOmmsServer(
                 port = port.toInt(),
                 code = if (saveCode) code.toIntOrNull() else null,
             )
-            servers.get().apply {
+            AppContainer.servers.get().apply {
                 put(
                     ommsServer.id,
                     ommsServer
                 )
             }.also {
-                servers.set(it)
+                AppContainer.servers.set(it)
             }
         }
     }
@@ -430,22 +426,22 @@ fun ExpandedOmmsServerList() {
         mutableStateMapOf<String, OmmsServer>()
         // 有一个未知问题导致会重复添加，所以我把 `id` 作为 `map` 的 `key`，就会自动去重了哈哈哈
     }
-    for (server in servers.get()) {
+    for (server in AppContainer.servers.get()) {
         // 初始化
         serverList[server.key] = server.value
     }
-    servers.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-ServerList" to {
+    AppContainer.servers.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-ServerList" to {
         // 更新
         serverList.clear()
-        for (server in servers.get()) {
+        for (server in AppContainer.servers.get()) {
             serverList[server.key] = server.value
         }
     }
     if (serverList.isNotEmpty()) {
 
-        var sortBy by remember { mutableStateOf(config.get().ommsServerListSortBy) }
-        config.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-SortBy" to {
-            sortBy = config.get().ommsServerListSortBy
+        var sortBy by remember { mutableStateOf(AppContainer.config.get().ommsServerListSortBy) }
+        AppContainer.config.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-SortBy" to {
+            sortBy = AppContainer.config.get().ommsServerListSortBy
         }
 
         var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
@@ -676,7 +672,7 @@ fun DialogDeleteOmmsServer(
                 )
                 Text(
                     Res.string.hint_confirm_delete.string(
-                        servers.get()[serverId]!!.name
+                        AppContainer.servers.get()[serverId]!!.name
                     ).replace(
                         "吗",
                         if (Random.nextInt(0..99) == 0) { "🐴" } else "吗"
@@ -711,10 +707,10 @@ fun DialogDeleteOmmsServer(
                         modifier = Modifier
                             .clickable {
                                 onDismissRequest()
-                                servers.get().apply {
+                                AppContainer.servers.get().apply {
                                     remove(serverId)
                                 }.also {
-                                    servers.set(it)
+                                    AppContainer.servers.set(it)
                                 }
                             }
                             .fillMaxHeight()
@@ -738,11 +734,11 @@ fun DialogEditOmmsServer(
     serverId: String,
     onDismissRequest: () -> Unit
 ) {
-    var name by remember { mutableStateOf(servers.get()[serverId]!!.name) }
-    var ip by remember { mutableStateOf(servers.get()[serverId]!!.ip) }
-    var port by remember { mutableStateOf(servers.get()[serverId]!!.port.toString()) }
-    var code by remember { mutableStateOf(servers.get()[serverId]!!.code?.toString() ?: "") }
-    var saveCode by remember { mutableStateOf(servers.get()[serverId]!!.code != null) }
+    var name by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.name) }
+    var ip by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.ip) }
+    var port by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.port.toString()) }
+    var code by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.code?.toString() ?: "") }
+    var saveCode by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.code != null) }
 
     val width = 400.dp
 
@@ -776,10 +772,10 @@ fun DialogEditOmmsServer(
                 port = port.toInt(),
                 code = if (saveCode) code.toIntOrNull() else null,
             )
-            servers.get().apply {
+            AppContainer.servers.get().apply {
                 replace(serverId, ommsServer)
             }.also {
-                servers.set(it)
+                AppContainer.servers.set(it)
             }
         }
     }

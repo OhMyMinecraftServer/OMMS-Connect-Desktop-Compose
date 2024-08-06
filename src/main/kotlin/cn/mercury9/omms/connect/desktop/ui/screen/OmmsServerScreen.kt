@@ -40,7 +40,6 @@ import cn.mercury9.omms.connect.desktop.client.connectOmmsServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.data.CodeLegalState
 import cn.mercury9.omms.connect.desktop.data.checkCode
-import cn.mercury9.omms.connect.desktop.data.configs.servers
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.app_name
 import cn.mercury9.omms.connect.desktop.resources.cancel
@@ -56,6 +55,7 @@ import cn.mercury9.omms.connect.desktop.resources.login_hint
 import cn.mercury9.omms.connect.desktop.resources.success
 import cn.mercury9.omms.connect.desktop.resources.welcome
 import cn.mercury9.omms.connect.desktop.resources.working
+import cn.mercury9.omms.connect.desktop.ui.screen.server.OmmsServerNavigateScreen
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -75,11 +75,11 @@ fun OmmsServerScreen() {
     AppContainer.onChangeCurrentOmmsServer += "OmmsServerScreen-OmmsServerId" to {
         serverId = AppContainer.currentOmmsServerId
         it?.let {
-            serverName = servers.get()[it]!!.name
-            serverIp = servers.get()[it]!!.ip
-            serverPort = servers.get()[it]!!.port
+            serverName = AppContainer.servers.get()[it]!!.name
+            serverIp = AppContainer.servers.get()[it]!!.ip
+            serverPort = AppContainer.servers.get()[it]!!.port
         }
-        serverCode = servers.get()[it]?.code
+        serverCode = AppContainer.servers.get()[it]?.code
         connectionState = ConnectionState.Idle
     }
 
@@ -116,7 +116,7 @@ fun OmmsServerScreen() {
         if (connectionState !is ConnectionState.Success) {
             Welcome(connectionState)
         } else {
-            Text("TODO")
+            OmmsServerNavigateScreen()
         }
     }
 }
@@ -256,7 +256,7 @@ fun Welcome(
                                 Res.string.hint_choose_omms_server.string
 
                             is ConnectionState.Connecting ->
-                                Res.string.working.string(servers.get()[state.id]?.name.toString())
+                                Res.string.working.string(AppContainer.servers.get()[state.id]?.name.toString())
 
                             is ConnectionState.Error ->
                                 Res.string.error_unknown_error.string
@@ -281,7 +281,7 @@ fun Welcome(
 
 @Composable
 fun DialogShowError(
-    e: Exception,
+    e: Throwable,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(

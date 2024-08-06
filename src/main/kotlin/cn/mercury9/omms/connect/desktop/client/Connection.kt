@@ -43,6 +43,10 @@ suspend fun connectOmmsServer(
     }
 }
 
+fun getServerName(
+    session: ClientSession,
+): String = session.serverName
+
 fun endOmmsServerConnection(
     session: ClientSession,
     callback: () -> Unit
