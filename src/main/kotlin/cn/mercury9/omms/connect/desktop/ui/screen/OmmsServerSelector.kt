@@ -2,6 +2,7 @@ package cn.mercury9.omms.connect.desktop.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,7 +29,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
@@ -107,74 +107,61 @@ fun OmmsServerSelector(
         color = MaterialTheme.colorScheme.background,
         modifier = modifier
     ) {
-        AnimatedVisibility(
-            visible = !isServerSelectorCollapsed,
-            enter = expandIn(expandFrom = Alignment.Center),
-            exit = shrinkOut(shrinkTowards = Alignment.Center)
+        OmmsServerSelector(
+            isServerSelectorCollapsed
         ) {
-            ExpandedOmmsServerSelector(
-                onCollapse = { isServerSelectorCollapsed = true }
-            )
-        }
-        AnimatedVisibility(
-            visible = isServerSelectorCollapsed,
-            enter = expandIn(expandFrom = Alignment.Center),
-            exit = shrinkOut(shrinkTowards = Alignment.Center)
-        ) {
-            CollapsedOmmsServerSelector {
-                isServerSelectorCollapsed = false
-            }
+            isServerSelectorCollapsed = !isServerSelectorCollapsed
         }
     }
 }
 
 @Composable
-fun ExpandedOmmsServerSelector(
-    onCollapse: () -> Unit
+fun OmmsServerSelector(
+    isCollapsed: Boolean,
+    onClickCEButton: () -> Unit
 ) {
+    val width = animateDpAsState(
+        if (isCollapsed) 64.dp else 250.dp
+    )
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxHeight()
+            .width(width.value)
     ) {
-        ExpandedOmmsServerListTopBar(
-            onCollapse = onCollapse
+        OmmsServerListTopBar(
+            isCollapsed,
+            onClickCEButton
         )
         HorizontalDivider()
-        ExpandedOmmsServerList()
-    }
-}
-
-@Composable
-fun CollapsedOmmsServerSelector(
-    onExpand: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .wrapContentWidth()
-            .sizeIn(maxWidth = 64.dp)
-    ) {
-        IconButton(
-            onExpand,
-            modifier = Modifier
-                .padding(8.dp)
+        AnimatedVisibility(
+            !isCollapsed,
+            enter = expandIn(
+                expandFrom = Alignment.TopStart
+            ),
+            exit = shrinkOut(
+                shrinkTowards = Alignment.TopStart
+            )
         ) {
-            Icon(Res.drawable.dns_24px.painter, null)
+            ExpandedOmmsServerList()
         }
-        HorizontalDivider()
     }
 }
 
 @Composable
-fun ExpandedOmmsServerListTopBar(
-    onCollapse: () -> Unit,
+fun OmmsServerListTopBar(
+    isCollapsed: Boolean,
+    onClickCEButton: () -> Unit,
 ) {
     var flagOpenAddOmmsServerDialog by remember { mutableStateOf(false) }
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier = if (isCollapsed) {
+            Modifier
+                .size(64.dp)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        }
     ) {
         Box(
             modifier = Modifier
@@ -184,25 +171,38 @@ fun ExpandedOmmsServerListTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .padding(8.dp),
+                    .padding(horizontal = 8.dp)
+                    .height(64.dp),
             ) {
                 IconButton(
-                    onCollapse
+                    onClickCEButton
                 ) {
                     Icon(Res.drawable.dns_24px.painter, null)
                 }
-                Text(Res.string.omms_server_list.string)
+                AnimatedVisibility(
+                    !isCollapsed,
+                    enter = expandIn(
+                        expandFrom = Alignment.CenterStart
+                    ),
+                    exit = shrinkOut(
+                        shrinkTowards = Alignment.CenterStart
+                    )
+                ) {
+                    Text(Res.string.omms_server_list.string)
+                }
             }
-            IconButton(
-                { flagOpenAddOmmsServerDialog = true },
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(8.dp),
-            ) {
-                Icon(
-                    Res.drawable.add_24px.painter,
-                    Res.string.add_omms_server.string
-                )
+            if (!isCollapsed) {
+                IconButton({
+                    flagOpenAddOmmsServerDialog = true
+                },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        Res.drawable.add_24px.painter,
+                        Res.string.add_omms_server.string
+                    )
+                }
             }
         }
     }

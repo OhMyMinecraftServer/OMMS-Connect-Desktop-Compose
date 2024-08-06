@@ -1,5 +1,6 @@
 package cn.mercury9.omms.connect.desktop.client
 
+import cn.mercury9.omms.connect.desktop.data.AppContainer
 import icu.takeneko.omms.client.session.ClientInitialSession
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit
 sealed interface ConnectionState {
     data object Idle : ConnectionState
     data class Connecting(val id: String) : ConnectionState
-    data class Error(val e: Exception) : ConnectionState
+    data class Error(val e: Throwable) : ConnectionState
     data class Success(val session: ClientSession) : ConnectionState
 }
 
@@ -28,17 +29,25 @@ suspend fun connectOmmsServer(
         try {
             val clientInitialSession = ClientInitialSession(InetAddress.getByName(ip), port)
             ensureActive()
-            val task = future {
+            future {
                 try {
                     val session = clientInitialSession.init(code)
                     stateListener(ConnectionState.Success(session))
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     stateListener(ConnectionState.Error(e))
                 }
-            }
-            task.orTimeout(1, TimeUnit.MINUTES)
+            }.orTimeout(1, TimeUnit.MINUTES)
         } catch (e: Exception) {
             stateListener(ConnectionState.Error(e))
         }
+    }
+}
+
+fun endOmmsServerConnection(
+    session: ClientSession,
+    callback: () -> Unit
+) {
+    session.close {
+        callback()
     }
 }
