@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -18,7 +20,9 @@ import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
 import org.jetbrains.compose.resources.stringResource
 
 fun main() = application {
-    val windowState = rememberWindowState()
+    val windowState = rememberWindowState(
+        size = DpSize(1200.dp, 900.dp)
+    )
     AppContainer.mainWindowState = windowState
 
     val isSystemInDarkTheme = isSystemInDarkTheme()

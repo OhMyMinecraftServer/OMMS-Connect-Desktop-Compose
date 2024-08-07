@@ -162,7 +162,6 @@ fun OmmsServerSelector(
                     .height(AppContainer.mainWindowState.size.height - 130.dp)
                     .width(64.dp)
                     .hoverable(interactionSourceRange)
-//                    .offset(y=64.dp)
             ) {
                 Box(
                     modifier = Modifier

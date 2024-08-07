@@ -23,7 +23,11 @@ suspend fun fetchControllersFormServer(
             ensureActive()
             future {
                 session.fetchControllersFromServer {
-                    stateListener(FetchControllersState.Success(it))
+                    try {
+                        stateListener(FetchControllersState.Success(it))
+                    } catch (e: Throwable) {
+                        stateListener(FetchControllersState.Error(e))
+                    }
                 }
             }.orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {

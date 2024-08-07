@@ -121,7 +121,7 @@ fun OmmsServerScreen() {
         AnimatedVisibility (
             connectionState is ConnectionState.Success,
             enter = slideIn {
-                IntOffset(-it.width, 0)
+                IntOffset(0, -it.height)
             },
             exit = slideOut {
                 IntOffset(-it.width, 0)

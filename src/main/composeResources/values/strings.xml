@@ -38,6 +38,7 @@
     <string name="title_activity_whitelist_edit">Whitelist Edit</string>
 
     <string name="label_controller_type">Type: %1$s</string>
+    <string name="label_loading">Loading ...</string>
 
     <string name="player_name">Player Name</string>
     <string name="whitelist">Whitelist</string>
@@ -69,7 +70,6 @@
     <string name="label_whitelists_count">%d whitelists added to this server.</string>
     <string name="label_announcements_count">%d announcements added to this server.</string>
     <string name="label_server_os" translatable="false">Server OS</string>
-    <string name="label_loading">Loading</string>
     <string name="label_wait">Please Wait…</string>
 
     <string name="error_unknown_exception">Unexpected Error occurred, more information: %s</string>

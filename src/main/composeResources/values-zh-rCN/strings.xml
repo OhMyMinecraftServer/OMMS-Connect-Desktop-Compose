@@ -35,6 +35,7 @@
     <string name="title_activity_whitelist_edit">白名单编辑</string>
 
     <string name="label_controller_type">类型：%1$s</string>
+    <string name="label_loading">正在加载...</string>
 
     <string name="player_name">玩家名</string>
     <string name="whitelist">白名单</string>
@@ -61,7 +62,6 @@
     <string name="label_controller_count">服务器正在管理%s个控制器</string>
     <string name="label_whitelists_count">服务器添加了%s个白名单</string>
     <string name="label_announcements_count">服务器添加了%s个公告</string>
-    <string name="label_loading">加载</string>
     <string name="label_wait">请稍等</string>
     <string name="error_unknown_exception">未知的错误发生了，更多信息:%s</string>
     <string name="error_controller_fetch_error">无法从服务器获取控制器列表，原因：</string>
