@@ -73,7 +73,7 @@ fun OmmsServerNavigateScreen() {
 fun OmmsServerScreenTopBar(
     navController: NavHostController,
 ) {
-    val serverName = getServerName(AppContainer.sessions[AppContainer.currentOmmsServerId]!!)
+    val serverName = getServerName(AppContainer.sessions[AppContainer.currentOmmsServerId])
     Box(
         modifier = Modifier
             .height(64.dp)
@@ -86,7 +86,7 @@ fun OmmsServerScreenTopBar(
         ) {
             IconButton({
                 val id = AppContainer.currentOmmsServerId!!
-                val session = AppContainer.sessions[id]!!
+                val session = AppContainer.sessions[id]
                 endOmmsServerConnection(session) {
                     try {
                         navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)

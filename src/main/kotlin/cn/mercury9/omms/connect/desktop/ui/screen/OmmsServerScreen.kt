@@ -87,7 +87,7 @@ fun OmmsServerScreen() {
         connectionState = ConnectionState.Idle
     }
 
-    if (serverId != null) {
+    if (serverId != null && serverIp != "example") {
         if (serverCode == null) {
             DialogInputOmmsServerCode({ code ->
                 serverCode = code.toInt()
@@ -119,7 +119,7 @@ fun OmmsServerScreen() {
     ) {
         Welcome(connectionState)
         AnimatedVisibility (
-            connectionState is ConnectionState.Success,
+            connectionState is ConnectionState.Success || serverIp == "example",
             enter = slideIn {
                 IntOffset(0, -it.height)
             },

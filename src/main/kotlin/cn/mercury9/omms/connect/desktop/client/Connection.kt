@@ -43,13 +43,17 @@ suspend fun connectOmmsServer(
 }
 
 fun getServerName(
-    session: ClientSession,
-): String = session.serverName
+    session: ClientSession?,
+): String = session?.serverName ?: "example"
 
 fun endOmmsServerConnection(
-    session: ClientSession,
+    session: ClientSession?,
     callback: (String) -> Unit
 ) {
+    if (session == null) {
+        callback("session is null")
+        return
+    }
     try {
         session.close(callback)
     } catch (e: Exception) {

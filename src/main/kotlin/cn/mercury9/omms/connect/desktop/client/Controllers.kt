@@ -3,6 +3,7 @@ package cn.mercury9.omms.connect.desktop.client
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.withContext
@@ -15,10 +16,15 @@ sealed interface FetchControllersState {
 }
 
 suspend fun fetchControllersFormServer(
-    session: ClientSession,
+    session: ClientSession?,
     stateListener: (FetchControllersState) -> Unit
 ) {
     withContext(Dispatchers.IO) {
+        if (session == null) {
+            delay(1000)
+            stateListener(FetchControllersState.Success(mapOf()))
+            return@withContext
+        }
         try {
             ensureActive()
             future {

@@ -46,6 +46,14 @@
     <string name="server">Server</string>
     <string name="title_activity_server_oscontrol">Server Control</string>
 
+    <string name="memory">Memory</string>
+    <string name="swap">Swap</string>
+    <string name="load_average">Load Average:</string>
+
+    <string name="remain">Remain</string>
+    <string name="used">Used</string>
+    <string name="total">Total</string>
+
     <string name="meme">MEME</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_minecraft_server_control" translatable="false">Minecraft Server Control</string>
@@ -62,9 +70,7 @@
     <string name="fake_player_count" translatable="false">0/114514</string>
     <string name="unavailable">Unavailable</string>
     <string name="command">Command</string>
-    <string name="memory">Memory</string>
-    <string name="swap">Swap</string>
-    <string name="load_average">Load Average:</string>
+
 
     <string name="label_controller_count">%d controllers added to this server.</string>
     <string name="label_whitelists_count">%d whitelists added to this server.</string>

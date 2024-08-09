@@ -56,9 +56,15 @@
     <string name="player_list">玩家列表</string>
     <string name="unavailable">不可用</string>
     <string name="command">命令</string>
+
     <string name="memory">内存</string>
     <string name="swap">交换空间</string>
     <string name="load_average">平均负载</string>
+
+    <string name="remain">剩余</string>
+    <string name="used">已用</string>
+    <string name="total">总量</string>
+
     <string name="label_controller_count">服务器正在管理%s个控制器</string>
     <string name="label_whitelists_count">服务器添加了%s个白名单</string>
     <string name="label_announcements_count">服务器添加了%s个公告</string>
