@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ThemeType {
-    Default, AmazingOrange
+    MaterialDefault, AmazingOrange
 }
 
 data class AppTheme(
     var darkTheme: Boolean,
-    var themeType: ThemeType = ThemeType.Default,
+    var themeType: ThemeType = ThemeType.MaterialDefault,
     var contrastType: ContrastType = ContrastType.Default,
 )
 
@@ -32,13 +32,13 @@ fun ThemeProvider(
 
 @Composable
 fun ThemeProvider(
-    themeType: ThemeType = ThemeType.Default,
+    themeType: ThemeType = ThemeType.MaterialDefault,
     contrastType: ContrastType = ContrastType.Default,
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val theme = when (themeType) {
-        ThemeType.Default -> DefaultTheme
+        ThemeType.MaterialDefault -> DefaultTheme
         ThemeType.AmazingOrange -> AmazingOrangeTheme
     }
     val colorScheme = theme.colorScheme(darkTheme, contrastType)

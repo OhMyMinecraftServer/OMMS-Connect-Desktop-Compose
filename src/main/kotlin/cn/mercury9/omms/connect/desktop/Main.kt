@@ -9,17 +9,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.setMinimumSize
+import cn.mercury9.compose.utils.string
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.app_name
 import cn.mercury9.omms.connect.desktop.resources.ic_launcher
+import cn.mercury9.omms.connect.desktop.resources.option_setup_by_system_dark_theme
+import cn.mercury9.omms.connect.desktop.resources.option_theme_dark
+import cn.mercury9.omms.connect.desktop.resources.option_theme_light
+import cn.mercury9.omms.connect.desktop.resources.title_activity_settings
+import cn.mercury9.omms.connect.desktop.resources.title_settings_contrast
+import cn.mercury9.omms.connect.desktop.resources.title_settings_dark
+import cn.mercury9.omms.connect.desktop.resources.title_settings_theme
 import cn.mercury9.omms.connect.desktop.ui.screen.MainScreen
+import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
 import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
 import org.jetbrains.compose.resources.stringResource
 
 //private val ColorMacFullscreenGreen = Color(96, 197, 85)
@@ -46,11 +57,7 @@ fun main() = application {
     ) }
 
     AppContainer.config.onConfigChange += "Main_AppTheme" to {
-        appTheme = AppContainer.config.get().theme.appTheme().apply {
-            if (AppContainer.config.get().setupThemeBySystemDarkTheme) {
-                darkTheme = isSystemInDarkTheme
-            }
-        }
+        appTheme = AppContainer.config.get().theme.appTheme()
     }
 
     Window(
@@ -73,6 +80,74 @@ fun main() = application {
 //        undecorated = true,
 //        transparent = true
     ) {
+        MenuBar {
+            Menu(Res.string.title_activity_settings.string) {
+                Menu(Res.string.title_settings_theme.string) {
+                    Menu(Res.string.title_settings_theme.string) {
+                        for (themeType in ThemeType.entries) {
+                            RadioButtonItem(
+                                themeType.name,
+                                themeType == appTheme.themeType
+                            ) {
+                                AppContainer.config.get().apply {
+                                    theme.themeType = themeType
+                                }.also {
+                                    AppContainer.config.set(it)
+                                }
+                            }
+                        }
+                    }
+                    Menu(Res.string.title_settings_dark.string) {
+                        CheckboxItem(
+                            Res.string.option_setup_by_system_dark_theme.string,
+                            AppContainer.config.get().setupThemeBySystemDarkTheme
+                        ) {
+                            AppContainer.config.get().apply {
+                                setupThemeBySystemDarkTheme = it
+                            }.also {
+                                AppContainer.config.set(it)
+                            }
+                        }
+                        Separator()
+                        RadioButtonItem(
+                            Res.string.option_theme_light.string,
+                            !appTheme.darkTheme
+                        ) {
+                            AppContainer.config.get().apply {
+                                theme.darkTheme = false
+                            }.also {
+                                AppContainer.config.set(it)
+                            }
+                        }
+                        RadioButtonItem(
+                            Res.string.option_theme_dark.string,
+                            appTheme.darkTheme
+                        ) {
+                            AppContainer.config.get().apply {
+                                theme.darkTheme = true
+                            }.also {
+                                AppContainer.config.set(it)
+                            }
+                        }
+                    }
+                    Menu(Res.string.title_settings_contrast.string) {
+                        for (contrast in ContrastType.entries) {
+                            RadioButtonItem(
+                                contrast.name,
+                                contrast == appTheme.contrastType
+                            ) {
+                                AppContainer.config.get().apply {
+                                    theme.contrastType = contrast
+                                }.also {
+                                    AppContainer.config.set(it)
+                                }
+                            }
+                        }
+                    }
+                } // end: settings - theme
+
+            }
+        }
         setMinimumSize(916.dp, 687.dp)
 //        fun close() {
 //            for (session in AppContainer.sessions.values) {
