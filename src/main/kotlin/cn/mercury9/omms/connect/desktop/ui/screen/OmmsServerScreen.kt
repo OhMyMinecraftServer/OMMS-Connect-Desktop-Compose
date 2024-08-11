@@ -76,6 +76,8 @@ fun OmmsServerScreen() {
 
     var connectionState: ConnectionState by remember { mutableStateOf(ConnectionState.Idle) }
 
+    var currentConnectedServerId: String? by remember { mutableStateOf(null) }
+
     AppContainer.onChangeCurrentOmmsServer += "OmmsServerScreen-OmmsServerId" to {
         serverId = AppContainer.currentOmmsServerId
         it?.let {
@@ -87,7 +89,7 @@ fun OmmsServerScreen() {
         connectionState = ConnectionState.Idle
     }
 
-    if (serverId != null && serverIp != "example") {
+    if (serverId != null) {
         if (serverCode == null) {
             DialogInputOmmsServerCode({ code ->
                 serverCode = code.toInt()
@@ -103,11 +105,13 @@ fun OmmsServerScreen() {
                     serverPort,
                     serverCode!!,
                 ) {
-                    connectionState = it
+                    currentConnectedServerId = null
                     if (it is ConnectionState.Success) {
+                        currentConnectedServerId = serverId
                         AppContainer.sessions += serverId!! to
                                 it.session
                     }
+                    connectionState = it
                 }
             }
         }
@@ -119,7 +123,10 @@ fun OmmsServerScreen() {
     ) {
         Welcome(connectionState)
         AnimatedVisibility (
-            connectionState is ConnectionState.Success || serverIp == "example",
+            (
+                currentConnectedServerId == serverId
+                && connectionState is ConnectionState.Success
+            ),
             enter = slideIn {
                 IntOffset(0, -it.height)
             },

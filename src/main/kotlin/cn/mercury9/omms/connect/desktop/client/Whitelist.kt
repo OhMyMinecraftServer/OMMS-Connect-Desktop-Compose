@@ -13,14 +13,10 @@ sealed interface FetchWhitelistState {
 }
 
 suspend fun fetchWhitelistFromServer(
-    session: ClientSession?,
+    session: ClientSession,
     stateListener: (FetchWhitelistState) -> Unit
 ) {
     withContext(Dispatchers.IO) {
-        if (session == null) {
-            stateListener(FetchWhitelistState.Error(RuntimeException("session is null")))
-            return@withContext
-        }
         try {
             future {
                 try {

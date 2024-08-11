@@ -102,7 +102,7 @@ fun OmmsControllersScreen() {
         lastFetchedController = AppContainer.currentOmmsServerId
         GlobalScope.launch {
             fetchControllersFormServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId!!]
+                AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
             ) {
                 fetchControllersState = it
             }
@@ -115,7 +115,7 @@ fun OmmsControllersScreen() {
         lastFetchedServerInfo = AppContainer.currentOmmsServerId
         GlobalScope.launch {
             fetchSystemInfoFromServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId!!]
+                AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
             ) {
                 fetchSystemInfoState = it
             }
@@ -526,7 +526,7 @@ fun OmmsServerController(
     }
     GlobalScope.launch {
         fetchControllerStatusFromServer(
-            AppContainer.sessions[AppContainer.currentOmmsServerId!!],
+            AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!,
             controller.id
         ) {
             fetchControllerStatusState = it

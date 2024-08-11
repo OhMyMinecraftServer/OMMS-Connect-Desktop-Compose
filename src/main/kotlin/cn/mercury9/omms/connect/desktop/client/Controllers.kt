@@ -4,7 +4,6 @@ import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.controller.Status
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.withContext
@@ -17,15 +16,10 @@ sealed interface FetchControllersState {
 }
 
 suspend fun fetchControllersFormServer(
-    session: ClientSession?,
+    session: ClientSession,
     stateListener: (FetchControllersState) -> Unit
 ) {
     withContext(Dispatchers.IO) {
-        if (session == null) {
-            delay(1000)
-            stateListener(FetchControllersState.Success(mapOf()))
-            return@withContext
-        }
         try {
             ensureActive()
             future {
@@ -50,16 +44,11 @@ sealed interface FetchControllerStatusState {
 }
 
 suspend fun fetchControllerStatusFromServer(
-    session: ClientSession?,
+    session: ClientSession,
     controllerId: String,
     stateListener: (FetchControllerStatusState) -> Unit
 ) {
     withContext(Dispatchers.IO) {
-        if (session == null) {
-            delay(1000)
-            stateListener(FetchControllerStatusState.Error(Exception("null")))
-            return@withContext
-        }
         try {
             ensureActive()
             future {

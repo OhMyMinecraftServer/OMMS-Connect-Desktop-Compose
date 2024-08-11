@@ -59,7 +59,7 @@ fun OmmsWhitelistScreen() {
         GlobalScope.launch {
             ensureActive()
             fetchWhitelistFromServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId]
+                AppContainer.sessions[AppContainer.currentOmmsServerId]!!
             ) {
                 fetchWhitelistState = it
             }

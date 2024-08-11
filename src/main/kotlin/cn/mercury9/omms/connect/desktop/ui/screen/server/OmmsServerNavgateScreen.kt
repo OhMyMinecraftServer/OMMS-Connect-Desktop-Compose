@@ -28,7 +28,6 @@ import androidx.navigation.compose.rememberNavController
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.string
 import cn.mercury9.omms.connect.desktop.client.endOmmsServerConnection
-import cn.mercury9.omms.connect.desktop.client.getServerName
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.logout
@@ -73,7 +72,7 @@ fun OmmsServerNavigateScreen() {
 fun OmmsServerScreenTopBar(
     navController: NavHostController,
 ) {
-    val serverName = getServerName(AppContainer.sessions[AppContainer.currentOmmsServerId])
+    val serverName = AppContainer.sessions[AppContainer.currentOmmsServerId]!!.serverName
     Box(
         modifier = Modifier
             .height(64.dp)
@@ -86,7 +85,7 @@ fun OmmsServerScreenTopBar(
         ) {
             IconButton({
                 val id = AppContainer.currentOmmsServerId!!
-                val session = AppContainer.sessions[id]
+                val session = AppContainer.sessions[id]!!
                 endOmmsServerConnection(session) {
                     try {
                         navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)

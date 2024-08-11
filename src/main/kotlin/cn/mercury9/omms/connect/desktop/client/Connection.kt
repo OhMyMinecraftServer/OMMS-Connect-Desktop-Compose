@@ -23,8 +23,8 @@ suspend fun connectOmmsServer(
     code: Int,
     stateListener: (ConnectionState) -> Unit,
 ) {
-    stateListener(ConnectionState.Connecting(id))
     withContext(Dispatchers.IO) {
+        stateListener(ConnectionState.Connecting(id))
         try {
             val clientInitialSession = ClientInitialSession(InetAddress.getByName(ip), port)
             ensureActive()
@@ -42,18 +42,10 @@ suspend fun connectOmmsServer(
     }
 }
 
-fun getServerName(
-    session: ClientSession?,
-): String = session?.serverName ?: "example"
-
 fun endOmmsServerConnection(
-    session: ClientSession?,
+    session: ClientSession,
     callback: (String) -> Unit
 ) {
-    if (session == null) {
-        callback("session is null")
-        return
-    }
     try {
         session.close(callback)
     } catch (e: Exception) {
