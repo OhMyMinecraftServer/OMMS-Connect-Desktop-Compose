@@ -101,10 +101,15 @@
     <string name="label_state_not_queryable">not_queryable</string>
     <string name="label_no_player">Nobody was here :(</string>
     <string name="error_exception">Encountered exception while %s:%s</string>
+
     <string name="label_whitelist_player_count">%1$s player was added to this whitelist</string>
+    <string name="title_add_player_to_whitelist">Add to whitelist</string>
+    <string name="hint_result_may_need_refresh">You may need to refresh to see result</string>
+    <string name="title_remove_player_from_whitelist">Remove player "%1$s" from whitelist "%2$s" ?</string>
     <string name="hint_whitelist_player_removed">Successfully to removed %s</string>
     <string name="hint_whitelist_remove_player_not_exist">Failed to remove %s \\n: Player Not Exist</string>
     <string name="hint_whitelist_remove_permission_denied">Failed to remove %s from whitelist: Permission Denied</string>
+
     <string name="error_controller_not_exist">Controller %s not exist, it might be removed from server.</string>
     <string name="error_server_controller_auth_error">Central server cannot auth with controller, make sure that controller exists or it`s name correct.</string>
     <string name="label_connect_console">Connect Console</string>

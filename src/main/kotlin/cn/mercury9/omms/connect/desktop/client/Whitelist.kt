@@ -32,3 +32,55 @@ suspend fun fetchWhitelistFromServer(
         }
     }
 }
+
+suspend fun addPlayerToWhitelist(
+    session: ClientSession,
+    whitelist: String,
+    player: String,
+    stateListener: (String) -> Unit
+) {
+    withContext(Dispatchers.IO) {
+        try {
+            future {
+                session.addToWhitelist(
+                    whitelist,
+                    player,
+                    { a, b ->
+                        stateListener("$a\n$b")
+                    },
+                    { a, b ->
+                        stateListener("$a\n$b")
+                    },
+                )
+            }.orTimeout(3, TimeUnit.MINUTES)
+        } catch (e: Throwable) {
+            stateListener(e.toString())
+        }
+    }
+}
+
+suspend fun removePlayerFromWhitelist(
+    session: ClientSession,
+    whitelist: String,
+    player: String,
+    stateListener: (String) -> Unit
+) {
+    withContext(Dispatchers.IO) {
+        try {
+            future {
+                session.removeFromWhitelist(
+                    whitelist,
+                    player,
+                    { a, b ->
+                        stateListener("$a\n$b")
+                    },
+                    { a, b ->
+                        stateListener("$a\n$b")
+                    },
+                )
+            }.orTimeout(3, TimeUnit.MINUTES)
+        } catch (e: Throwable) {
+            stateListener(e.toString())
+        }
+    }
+}

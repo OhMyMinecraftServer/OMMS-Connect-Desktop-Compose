@@ -92,10 +92,15 @@
     <string name="label_state_not_queryable">状态无法获取</string>
     <string name="label_no_player">一个人都没有 :(</string>
     <string name="error_exception">在%s时发生了异常%s</string>
+
     <string name="label_whitelist_player_count">该白名单中有%1$s个玩家</string>
+    <string name="title_add_player_to_whitelist">添加到白名单</string>
+    <string name="hint_result_may_need_refresh">结果可能需要刷新才能显示</string>
+    <string name="title_remove_player_from_whitelist">从白名单“%2$s”移除玩家“%1$s”?</string>
     <string name="hint_whitelist_player_removed">成功移除玩家%s</string>
     <string name="hint_whitelist_remove_player_not_exist">无法移除玩家%s\\n此玩家不存在。</string>
     <string name="hint_whitelist_remove_permission_denied">无法移除玩家%s\\n权限不足。</string>
+
     <string name="error_controller_not_exist">服务器找不到受控端%s,该受控端可能已经被从服务端上移除。</string>
     <string name="error_server_controller_auth_error">Central服务端无法与被控端验证，请确保被控端名称正确且存在。</string>
     <string name="label_connect_console">连接控制台</string>

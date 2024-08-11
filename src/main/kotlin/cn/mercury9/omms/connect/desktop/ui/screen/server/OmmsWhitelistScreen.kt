@@ -8,19 +8,26 @@ import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,14 +40,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.string
 import cn.mercury9.omms.connect.desktop.client.FetchWhitelistState
+import cn.mercury9.omms.connect.desktop.client.addPlayerToWhitelist
 import cn.mercury9.omms.connect.desktop.client.fetchWhitelistFromServer
+import cn.mercury9.omms.connect.desktop.client.removePlayerFromWhitelist
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.add_24px
 import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
+import cn.mercury9.omms.connect.desktop.resources.cancel
+import cn.mercury9.omms.connect.desktop.resources.confirm
+import cn.mercury9.omms.connect.desktop.resources.error_blank
+import cn.mercury9.omms.connect.desktop.resources.hint_result_may_need_refresh
 import cn.mercury9.omms.connect.desktop.resources.label_whitelist_player_count
+import cn.mercury9.omms.connect.desktop.resources.player_name
+import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
+import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ensureActive
@@ -159,6 +177,9 @@ fun OmmsWhitelistDetail(
     whitelist: List<String>,
     onClickButtonBack: () -> Unit
 ) {
+    var showDialogAddPlayer by remember { mutableStateOf(false) }
+    var showDialogRemovePlayer by remember { mutableStateOf(false) }
+    var playerName by remember { mutableStateOf("") }
     Box(Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier
@@ -183,7 +204,7 @@ fun OmmsWhitelistDetail(
                                 .fillMaxSize()
                         ) {
                             Text(
-                                whitelistName.toString(),
+                                whitelistName ?: "null",
                                 style = MaterialTheme.typography.titleLarge,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
@@ -194,7 +215,12 @@ fun OmmsWhitelistDetail(
                     }
                 }
                 items(whitelist) {
-                    ElevatedCard {
+                    ElevatedCard(
+                        onClick = {
+                            showDialogRemovePlayer = true
+                            playerName = it
+                        }
+                    ) {
                         Text(
                             it,
                             textAlign = TextAlign.Center,
@@ -209,6 +235,16 @@ fun OmmsWhitelistDetail(
                 }
             }
         }
+        FloatingActionButton(
+            onClick = {
+                showDialogAddPlayer = true
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(Res.drawable.add_24px.painter, null)
+        }
         IconButton(
             onClickButtonBack,
             modifier = Modifier
@@ -218,4 +254,134 @@ fun OmmsWhitelistDetail(
             Icon(Res.drawable.arrow_back_24px.painter, null)
         }
     }
+    if (showDialogAddPlayer) {
+        DialogAddPlayerToWhitelist(whitelistName!!) {
+            showDialogAddPlayer = false
+        }
+    }
+    if (showDialogRemovePlayer) {
+        DialogConfirmRemovePlayer(
+            whitelistName!!,
+            playerName
+        ) {
+            showDialogRemovePlayer = false
+        }
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+@Composable
+fun DialogAddPlayerToWhitelist(
+    whitelist: String,
+    onDismiss: () -> Unit
+) {
+    var playerName by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(false) }
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        ElevatedCard {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    Res.string.title_add_player_to_whitelist.string,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                OutlinedTextField(
+                    label = { Text(Res.string.player_name.string) },
+                    value = playerName,
+                    onValueChange = {
+                        playerName = it.filter { char ->
+                            char.isLetterOrDigit() || char == '_'
+                        }
+                    },
+                    singleLine = true,
+                    enabled = !loading,
+                    isError = playerName.isBlank(),
+                    supportingText = {
+                        if (playerName.isBlank()) {
+                            Text(Res.string.error_blank.string)
+                        }
+                    }
+                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        enabled = !loading,
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(Res.string.cancel.string)
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Button(
+                        onClick = {
+                            loading = true
+                            GlobalScope.launch {
+                                ensureActive()
+                                addPlayerToWhitelist(
+                                    AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                                    whitelist,
+                                    playerName
+                                ) {}
+                            }
+                        },
+                        enabled = !loading,
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(Res.string.confirm.string)
+                    }
+                }
+                Text(Res.string.hint_result_may_need_refresh.string)
+            }
+        }
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+@Composable
+fun DialogConfirmRemovePlayer(
+    whitelist: String,
+    playerName: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button({
+                GlobalScope.launch {
+                    ensureActive()
+                    removePlayerFromWhitelist(
+                        AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                        whitelist,
+                        playerName
+                    ) {
+
+                    }
+                }
+                onDismiss()
+            }) {
+                Text(Res.string.confirm.string)
+            }
+        },
+        dismissButton = {
+            Button(onDismiss) {
+                Text(Res.string.cancel.string)
+            }
+        },
+        title = {
+            Text(
+                Res.string.title_remove_player_from_whitelist.string(playerName, whitelist)
+                    + "\n"
+                    + Res.string.hint_result_may_need_refresh.string)
+        }
+    )
 }
