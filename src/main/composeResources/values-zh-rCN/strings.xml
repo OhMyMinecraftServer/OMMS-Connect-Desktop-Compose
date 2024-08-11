@@ -92,7 +92,7 @@
     <string name="label_state_not_queryable">状态无法获取</string>
     <string name="label_no_player">一个人都没有 :(</string>
     <string name="error_exception">在%s时发生了异常%s</string>
-    <string name="label_whitelist_player_count">该白名单中有%s个玩家</string>
+    <string name="label_whitelist_player_count">该白名单中有%1$s个玩家</string>
     <string name="hint_whitelist_player_removed">成功移除玩家%s</string>
     <string name="hint_whitelist_remove_player_not_exist">无法移除玩家%s\\n此玩家不存在。</string>
     <string name="hint_whitelist_remove_permission_denied">无法移除玩家%s\\n权限不足。</string>

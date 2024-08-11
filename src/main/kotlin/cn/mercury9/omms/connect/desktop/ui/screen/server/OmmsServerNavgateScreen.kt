@@ -60,7 +60,7 @@ fun OmmsServerNavigateScreen() {
                 OmmsControllersScreen()
             }
             composable(OmmsServerNavRoute.WHITELIST_SCREEN) {
-                Text("TODO")
+                OmmsWhitelistScreen()
             }
             composable(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN) {
                 Text("TODO")

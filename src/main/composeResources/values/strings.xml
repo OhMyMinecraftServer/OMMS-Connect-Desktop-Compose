@@ -101,7 +101,7 @@
     <string name="label_state_not_queryable">not_queryable</string>
     <string name="label_no_player">Nobody was here :(</string>
     <string name="error_exception">Encountered exception while %s:%s</string>
-    <string name="label_whitelist_player_count">%s player was added to this whitelist</string>
+    <string name="label_whitelist_player_count">%1$s player was added to this whitelist</string>
     <string name="hint_whitelist_player_removed">Successfully to removed %s</string>
     <string name="hint_whitelist_remove_player_not_exist">Failed to remove %s \\n: Player Not Exist</string>
     <string name="hint_whitelist_remove_permission_denied">Failed to remove %s from whitelist: Permission Denied</string>
