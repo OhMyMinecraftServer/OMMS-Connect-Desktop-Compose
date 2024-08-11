@@ -5,6 +5,7 @@
     <string name="server_name">名称</string>
     <string name="code">权限代码</string>
     <string name="port">端口</string>
+    <string name="error">错误</string>
     <string name="error_port_oob">端口必须在 0-65535</string>
     <string name="error_blank">不能为空！</string>
     <string name="error_name_too_long">名称不能超过64个字符！</string>
@@ -69,12 +70,14 @@
     <string name="label_whitelists_count">服务器添加了%s个白名单</string>
     <string name="label_announcements_count">服务器添加了%s个公告</string>
     <string name="label_wait">请稍等</string>
+
     <string name="error_unknown_exception">未知的错误发生了，更多信息:%s</string>
     <string name="error_controller_fetch_error">无法从服务器获取控制器列表，原因：</string>
     <string name="error_system_info_fetch_error">无法从服务器获取系统信息，原因：</string>
     <string name="error_permission_denied">权限不足</string>
     <string name="error_unknown_error">服务器发生了内部错误</string>
     <string name="error_code_error">服务器找不到该权限代码</string>
+
     <string name="label_util_commands">快速命令</string>
     <string name="hint_server_ip_port">在这里键入服务器IP地址和端口</string>
     <string name="hint_permission_code">在这里键入服务器权限代码</string>
@@ -99,6 +102,7 @@
     <string name="general">通用</string>
     <string name="text_size">字体大小</string>
     <string name="data">设置数据</string>
+
     <string name="label_add_custom_server_icon">管理自定义受控端图标</string>
     <string name="title_custom_controller_icon">自定义受控端图标</string>
 </resources>

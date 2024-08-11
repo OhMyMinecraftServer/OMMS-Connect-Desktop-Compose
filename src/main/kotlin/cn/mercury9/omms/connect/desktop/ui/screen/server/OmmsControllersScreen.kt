@@ -45,25 +45,39 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import cn.mercury9.compose.utils.painter
 import cn.mercury9.compose.utils.string
+import cn.mercury9.omms.connect.desktop.client.FetchControllerStatusState
 import cn.mercury9.omms.connect.desktop.client.FetchControllersState
 import cn.mercury9.omms.connect.desktop.client.FetchSystemInfoState
+import cn.mercury9.omms.connect.desktop.client.fetchControllerStatusFromServer
 import cn.mercury9.omms.connect.desktop.client.fetchControllersFormServer
 import cn.mercury9.omms.connect.desktop.client.fetchSystemInfoFromServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
+import cn.mercury9.omms.connect.desktop.resources.cancel_24px
+import cn.mercury9.omms.connect.desktop.resources.check_circle_fill_24px
+import cn.mercury9.omms.connect.desktop.resources.error
+import cn.mercury9.omms.connect.desktop.resources.error_fill_24px
 import cn.mercury9.omms.connect.desktop.resources.ic_server_default
 import cn.mercury9.omms.connect.desktop.resources.ic_server_fabric
 import cn.mercury9.omms.connect.desktop.resources.ic_server_linux
 import cn.mercury9.omms.connect.desktop.resources.ic_server_windows
 import cn.mercury9.omms.connect.desktop.resources.label_controller_type
 import cn.mercury9.omms.connect.desktop.resources.label_loading
+import cn.mercury9.omms.connect.desktop.resources.label_no_player
+import cn.mercury9.omms.connect.desktop.resources.label_state_running
+import cn.mercury9.omms.connect.desktop.resources.label_state_stopped
 import cn.mercury9.omms.connect.desktop.resources.load_average
 import cn.mercury9.omms.connect.desktop.resources.memory
+import cn.mercury9.omms.connect.desktop.resources.player_count
+import cn.mercury9.omms.connect.desktop.resources.player_list
+import cn.mercury9.omms.connect.desktop.resources.refresh_24px
 import cn.mercury9.omms.connect.desktop.resources.remain
 import cn.mercury9.omms.connect.desktop.resources.server
+import cn.mercury9.omms.connect.desktop.resources.status_waiting
 import cn.mercury9.omms.connect.desktop.resources.swap
 import cn.mercury9.omms.connect.desktop.resources.total
+import cn.mercury9.omms.connect.desktop.resources.unavailable
 import cn.mercury9.omms.connect.desktop.resources.used
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
@@ -178,7 +192,10 @@ fun OmmsServerControllerList(
                     controllers.values.toList(),
                     key = { it.id }
                 ) {
-                    OmmsServerControllerItem(it)
+                    OmmsServerControllerItem(it) {
+                        showController = true
+                        currentShowController = it
+                    }
                 }
                 if (fetchControllersState !is FetchControllersState.Success) {
                     item(
@@ -207,6 +224,19 @@ fun OmmsServerControllerList(
                 (fetchSystemInfoState as FetchSystemInfoState.Success).info
             ) {
                 showSystemInfo = false
+            }
+        }
+        AnimatedVisibility(
+            visible = showController,
+            enter = slideIn {
+                IntOffset(it.width, 0)
+            },
+            exit = slideOut {
+                IntOffset(it.width, 0)
+            }
+        ) {
+            OmmsServerController(currentShowController!!) {
+                showController = false
             }
         }
     }
@@ -443,8 +473,11 @@ fun OmmsServerStorageItem(
 @Composable
 fun OmmsServerControllerItem(
     controller: Controller,
+    onClick: () -> Unit
 ) {
-    ElevatedCard {
+    ElevatedCard(
+        onClick = onClick,
+    ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)
@@ -478,6 +511,175 @@ fun OmmsServerControllerItem(
                 }
             }
             Text(Res.string.label_controller_type.string(controller.type))
+        }
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+@Composable
+fun OmmsServerController(
+    controller: Controller,
+    onClickButtonBack: () -> Unit
+) {
+    var fetchControllerStatusState: FetchControllerStatusState by remember {
+        mutableStateOf(FetchControllerStatusState.Fetching)
+    }
+    GlobalScope.launch {
+        fetchControllerStatusFromServer(
+            AppContainer.sessions[AppContainer.currentOmmsServerId!!],
+            controller.id
+        ) {
+            fetchControllerStatusState = it
+        }
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .wrapContentHeight()
+                .width(550.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                ElevatedCard(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Surface(
+                        color = when (fetchControllerStatusState) {
+                            is FetchControllerStatusState.Fetching ->
+                                MaterialTheme.colorScheme.surfaceVariant
+                            is FetchControllerStatusState.Error ->
+                                MaterialTheme.colorScheme.error
+                            is FetchControllerStatusState.Success -> {
+                                val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
+                                if (state.status.isAlive) {
+                                    MaterialTheme.colorScheme.secondary
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceVariant
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                            ) {
+                                Icon(
+                                    when (fetchControllerStatusState) {
+                                        is FetchControllerStatusState.Fetching ->
+                                            Res.drawable.refresh_24px.painter
+
+                                        is FetchControllerStatusState.Success -> {
+                                            val state =
+                                                (fetchControllerStatusState as FetchControllerStatusState.Success)
+                                            if (state.status.isAlive) {
+                                                Res.drawable.check_circle_fill_24px.painter
+                                            } else {
+                                                Res.drawable.cancel_24px.painter
+                                            }
+                                        }
+
+                                        is FetchControllerStatusState.Error ->
+                                            Res.drawable.error_fill_24px.painter
+                                    },
+                                    null
+                                )
+                                Text(
+                                    when (fetchControllerStatusState) {
+                                        is FetchControllerStatusState.Fetching ->
+                                            Res.string.status_waiting.string
+
+                                        is FetchControllerStatusState.Success -> {
+                                            val state =
+                                                (fetchControllerStatusState as FetchControllerStatusState.Success)
+                                            if (state.status.isAlive) {
+                                                Res.string.label_state_running.string
+                                            } else {
+                                                Res.string.label_state_stopped.string
+                                            }
+                                        }
+
+                                        is FetchControllerStatusState.Error ->
+                                            Res.string.error.string
+                                    }
+                                )
+                            }
+                            Text(
+                                controller.displayName,
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                            )
+                        }
+                    }
+                }
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                Res.string.player_count.string,
+                                color = MaterialTheme.colorScheme.outline,
+                            )
+                            if (fetchControllerStatusState is FetchControllerStatusState.Success) {
+                                val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
+                                if (!state.status.isAlive) {
+                                    Text(Res.string.unavailable.string)
+                                } else {
+                                    Text("${state.status.playerCount} / ${state.status.maxPlayerCount}")
+                                }
+                            } else {
+                                Text(Res.string.unavailable.string)
+                            }
+                            Text(
+                                Res.string.player_list.string,
+                                color = MaterialTheme.colorScheme.outline,
+                            )
+                            if (fetchControllerStatusState is FetchControllerStatusState.Success) {
+                                val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
+                                val players = state.status.players
+                                if (!state.status.isAlive) {
+                                    Text(Res.string.unavailable.string)
+                                } else if (players.isEmpty()) {
+                                    Text(Res.string.label_no_player.string)
+                                }else for (player in players) {
+                                    Text(player)
+                                }
+                            } else {
+                                Text(Res.string.unavailable.string)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        IconButton(
+            onClickButtonBack,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(4.dp)
+        ) {
+            Icon(Res.drawable.arrow_back_24px.painter, null)
         }
     }
 }

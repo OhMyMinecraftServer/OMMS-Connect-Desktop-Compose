@@ -129,7 +129,7 @@ fun OmmsServerSelector(
                 color = MaterialTheme.colorScheme.background,
                 modifier = modifier
             ) {
-                OmmsServerSelector {
+                OmmsServerSelectorContainer {
                     isServerSelectorCollapsed = !isServerSelectorCollapsed
                 }
             }
@@ -159,7 +159,7 @@ fun OmmsServerSelector(
             Column(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .height(AppContainer.mainWindowState.size.height - 130.dp)
+                    .height(AppContainer.mainWindowState.size.height - 260.dp)
                     .width(64.dp)
                     .hoverable(interactionSourceRange)
             ) {
@@ -187,7 +187,7 @@ fun OmmsServerSelector(
 }
 
 @Composable
-fun OmmsServerSelector(
+fun OmmsServerSelectorContainer(
     onClickCEButton: () -> Unit
 ) {
     Column(

@@ -7,6 +7,7 @@
     <string name="code">Code</string>
     <string name="ip" translatable="false">IP</string>
     <string name="port">Port</string>
+    <string name="error">Error</string>
     <string name="error_port_oob">Port must in 0-65535</string>
     <string name="error_blank">Can not be blank!</string>
     <string name="error_name_too_long">Name can not be longer than 64!</string>

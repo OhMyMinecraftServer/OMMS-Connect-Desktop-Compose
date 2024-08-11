@@ -1,6 +1,7 @@
 package cn.mercury9.omms.connect.desktop.client
 
 import icu.takeneko.omms.client.data.controller.Controller
+import icu.takeneko.omms.client.data.controller.Status
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -38,6 +39,42 @@ suspend fun fetchControllersFormServer(
             }.orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {
             stateListener(FetchControllersState.Error(e))
+        }
+    }
+}
+
+sealed interface FetchControllerStatusState {
+    data object Fetching : FetchControllerStatusState
+    data class Error(val e: Throwable) : FetchControllerStatusState
+    data class Success(val status: Status) : FetchControllerStatusState
+}
+
+suspend fun fetchControllerStatusFromServer(
+    session: ClientSession?,
+    controllerId: String,
+    stateListener: (FetchControllerStatusState) -> Unit
+) {
+    withContext(Dispatchers.IO) {
+        if (session == null) {
+            delay(1000)
+            stateListener(FetchControllerStatusState.Error(Exception("null")))
+            return@withContext
+        }
+        try {
+            ensureActive()
+            future {
+                try {
+                    session.fetchControllerStatus(
+                        controllerId,
+                        {stateListener(FetchControllerStatusState.Success(it))},
+                        {stateListener(FetchControllerStatusState.Error(Exception(it)))},
+                    )
+                } catch (e: Throwable) {
+                    stateListener(FetchControllerStatusState.Error(e))
+                }
+            }.orTimeout(3, TimeUnit.MINUTES)
+        } catch (e: Throwable) {
+            stateListener(FetchControllerStatusState.Error(e))
         }
     }
 }
