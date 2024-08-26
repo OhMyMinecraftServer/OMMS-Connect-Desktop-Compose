@@ -29,9 +29,13 @@ dependencies {
     implementation(compose.components.resources)
     implementation(compose.material3)
 
-    implementation(libs.navigation.compose)
+    implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.timedate)
+
+    api(libs.imageLoader.core)
+    api(libs.imageLoader.composeResources)
+    api(libs.imageLoader.imageio)
 
     implementation(libs.omms.client.core)
     implementation(libs.gson)

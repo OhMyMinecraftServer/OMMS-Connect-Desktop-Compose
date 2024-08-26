@@ -7,6 +7,7 @@ kotlinx-timedate = "0.6.0"
 
 navigationCompose = "2.8.0-alpha02"
 
+image-loader = "1.8.2"
 
 omms-client-core = "1.5.0"
 gson = "2.11.0"
@@ -15,7 +16,11 @@ gson = "2.11.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
 kotlinx-timedate = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-timedate"}
 
-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose"}
+compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose"}
+
+imageLoader-core = { group = "io.github.qdsfdhvh", name = "image-loader", version.ref = "image-loader" }
+imageLoader-composeResources = { group = "io.github.qdsfdhvh", name = "image-loader-extension-compose-resources", version.ref = "image-loader" }
+imageLoader-imageio = { group = "io.github.qdsfdhvh", name = "image-loader-extension-imageio", version.ref = "image-loader" }
 
 omms-client-core = { module = "icu.takeneko:omms-client-core", version.ref = "omms-client-core"}
 gson = { module = "com.google.code.gson:gson", version.ref = "gson"}
