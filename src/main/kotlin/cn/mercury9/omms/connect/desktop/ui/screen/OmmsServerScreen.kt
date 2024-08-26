@@ -44,6 +44,7 @@ import cn.mercury9.omms.connect.desktop.client.connectOmmsServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.data.CodeLegalState
 import cn.mercury9.omms.connect.desktop.data.checkCode
+import cn.mercury9.omms.connect.desktop.data.getHashedCode
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.app_name
 import cn.mercury9.omms.connect.desktop.resources.cancel
@@ -72,7 +73,7 @@ fun OmmsServerScreen() {
     var serverName by remember { mutableStateOf("") }
     var serverIp by remember { mutableStateOf("") }
     var serverPort by remember { mutableStateOf(0) }
-    var serverCode: Int? by remember { mutableStateOf(null) }
+    var serverCodeHashed: String? by remember { mutableStateOf(null) }
 
     var connectionState: ConnectionState by remember { mutableStateOf(ConnectionState.Idle) }
 
@@ -85,17 +86,17 @@ fun OmmsServerScreen() {
             serverIp = AppContainer.servers.get()[it]!!.ip
             serverPort = AppContainer.servers.get()[it]!!.port
         }
-        serverCode = AppContainer.servers.get()[it]?.code
+        serverCodeHashed = AppContainer.servers.get()[it]?.codeHashed
         connectionState = ConnectionState.Idle
     }
 
     if (serverId != null) {
-        if (serverCode == null) {
+        if (serverCodeHashed == null) {
             DialogInputOmmsServerCode({ code ->
-                serverCode = code.toInt()
+                serverCodeHashed = getHashedCode(code)
             }) {
                 AppContainer.currentOmmsServerId = null
-                serverCode = null
+                serverCodeHashed = null
             }
         } else {
             GlobalScope.launch {
@@ -103,7 +104,7 @@ fun OmmsServerScreen() {
                     serverId!!,
                     serverIp,
                     serverPort,
-                    serverCode!!,
+                    serverCodeHashed!!,
                 ) {
                     currentConnectedServerId = null
                     if (it is ConnectionState.Success) {

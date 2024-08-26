@@ -61,6 +61,8 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -77,6 +79,7 @@ import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
 import cn.mercury9.omms.connect.desktop.data.configs.OmmsServerListSortBy
+import cn.mercury9.omms.connect.desktop.data.getHashedCode
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_24px
 import cn.mercury9.omms.connect.desktop.resources.add_omms_server
@@ -267,6 +270,7 @@ fun DialogAddOmmsServer(
     var ip by remember { mutableStateOf("") }
     var port by remember { mutableStateOf("50000") }
     var code by remember { mutableStateOf("") }
+    val codeHashed by remember { mutableStateOf("") }
     var saveCode by remember { mutableStateOf(false) }
 
     val width = 400.dp
@@ -299,7 +303,11 @@ fun DialogAddOmmsServer(
                 name = name,
                 ip = ip,
                 port = port.toInt(),
-                code = if (saveCode) code.toIntOrNull() else null,
+                codeHashed = if (saveCode) {
+                    if (code == codeHashed) {
+                        code
+                    } else getHashedCode(code)
+                } else null,
             )
             AppContainer.servers.get().apply {
                 put(
@@ -779,8 +787,9 @@ fun DialogEditOmmsServer(
     var name by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.name) }
     var ip by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.ip) }
     var port by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.port.toString()) }
-    var code by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.code?.toString() ?: "") }
-    var saveCode by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.code != null) }
+    var saveCode by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.codeHashed != null) }
+    val codeHashed by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.codeHashed) }
+    var code by remember { mutableStateOf(AppContainer.servers.get()[serverId]!!.codeHashed) }
 
     val width = 400.dp
 
@@ -812,7 +821,12 @@ fun DialogEditOmmsServer(
                 name = name,
                 ip = ip,
                 port = port.toInt(),
-                code = if (saveCode) code.toIntOrNull() else null,
+                codeHashed = if (saveCode) {
+                    if (code == codeHashed)
+                        code
+                    else
+                        getHashedCode(code)
+                } else null,
             )
             AppContainer.servers.get().apply {
                 replace(serverId, ommsServer)
@@ -937,7 +951,7 @@ fun DialogEditOmmsServer(
                 }
 
                 OutlinedTextField(
-                    value = code,
+                    value = code ?: "",
                     enabled = saveCode,
                     onValueChange = {
                         code = it.filter { symbol ->
@@ -947,6 +961,9 @@ fun DialogEditOmmsServer(
                     label = { Text(Res.string.code.string) },
                     supportingText = { Text("") },
                     singleLine = true,
+                    visualTransformation = if (code == codeHashed) {
+                        PasswordVisualTransformation()
+                    } else VisualTransformation.None,
                     modifier = Modifier
                         .width(width)
                 )

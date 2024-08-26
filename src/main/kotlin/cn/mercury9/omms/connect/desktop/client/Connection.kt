@@ -20,7 +20,7 @@ suspend fun connectOmmsServer(
     id: String,
     ip: String,
     port: Int,
-    code: Int,
+    codeHashed: String,
     stateListener: (ConnectionState) -> Unit,
 ) {
     withContext(Dispatchers.IO) {
@@ -30,7 +30,8 @@ suspend fun connectOmmsServer(
             ensureActive()
             future {
                 try {
-                    val session = clientInitialSession.init(code)
+                    val token = ClientInitialSession.generateTokenFromHashed(codeHashed)
+                    val session = clientInitialSession.init(token)
                     stateListener(ConnectionState.Success(session))
                 } catch (e: Throwable) {
                     stateListener(ConnectionState.Error(e))

@@ -8,6 +8,6 @@ data class OmmsServer(
     var name: String,
     var ip: String,
     var port: Int,
-    var code: Int? = null,
+    var codeHashed: String? = null,
     var emoji: String? = null,
 )

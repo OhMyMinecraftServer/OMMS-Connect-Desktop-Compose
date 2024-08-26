@@ -8,7 +8,7 @@ kotlinx-timedate = "0.6.0"
 navigationCompose = "2.8.0-alpha02"
 
 
-omms-client-core = "1.1.2"
+omms-client-core = "1.5.0"
 gson = "2.11.0"
 
 [libraries]

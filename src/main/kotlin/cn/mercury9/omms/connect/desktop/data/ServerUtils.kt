@@ -53,3 +53,10 @@ fun checkCode(code: String): CodeLegalState {
     }
     return CodeLegalState.Legal
 }
+
+fun getHashedCode(code: String?): String? =
+    if (code != null) {
+        icu.takeneko.omms.client.util.Util.getChecksumMD5(code)
+    } else {
+        null
+    }
