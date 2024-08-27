@@ -3,11 +3,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-###
-/.kotlin/
-# App 运行数据
-/data/
+.kotlin/
 
 ### IntelliJ IDEA ###
 .idea/
