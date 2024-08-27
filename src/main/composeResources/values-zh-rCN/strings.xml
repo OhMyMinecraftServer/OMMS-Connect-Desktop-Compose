@@ -116,4 +116,7 @@
 
     <string name="label_add_custom_server_icon">管理自定义受控端图标</string>
     <string name="title_custom_controller_icon">自定义受控端图标</string>
+
+    <string name="title_chat">跨服聊天</string>
+
 </resources>

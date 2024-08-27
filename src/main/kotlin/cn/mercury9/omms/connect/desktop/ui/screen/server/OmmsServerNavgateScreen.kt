@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,20 +31,29 @@ import cn.mercury9.compose.utils.string
 import cn.mercury9.omms.connect.desktop.client.endOmmsServerConnection
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.chat_24px
 import cn.mercury9.omms.connect.desktop.resources.logout
 import cn.mercury9.omms.connect.desktop.resources.logout_24px
 import cn.mercury9.omms.connect.desktop.resources.monitor_24px
 import cn.mercury9.omms.connect.desktop.resources.notifications_24px
 import cn.mercury9.omms.connect.desktop.resources.sensor_window_24px
 import cn.mercury9.omms.connect.desktop.resources.title_broadcast
+import cn.mercury9.omms.connect.desktop.resources.title_chat
 import cn.mercury9.omms.connect.desktop.resources.title_server
 import cn.mercury9.omms.connect.desktop.resources.title_whitelist
 
 data object OmmsServerNavRoute {
     const val CONTROLLERS_SCREEN = "CONTROLLERS_SCREEN"
     const val WHITELIST_SCREEN = "WHITELIST_SCREEN"
+    const val CHAT_SCREEN = "CHAT_SCREEN"
     const val ANNOUNCEMENT_SCREEN = "ANNOUNCEMENT_SCREEN"
 }
+
+data class NavigationTarget(
+    val navRoute: String,
+    val name: String,
+    val icon: Painter,
+)
 
 @Composable
 fun OmmsServerNavigateScreen() {
@@ -60,6 +70,9 @@ fun OmmsServerNavigateScreen() {
             }
             composable(OmmsServerNavRoute.WHITELIST_SCREEN) {
                 OmmsWhitelistScreen()
+            }
+            composable(OmmsServerNavRoute.CHAT_SCREEN) {
+                OmmsChatScreen()
             }
             composable(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN) {
                 Text("TODO")
@@ -108,7 +121,7 @@ fun OmmsServerScreenTopBar(
             navController,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .size(192.dp, 64.dp)
+                .size((80*4).dp, 64.dp)
                 .padding(end = 8.dp)
         )
     }
@@ -119,6 +132,28 @@ fun OmmsServerScreenTopBarNavigateButtons(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val navigationTargets = listOf(
+        NavigationTarget(
+            OmmsServerNavRoute.CONTROLLERS_SCREEN,
+            Res.string.title_server.string,
+            Res.drawable.monitor_24px.painter
+        ),
+        NavigationTarget(
+            OmmsServerNavRoute.WHITELIST_SCREEN,
+            Res.string.title_whitelist.string,
+            Res.drawable.sensor_window_24px.painter
+        ),
+        NavigationTarget(
+            OmmsServerNavRoute.CHAT_SCREEN,
+            Res.string.title_chat.string,
+            Res.drawable.chat_24px.painter
+        ),
+        NavigationTarget(
+            OmmsServerNavRoute.ANNOUNCEMENT_SCREEN,
+            Res.string.title_broadcast.string,
+            Res.drawable.notifications_24px.painter
+        )
+    )
     var current by remember { mutableStateOf(OmmsServerNavRoute.CONTROLLERS_SCREEN) }
     fun navigate(route: String) {
         navController.navigate(route)
@@ -127,53 +162,22 @@ fun OmmsServerScreenTopBarNavigateButtons(
     Row (
         modifier = modifier,
     ) {
-        NavigationBarItem(
-            modifier = Modifier.size(64.dp),
-            selected = current == OmmsServerNavRoute.CONTROLLERS_SCREEN,
-            onClick = {
-                navigate(OmmsServerNavRoute.CONTROLLERS_SCREEN)
-            },
-            icon = {
-                Icon(
-                    Res.drawable.monitor_24px.painter,
-                    Res.string.title_server.string
-                )
-            },
-            label = {
-                Text(Res.string.title_server.string)
-            }
-        )
-        NavigationBarItem(
-            modifier = Modifier.size(64.dp),
-            selected = current == OmmsServerNavRoute.WHITELIST_SCREEN,
-            onClick = {
-                navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
-            },
-            icon = {
-                Icon(
-                    Res.drawable.sensor_window_24px.painter,
-                    Res.string.title_whitelist.string
-                )
-            },
-            label = {
-                Text(Res.string.title_whitelist.string)
-            }
-        )
-        NavigationBarItem(
-            modifier = Modifier.size(64.dp),
-            selected = current == OmmsServerNavRoute.ANNOUNCEMENT_SCREEN,
-            onClick = {
-                navigate(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN)
-            },
-            icon = {
-                Icon(
-                    Res.drawable.notifications_24px.painter,
-                    Res.string.title_broadcast.string
-                )
-            },
-            label = {
-                Text(Res.string.title_broadcast.string)
-            }
-        )
+        for (target in navigationTargets) {
+            NavigationBarItem(
+                selected = current == target.navRoute,
+                onClick = {
+                    navigate(target.navRoute)
+                },
+                icon = {
+                    Icon(
+                        target.icon,
+                        target.name
+                    )
+                },
+                label = {
+                    Text(target.name)
+                }
+            )
+        }
     }
 }

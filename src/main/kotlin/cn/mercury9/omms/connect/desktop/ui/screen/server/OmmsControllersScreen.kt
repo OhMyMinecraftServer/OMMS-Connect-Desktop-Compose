@@ -87,12 +87,11 @@ import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
 import icu.takeneko.omms.client.data.system.SystemInfo
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun OmmsControllersScreen() {
     var lastFetchedController by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
@@ -105,7 +104,7 @@ fun OmmsControllersScreen() {
         || lastFetchedController != AppContainer.currentOmmsServerId
     ) {
         lastFetchedController = AppContainer.currentOmmsServerId
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             fetchControllersFormServer(
                 AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
             ) {
@@ -118,7 +117,7 @@ fun OmmsControllersScreen() {
         || lastFetchedServerInfo != AppContainer.currentOmmsServerId
     ) {
         lastFetchedServerInfo = AppContainer.currentOmmsServerId
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             fetchSystemInfoFromServer(
                 AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
             ) {
@@ -520,7 +519,6 @@ fun OmmsServerControllerItem(
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun OmmsServerController(
     controller: Controller,
@@ -529,7 +527,7 @@ fun OmmsServerController(
     var fetchControllerStatusState: FetchControllerStatusState by remember {
         mutableStateOf(FetchControllerStatusState.Fetching)
     }
-    GlobalScope.launch {
+    CoroutineScope(Dispatchers.IO).launch {
         fetchControllerStatusFromServer(
             AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!,
             controller.id

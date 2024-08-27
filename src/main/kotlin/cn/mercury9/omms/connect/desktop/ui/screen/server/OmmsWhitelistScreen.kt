@@ -62,12 +62,10 @@ import cn.mercury9.omms.connect.desktop.resources.player_name
 import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
 import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun OmmsWhitelistScreen() {
     var lastFetched by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
@@ -77,8 +75,7 @@ fun OmmsWhitelistScreen() {
         || lastFetched != AppContainer.currentOmmsServerId
     ) {
         lastFetched = AppContainer.currentOmmsServerId
-        GlobalScope.launch {
-            ensureActive()
+        CoroutineScope(Dispatchers.IO).launch {
             fetchWhitelistFromServer(
                 AppContainer.sessions[AppContainer.currentOmmsServerId]!!
             ) {
@@ -281,7 +278,6 @@ fun OmmsWhitelistDetail(
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun DialogAddPlayerToWhitelist(
     whitelist: String,
@@ -336,8 +332,7 @@ fun DialogAddPlayerToWhitelist(
                     Button(
                         onClick = {
                             loading = true
-                            GlobalScope.launch {
-                                ensureActive()
+                            CoroutineScope(Dispatchers.IO).launch {
                                 addPlayerToWhitelist(
                                     AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
                                     whitelist,
@@ -358,7 +353,6 @@ fun DialogAddPlayerToWhitelist(
     }
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun DialogConfirmRemovePlayer(
     whitelist: String,
@@ -369,14 +363,12 @@ fun DialogConfirmRemovePlayer(
         onDismissRequest = onDismiss,
         confirmButton = {
             Button({
-                GlobalScope.launch {
-                    ensureActive()
+                CoroutineScope(Dispatchers.IO).launch {
                     removePlayerFromWhitelist(
                         AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
                         whitelist,
                         playerName
                     ) {
-
                     }
                 }
                 onDismiss()

@@ -61,11 +61,10 @@ import cn.mercury9.omms.connect.desktop.resources.success
 import cn.mercury9.omms.connect.desktop.resources.welcome
 import cn.mercury9.omms.connect.desktop.resources.working
 import cn.mercury9.omms.connect.desktop.ui.screen.server.OmmsServerNavigateScreen
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun OmmsServerScreen() {
     var serverId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
@@ -99,7 +98,7 @@ fun OmmsServerScreen() {
                 serverCodeHashed = null
             }
         } else {
-            GlobalScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 connectOmmsServer(
                     serverId!!,
                     serverIp,
