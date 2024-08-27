@@ -1,7 +1,9 @@
 # OMMS Connect Desktop Compose
 
-[![Kotlin](https://img.shields.io/badge/4045_lines-Kotlin-7954F6)](https://kotlinlang.org/)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform_UI-5383EC)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Kotlin](https://img.shields.io/badge/4045_lines-Kotlin-7954F6?logo=kotlin)](https://kotlinlang.org/)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform_UI-5383EC?logo=jetpackcompose&logoColor=ffffff)](https://www.jetbrains.com/lp/compose-multiplatform/)
+
+[![GitHub downloads](https://img.shields.io/github/downloads/OhMyMinecraftServer/OMMS-Connect-Desktop-Compose/total?label=Github%20Downloads&logo=github)](https://github.com/OhMyMinecraftServer/OMMS-Connect-Desktop-Compose/releases)
 
 **连接到OMMS的桌面客户端**
 

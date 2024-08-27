@@ -135,8 +135,10 @@ tasks {
 
             readmeFile.readText().apply {
                 replace(
-                    this.lines()[2],
-                "[![Kotlin](https://img.shields.io/badge/${ktLines}_lines-Kotlin-7954F6)](https://kotlinlang.org/)"
+                    this.lines().filter {
+                        it.startsWith("[![Kotlin](https://img.shields.io/badge/")
+                    }[0],
+                "[![Kotlin](https://img.shields.io/badge/${ktLines}_lines-Kotlin-7954F6?logo=kotlin)](https://kotlinlang.org/)"
                 ).also {
                     readmeFile.writeText(it)
                 }
