@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -59,6 +61,7 @@ import cn.mercury9.omms.connect.desktop.resources.label_whitelist_player_count
 import cn.mercury9.omms.connect.desktop.resources.player_name
 import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
 import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ensureActive
@@ -186,43 +189,17 @@ fun OmmsWhitelistDetail(
                 .padding(horizontal = 64.dp)
                 .fillMaxSize()
         ) {
-            LazyVerticalStaggeredGrid(
-                StaggeredGridCells.Adaptive(200.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalItemSpacing = 8.dp,
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Spacer(Modifier.height(8.dp))
-                }
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    ElevatedCard {
-                        Surface(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Text(
-                                whitelistName ?: "null",
-                                style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-                items(whitelist) {
-                    ElevatedCard(
-                        onClick = {
-                            showDialogRemovePlayer = true
-                            playerName = it
-                        }
+            Column {
+                ElevatedCard(Modifier
+                    .padding(horizontal = 8.dp)
+                    .padding(top = 16.dp)
+                ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
                     ) {
                         Text(
-                            it,
+                            whitelistName ?: "null",
+                            style = MaterialTheme.typography.titleLarge,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(16.dp)
@@ -230,8 +207,43 @@ fun OmmsWhitelistDetail(
                         )
                     }
                 }
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    Spacer(Modifier.height(8.dp))
+                LazyVerticalStaggeredGrid(
+                    StaggeredGridCells.Adaptive(200.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp,
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(whitelist) {
+                        ElevatedCard(
+                            onClick = {
+                                showDialogRemovePlayer = true
+                                playerName = it
+                            },
+                            modifier = Modifier
+                                .heightIn(min = 64.dp)
+                        ) {
+                            Box(
+                                Modifier.fillMaxSize(),
+                            ) {
+                                PlayerHeadImage(
+                                    it,
+                                    size = 64,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .padding(16.dp)
+                                )
+                                Text(
+                                    it,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .padding(24.dp)
+                                        .align(Alignment.CenterEnd)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

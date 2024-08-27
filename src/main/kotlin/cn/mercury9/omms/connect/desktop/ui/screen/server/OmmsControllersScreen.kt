@@ -9,12 +9,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,8 +26,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -41,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import cn.mercury9.compose.utils.painter
@@ -64,7 +69,6 @@ import cn.mercury9.omms.connect.desktop.resources.ic_server_linux
 import cn.mercury9.omms.connect.desktop.resources.ic_server_windows
 import cn.mercury9.omms.connect.desktop.resources.label_controller_type
 import cn.mercury9.omms.connect.desktop.resources.label_loading
-import cn.mercury9.omms.connect.desktop.resources.label_no_player
 import cn.mercury9.omms.connect.desktop.resources.label_state_running
 import cn.mercury9.omms.connect.desktop.resources.label_state_stopped
 import cn.mercury9.omms.connect.desktop.resources.load_average
@@ -79,6 +83,7 @@ import cn.mercury9.omms.connect.desktop.resources.swap
 import cn.mercury9.omms.connect.desktop.resources.total
 import cn.mercury9.omms.connect.desktop.resources.unavailable
 import cn.mercury9.omms.connect.desktop.resources.used
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
 import icu.takeneko.omms.client.data.system.SystemInfo
@@ -624,51 +629,39 @@ fun OmmsServerController(
                         }
                     }
                 }
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column(
+                if (fetchControllerStatusState is FetchControllerStatusState.Success) {
+                    val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
+                    if (state.status.isAlive) {
+                        val players = state.status.players
+                        ElevatedCard(
                             modifier = Modifier
-                                .padding(16.dp)
+                                .fillMaxWidth()
                         ) {
-                            Text(
-                                Res.string.player_count.string,
-                                color = MaterialTheme.colorScheme.outline,
-                            )
-                            if (fetchControllerStatusState is FetchControllerStatusState.Success) {
-                                val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
-                                if (!state.status.isAlive) {
-                                    Text(Res.string.unavailable.string)
-                                } else {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        Res.string.player_count.string,
+                                        color = MaterialTheme.colorScheme.outline,
+                                    )
                                     Text("${state.status.playerCount} / ${state.status.maxPlayerCount}")
                                 }
-                            } else {
-                                Text(Res.string.unavailable.string)
-                            }
-                            Text(
-                                Res.string.player_list.string,
-                                color = MaterialTheme.colorScheme.outline,
-                            )
-                            if (fetchControllerStatusState is FetchControllerStatusState.Success) {
-                                val state = (fetchControllerStatusState as FetchControllerStatusState.Success)
-                                val players = state.status.players
-                                if (!state.status.isAlive) {
-                                    Text(Res.string.unavailable.string)
-                                } else if (players.isEmpty()) {
-                                    Text(Res.string.label_no_player.string)
-                                }else for (player in players) {
-                                    Text(player)
-                                }
-                            } else {
-                                Text(Res.string.unavailable.string)
                             }
                         }
+                        if (players.isNotEmpty()) {
+                            OmmsServerControllerPlayerList(
+                                players,
+                                Modifier.weight(1f)
+                            )
+                        }
                     }
+                } else {
+                    Text(Res.string.unavailable.string)
                 }
             }
         }
@@ -680,6 +673,70 @@ fun OmmsServerController(
                 .padding(4.dp)
         ) {
             Icon(Res.drawable.arrow_back_24px.painter, null)
+        }
+    }
+}
+
+@Composable
+fun OmmsServerControllerPlayerList(
+    players: List<String>,
+    modifier: Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp),
+    ) {
+        ElevatedCard(
+            Modifier
+                .align(Alignment.TopCenter)
+                .wrapContentHeight()
+        ) {
+            Column(
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+            ) {
+                Text(
+                    Res.string.player_list.string,
+                    color = MaterialTheme.colorScheme.outline,
+                )
+                HorizontalDivider()
+                LazyVerticalStaggeredGrid(
+                    StaggeredGridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp,
+                    contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp),
+                    modifier = Modifier
+                        .wrapContentHeight()
+                ) {
+                    items(players) {
+                        Card(
+                            modifier = Modifier
+                                .heightIn(min = 64.dp)
+                        ) {
+                            Box(
+                                Modifier.fillMaxSize(),
+                            ) {
+                                PlayerHeadImage(
+                                    it,
+                                    size = 64,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .padding(16.dp)
+                                )
+                                Text(
+                                    it,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .padding(24.dp)
+                                        .align(Alignment.CenterEnd)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
