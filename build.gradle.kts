@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "cn.mercury9.omms.connect.desktop"
-version = "1.1.1-SNAPSHOT"
+version = "1.1.2"
 
 repositories {
     mavenCentral()
@@ -52,7 +52,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
             packageName = "OMMS Connect Desktop"
-            packageVersion = "1.1.1"
+            packageVersion = "1.1.2"
             copyright = "© 2024 OhMyMinecraftServer"
             licenseFile.set(project.file("LICENSE"))
 
