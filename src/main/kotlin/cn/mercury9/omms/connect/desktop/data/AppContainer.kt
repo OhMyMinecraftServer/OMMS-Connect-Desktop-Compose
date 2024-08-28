@@ -101,6 +101,9 @@ object AppContainer {
             }
         }
 
+    val currentOmmsServerSession: ClientSession?
+        get() = currentOmmsServerId?.let { sessions[currentOmmsServerId] }
+
     val onKeyEvent: MutableMap<String, (KeyEvent) -> Boolean> = mutableMapOf()
 
     val sessions: MutableMap<String, ClientSession> = mutableMapOf()

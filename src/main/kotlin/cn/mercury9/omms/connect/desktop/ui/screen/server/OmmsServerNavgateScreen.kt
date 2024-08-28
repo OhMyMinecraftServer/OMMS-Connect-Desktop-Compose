@@ -75,7 +75,7 @@ fun OmmsServerNavigateScreen() {
                 OmmsChatScreen()
             }
             composable(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN) {
-                Text("TODO")
+                OmmsAnnouncementScreen()
             }
         }
     }
