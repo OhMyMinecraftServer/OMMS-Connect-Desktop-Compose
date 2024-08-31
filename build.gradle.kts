@@ -37,6 +37,9 @@ dependencies {
     api(libs.imageLoader.composeResources)
     api(libs.imageLoader.imageio)
 
+    implementation(libs.haze)
+    implementation(libs.haze.materials)
+
     implementation(libs.omms.client.core)
     implementation(libs.gson)
 

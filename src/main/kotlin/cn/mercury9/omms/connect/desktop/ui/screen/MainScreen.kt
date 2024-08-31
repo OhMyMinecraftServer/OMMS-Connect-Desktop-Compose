@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 fun MainScreen() {
     Surface(
         color = MaterialTheme.colorScheme.background,
-        shape = MaterialTheme.shapes.medium
     ) {
         Row {
             OmmsServerSelector(

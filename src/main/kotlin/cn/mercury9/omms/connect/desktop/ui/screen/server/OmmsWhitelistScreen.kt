@@ -1,10 +1,12 @@
 package cn.mercury9.omms.connect.desktop.ui.screen.server
 
+import CardColorSets
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,16 +24,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -62,6 +56,11 @@ import cn.mercury9.omms.connect.desktop.resources.player_name
 import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
 import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -171,6 +170,7 @@ fun OmmsWhitelistItem(
     }
 }
 
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun OmmsWhitelistDetail(
     whitelistName: String?,
@@ -180,37 +180,25 @@ fun OmmsWhitelistDetail(
     var showDialogAddPlayer by remember { mutableStateOf(false) }
     var showDialogRemovePlayer by remember { mutableStateOf(false) }
     var playerName by remember { mutableStateOf("") }
+
+    val hazeState = remember { HazeState() }
+
     Box(Modifier.fillMaxSize()) {
         Surface(
             modifier = Modifier
                 .padding(horizontal = 64.dp)
                 .fillMaxSize()
         ) {
-            Column {
-                ElevatedCard(Modifier
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 16.dp)
-                ) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    ) {
-                        Text(
-                            whitelistName ?: "null",
-                            style = MaterialTheme.typography.titleLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                        )
-                    }
-                }
+            Box {
                 LazyVerticalStaggeredGrid(
                     StaggeredGridCells.Adaptive(200.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp,
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(top = 90.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                     modifier = Modifier
+                        .align(Alignment.TopCenter)
                         .fillMaxSize()
+                        .haze(hazeState, HazeMaterials.ultraThin())
                 ) {
                     items(whitelist) {
                         ElevatedCard(
@@ -240,6 +228,32 @@ fun OmmsWhitelistDetail(
                                 )
                             }
                         }
+                    }
+                }
+                Card(
+                    colors = CardColorSets.Transparent,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(horizontal = 8.dp)
+                        .padding(top = 16.dp)
+                        .hazeChild(
+                            state = hazeState,
+                            style = HazeMaterials.ultraThin()
+                        )
+                ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(0.1f),
+                    ) {
+                        Text(
+                            whitelistName ?: "null",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .background(Color.Transparent)
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                        )
                     }
                 }
             }

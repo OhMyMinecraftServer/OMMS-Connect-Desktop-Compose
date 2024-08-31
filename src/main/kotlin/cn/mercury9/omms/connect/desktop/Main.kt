@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -211,21 +210,21 @@ fun main() = application {
 //        }
 
         ThemeProvider(appTheme) {
-            Surface(
+//            Surface(
 //                shape = when (windowState.placement) {
 //                    WindowPlacement.Fullscreen ->
 //                        RoundedCornerShape(0.dp)
 //                    else ->
 //                        MaterialTheme.shapes.medium
 //                }
-            ) {
-                Column {
+//            ) {
+//                Column {
 //                        // 计划自定义窗口标题栏，但没有完全成功
 //                        AppDraggableArea(::onCloseRequest, ::minimize, ::switchFullscreen, windowState)
 //                        HorizontalDivider()
                     MainScreen()
-                }
-            }
+//                }
+//            }
         }
     }
 }
