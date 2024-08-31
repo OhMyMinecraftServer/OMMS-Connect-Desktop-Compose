@@ -57,19 +57,16 @@ compose.desktop {
             licenseFile.set(project.file("LICENSE"))
 
             windows {
-                jvmArgs += "-Dfile.encoding=GBK"
                 iconFile.set(project.file("icon.ico"))
                 dirChooser = true
                 menuGroup = "OhMyMinecraftServer"
             }
 
             macOS {
-                jvmArgs += "-Dfile.encoding=UTF-8"
                 iconFile.set(project.file("icon.icns"))
             }
 
             linux {
-                jvmArgs += "-Dfile.encoding=UTF-8"
                 iconFile.set(project.file("icon.png"))
             }
         }
