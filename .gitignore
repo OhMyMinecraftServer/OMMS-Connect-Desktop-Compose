@@ -6,7 +6,19 @@ build/
 .kotlin/
 
 ### IntelliJ IDEA ###
-.idea/
+.idea/uiDesigner.xml
+
+# 共享的运行配置应当放置于 <root>/.run/
+.idea/runConfigurations/
+
+# 默认忽略的文件
+.idea/shelf/
+.idea/workspace.xml
+# 基于编辑器的 HTTP 客户端请求
+.idea/httpRequests/
+# Datasource local storage ignored files
+.idea/dataSources/
+.idea/dataSources.local.xml
 
 *.iws
 *.iml

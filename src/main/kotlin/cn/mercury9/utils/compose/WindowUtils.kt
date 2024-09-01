@@ -1,4 +1,4 @@
-package cn.mercury9.compose.utils
+package cn.mercury9.utils.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

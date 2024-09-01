@@ -1,18 +1,9 @@
-package cn.mercury9.compose.utils
+package cn.mercury9.utils.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.Font
-import org.jetbrains.compose.resources.FontResource
-import org.jetbrains.compose.resources.PluralStringResource
-import org.jetbrains.compose.resources.StringArrayResource
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.pluralStringResource
-import org.jetbrains.compose.resources.stringArrayResource
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.*
 
 val DrawableResource.painter
     @Composable
