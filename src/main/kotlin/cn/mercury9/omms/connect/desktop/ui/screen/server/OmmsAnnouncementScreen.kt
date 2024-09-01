@@ -18,12 +18,15 @@ import androidx.compose.ui.unit.dp
 import cn.mercury9.omms.connect.desktop.client.FetchAnnouncementState
 import cn.mercury9.omms.connect.desktop.client.fetchAnnouncementFromServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.utils.datetime.default
+import cn.mercury9.utils.datetime.toInstantAsMilliseconds
+import cn.mercury9.utils.datetime.toLocalDateTime
 import icu.takeneko.omms.client.data.announcement.Announcement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.datetime.*
-import kotlinx.datetime.format.char
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 
 @Composable
 fun OmmsAnnouncementScreen() {
@@ -84,13 +87,9 @@ fun OmmsAnnouncementList(
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             Text(
-                                Instant.fromEpochMilliseconds(it.timeMillis)
-                                    .toLocalDateTime(TimeZone.currentSystemDefault())
-                                    .format(LocalDateTime.Format {
-                                        date(LocalDate.Formats.ISO)
-                                        char(' ')
-                                        hour(); char(':'); minute(); char(':'); second()
-                                    }),
+                                it.timeMillis.toInstantAsMilliseconds()
+                                    .toLocalDateTime()
+                                    .format(LocalDateTime.Formats.default),
                                 color = MaterialTheme.colorScheme.outline,
                                 style = MaterialTheme.typography.labelLarge,
                             )
