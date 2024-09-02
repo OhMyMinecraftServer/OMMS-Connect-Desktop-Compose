@@ -9,13 +9,14 @@ plugins {
 }
 
 group = "cn.mercury9.omms.connect.desktop"
-version = "1.1.2"
+version = "1.1.3"
 
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
     maven {
+        name = "NekoMaven"
         url = uri("https://maven.takeneko.icu/releases")
     }
 }

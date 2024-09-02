@@ -8,6 +8,8 @@ build/
 ### IntelliJ IDEA ###
 .idea/uiDesigner.xml
 
+.idea/modules.xml
+
 # 共享的运行配置应当放置于 <root>/.run/
 .idea/runConfigurations/
 
