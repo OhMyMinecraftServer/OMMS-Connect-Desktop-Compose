@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.screen
+package cn.mercury9.omms.connect.desktop.ui.window.main
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.sizeIn

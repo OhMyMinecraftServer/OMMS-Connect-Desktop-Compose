@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.client
+package cn.mercury9.omms.connect.desktop.client.omms
 
 import icu.takeneko.omms.client.data.announcement.Announcement
 import icu.takeneko.omms.client.session.ClientSession

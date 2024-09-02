@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.screen.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -55,10 +55,10 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import cn.mercury9.omms.connect.desktop.client.FetchWhitelistState
-import cn.mercury9.omms.connect.desktop.client.addPlayerToWhitelist
-import cn.mercury9.omms.connect.desktop.client.fetchWhitelistFromServer
-import cn.mercury9.omms.connect.desktop.client.removePlayerFromWhitelist
+import cn.mercury9.omms.connect.desktop.client.omms.FetchWhitelistState
+import cn.mercury9.omms.connect.desktop.client.omms.addPlayerToWhitelist
+import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage

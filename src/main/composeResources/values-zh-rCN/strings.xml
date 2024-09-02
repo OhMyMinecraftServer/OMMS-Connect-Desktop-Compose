@@ -48,15 +48,6 @@
     <string name="whitelist_icon_desp">白名单图标</string>
     <string name="announcement">公告</string>
 
-    <string name="setting_button">设置按钮</string>
-    <string name="title_activity_settings">设置</string>
-    <string name="title_settings_theme">主题</string>
-    <string name="title_settings_dark">暗色模式</string>
-    <string name="option_setup_by_system_dark_theme">启动时跟随系统暗色模式设定</string>
-    <string name="option_theme_light">亮色</string>
-    <string name="option_theme_dark">暗色</string>
-    <string name="title_settings_contrast">对比度</string>
-
     <string name="title_activity_util_command_edit">编辑快速命令</string>
     <string name="status_waiting">等待服务器响应</string>
     <string name="player_count">玩家数量</string>
@@ -118,5 +109,29 @@
     <string name="title_custom_controller_icon">自定义受控端图标</string>
 
     <string name="title_chat">跨服聊天</string>
+
+<!--  menu bar  -->
+    <string name="title_settings">设置</string>
+
+    <string name="title_settings_theme">主题</string>
+    <string name="title_settings_dark">暗色模式</string>
+    <string name="option_setup_by_system_dark_theme">启动时跟随系统暗色模式设定</string>
+    <string name="option_theme_light">亮色</string>
+    <string name="option_theme_dark">暗色</string>
+    <string name="title_settings_contrast">对比度</string>
+
+    <string name="title_check_update">检查更新</string>
+
+<!--  check update window  -->
+    <string name="title_current_version_info">当前版本</string>
+    <string name="label_app_version">应用版本</string>
+    <string name="label_core_version">核心版本</string>
+
+    <string name="title_latest_release">最新发布</string>
+    <string name="label_releases_url">🔗所有发布地址</string>
+    <string name="label_latest_release_url">🔗最新发布地址</string>
+
+    <string name="error_load_fail">加载失败</string>
+    <string name="label_refresh">刷新</string>
 
 </resources>

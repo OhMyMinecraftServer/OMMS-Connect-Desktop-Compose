@@ -61,15 +61,6 @@
     <string name="whitelist_icon_desp">whitelist icon</string>
     <string name="announcement">Announcement</string>
 
-    <string name="setting_button">setting button</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="title_settings_theme">Theme</string>
-    <string name="title_settings_dark">Dark Theme</string>
-    <string name="option_setup_by_system_dark_theme">Follow system Dark Theme setting when set up App</string>
-    <string name="option_theme_light">Light</string>
-    <string name="option_theme_dark">Dark</string>
-    <string name="title_settings_contrast">Contrast</string>
-
     <string name="title_activity_util_command_edit">Util Command</string>
     <string name="status_waiting">Waiting for Status</string>
     <string name="player_count">Player Count</string>
@@ -128,5 +119,29 @@
     <string name="title_custom_controller_icon">Custom Server Icon</string>
 
     <string name="title_chat">Chat</string>
+
+<!--  menu bar  -->
+    <string name="title_settings">Settings</string>
+
+    <string name="title_settings_theme">Theme</string>
+    <string name="title_settings_dark">Dark Theme</string>
+    <string name="option_setup_by_system_dark_theme">Follow system Dark Theme setting when set up App</string>
+    <string name="option_theme_light">Light</string>
+    <string name="option_theme_dark">Dark</string>
+    <string name="title_settings_contrast">Contrast</string>
+
+    <string name="title_check_update">Check update</string>
+
+<!--  check update window  -->
+    <string name="title_current_version_info">Current Version</string>
+    <string name="label_app_version">App version</string>
+    <string name="label_core_version">Core version</string>
+
+    <string name="title_latest_release">Latest Release</string>
+    <string name="label_releases_url">🔗All Releases URL</string>
+    <string name="label_latest_release_url">🔗Latest Release URL</string>
+
+    <string name="error_load_fail">Load Failed</string>
+    <string name="label_refresh">Refresh</string>
 
 </resources>

@@ -1,14 +1,41 @@
-package cn.mercury9.omms.connect.desktop.ui.screen.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -21,12 +48,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import cn.mercury9.omms.connect.desktop.client.*
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.string
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
 import icu.takeneko.omms.client.data.system.SystemInfo
@@ -34,6 +55,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import cn.mercury9.omms.connect.desktop.client.omms.FetchControllerStatusState
+import cn.mercury9.omms.connect.desktop.client.omms.FetchControllersState
+import cn.mercury9.omms.connect.desktop.client.omms.FetchSystemInfoState
+import cn.mercury9.omms.connect.desktop.client.omms.fetchControllerStatusFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.fetchControllersFormServer
+import cn.mercury9.omms.connect.desktop.client.omms.fetchSystemInfoFromServer
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.string
 
 @Composable
 fun OmmsControllersScreen() {

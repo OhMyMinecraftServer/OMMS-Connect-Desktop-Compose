@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.screen.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cn.mercury9.omms.connect.desktop.client.endOmmsServerConnection
+import cn.mercury9.omms.connect.desktop.client.omms.endOmmsServerConnection
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
 import cn.mercury9.utils.compose.painter

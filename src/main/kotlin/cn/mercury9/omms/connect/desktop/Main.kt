@@ -6,35 +6,56 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.screen.MainScreen
-import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
-import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
-import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
-import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.setMinimumSize
-import cn.mercury9.utils.compose.string
+import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberDialogState
+import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.skiko.hostOs
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
+import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
+import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
+import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.setMinimumSize
+import cn.mercury9.utils.compose.string
 
 fun main() = application {
     val windowState = rememberWindowState(
@@ -61,6 +82,8 @@ fun main() = application {
         }
         exitApplication()
     }
+
+    var showDialogWindowAppUpdate by remember { mutableStateOf(false) }
 
     Window(
         onCloseRequest = ::onCloseRequest,
@@ -162,7 +185,12 @@ fun main() = application {
             }
         } // End: 移动窗口时吸附屏幕边缘
 
-        AppMenuBar(appTheme)
+        AppMenuBar(
+            appTheme,
+            onShowWindowAppUpdateRequest = {
+                showDialogWindowAppUpdate = true
+            }
+        )
 
 //        fun minimize() {
 //            windowState.isMinimized = true
@@ -191,16 +219,30 @@ fun main() = application {
                     MainScreen()
 //                }
 //            }
+            if (showDialogWindowAppUpdate) {
+                DialogWindow(
+                    state = rememberDialogState(
+                        size = DpSize(404.dp, 303.dp)
+                    ),
+                    onCloseRequest = { showDialogWindowAppUpdate = false },
+                    title = Res.string.title_check_update.string
+                ) {
+                    setMinimumSize(404.dp, 303.dp)
+                    AppUpdateScreen()
+                }
+            }
         }
     }
+
 }
 
 @Composable
 fun FrameWindowScope.AppMenuBar(
-    appTheme: AppTheme
+    appTheme: AppTheme,
+    onShowWindowAppUpdateRequest: () -> Unit,
 ) {
     MenuBar {
-        Menu(Res.string.title_activity_settings.string) {
+        Menu(Res.string.title_settings.string) {
             Menu(Res.string.title_settings_theme.string) {
                 Menu(Res.string.title_settings_theme.string) {
                     for (themeType in ThemeType.entries) {
@@ -264,7 +306,10 @@ fun FrameWindowScope.AppMenuBar(
                     }
                 }
             } // end: settings - theme
-
+            Separator()
+            Item(Res.string.title_check_update.string) {
+                onShowWindowAppUpdateRequest()
+            }
         }
     }
 }

@@ -1,12 +1,21 @@
-package cn.mercury9.omms.connect.desktop.ui.screen.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideIn
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.*
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,18 +24,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import cn.mercury9.omms.connect.desktop.client.FetchAnnouncementState
-import cn.mercury9.omms.connect.desktop.client.fetchAnnouncementFromServer
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.utils.datetime.default
-import cn.mercury9.utils.datetime.toInstantAsMilliseconds
-import cn.mercury9.utils.datetime.toLocalDateTime
 import icu.takeneko.omms.client.data.announcement.Announcement
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
+import cn.mercury9.omms.connect.desktop.client.omms.FetchAnnouncementState
+import cn.mercury9.omms.connect.desktop.client.omms.fetchAnnouncementFromServer
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.utils.datetime.default
+import cn.mercury9.utils.datetime.toInstantAsMilliseconds
+import cn.mercury9.utils.datetime.toLocalDateTime
 
 @Composable
 fun OmmsAnnouncementScreen() {
