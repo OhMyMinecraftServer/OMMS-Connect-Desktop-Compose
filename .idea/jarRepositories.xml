@@ -29,7 +29,7 @@
     <remote-repository>
       <option name="id" value="NekoMaven" />
       <option name="name" value="NekoMaven" />
-      <option name="url" value="https://maven.takeneko.icu/release" />
+      <option name="url" value="https://maven.takeneko.icu/releases" />
     </remote-repository>
   </component>
 </project>

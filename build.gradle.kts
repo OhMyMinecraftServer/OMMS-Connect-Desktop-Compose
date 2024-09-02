@@ -51,12 +51,19 @@ compose.desktop {
         mainClass = "$group.MainKt"
 
         nativeDistributions {
-            modules("jdk.unsupported")
+
+            modules(
+                "java.instrument",
+                "java.management",
+                "java.sql",
+                "jdk.unsupported",
+                "java.xml",
+            )
 
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
             packageName = "OMMS Connect Desktop"
-            packageVersion = "1.1.2"
+            packageVersion = "$version"
             copyright = "© 2024 OhMyMinecraftServer"
             licenseFile.set(project.file("LICENSE"))
 
