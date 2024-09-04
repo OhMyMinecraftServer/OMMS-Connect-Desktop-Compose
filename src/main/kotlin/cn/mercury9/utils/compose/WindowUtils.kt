@@ -6,11 +6,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.FrameWindowScope
+import androidx.compose.ui.window.WindowScope
 import org.jetbrains.skiko.hostOs
 import java.awt.Dimension
 
 @Composable
-fun FrameWindowScope.setMinimumSize(
+fun WindowScope.setMinimumSize(
     width: Dp = Dp.Unspecified,
     height: Dp = Dp.Unspecified,
 ) {
