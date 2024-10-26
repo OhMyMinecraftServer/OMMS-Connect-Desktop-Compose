@@ -88,7 +88,7 @@
     <string name="label_whitelist_player_count">该白名单中有%1$s个玩家</string>
     <string name="title_add_player_to_whitelist">添加到白名单</string>
     <string name="hint_result_may_need_refresh">结果可能需要刷新才能显示</string>
-    <string name="title_remove_player_from_whitelist">从白名单“%2$s”移除玩家“%1$s”?</string>
+    <string name="title_remove_player_from_whitelist">从白名单“%2$s”移除玩家“%1$s”</string>
     <string name="hint_whitelist_player_removed">成功移除玩家%s</string>
     <string name="hint_whitelist_remove_player_not_exist">无法移除玩家%s\\n此玩家不存在。</string>
     <string name="hint_whitelist_remove_permission_denied">无法移除玩家%s\\n权限不足。</string>

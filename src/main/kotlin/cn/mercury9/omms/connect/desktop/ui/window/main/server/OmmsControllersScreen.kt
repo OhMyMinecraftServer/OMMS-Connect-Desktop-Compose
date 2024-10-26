@@ -685,7 +685,7 @@ fun OmmsServerControllerPlayerList(
                         .wrapContentHeight()
                 ) {
                     items(players) {
-                        PlayerCard(it, playerDetailHazeState)
+                        PlayerCard(it, expandable = false)
                     }
                 }
             }

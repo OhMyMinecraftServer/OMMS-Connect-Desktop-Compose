@@ -1,16 +1,20 @@
 package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +22,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -44,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dev.chrisbanes.haze.HazeState
@@ -54,9 +61,11 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.jewel.ui.component.Tooltip
 import cn.mercury9.omms.connect.desktop.client.omms.FetchWhitelistState
 import cn.mercury9.omms.connect.desktop.client.omms.addPlayerToWhitelist
 import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
@@ -169,7 +178,7 @@ fun OmmsWhitelistItem(
     }
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
+@OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun OmmsWhitelistDetail(
     whitelistName: String?,
@@ -182,77 +191,228 @@ fun OmmsWhitelistDetail(
     val hazeStyle = HazeMaterials.ultraThin()
 
     val playerDetailHazeState = remember { HazeState() }
+    var showPlayerDetail by remember { mutableStateOf(false) }
+    var detailPlayerName by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .haze(playerDetailHazeState),
+    Box(modifier = Modifier
+        .fillMaxSize()
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .padding(horizontal = 64.dp)
                 .fillMaxSize()
+                .haze(playerDetailHazeState),
         ) {
-            Box {
-                LazyVerticalStaggeredGrid(
-                    StaggeredGridCells.Adaptive(256.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalItemSpacing = 8.dp,
-                    contentPadding = PaddingValues(top = 90.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxSize()
-                        .haze(hazeState),
-                ) {
-                    items(whitelist) {
-                        PlayerCard(it, playerDetailHazeState)
-                    }
-                }
-                Card(
-                    colors = CardColorSets.Transparent,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 16.dp)
-                        .clip(CardDefaults.shape)
-                        .hazeChild(hazeState) {
-                            style = hazeStyle
-                        }
-                ) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(0.1f),
+            Surface(
+                modifier = Modifier
+                    .padding(horizontal = 64.dp)
+                    .fillMaxSize()
+            ) {
+                Box {
+                    LazyVerticalStaggeredGrid(
+                        StaggeredGridCells.Adaptive(256.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalItemSpacing = 8.dp,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                            .haze(hazeState),
                     ) {
-                        Text(
-                            whitelistName ?: "null",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .background(Color.Transparent)
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                        )
+                        item(
+                            span = StaggeredGridItemSpan.FullLine,
+                        ) {
+                            Spacer(Modifier.height(90.dp))
+                        }
+                        items(whitelist) {
+                            PlayerCard(it) { playerName ->
+                                showPlayerDetail = true
+                                detailPlayerName = playerName
+                            }
+                        }
+                        item(
+                            span = StaggeredGridItemSpan.FullLine,
+                        ) {
+                            Spacer(Modifier.height(16.dp))
+                        }
+                    }
+                    Card(
+                        colors = CardColorSets.Transparent,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(horizontal = 8.dp)
+                            .padding(top = 16.dp)
+                            .clip(CardDefaults.shape)
+                            .hazeChild(hazeState) {
+                                style = hazeStyle
+                            }
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(0.1f),
+                        ) {
+                            Text(
+                                whitelistName ?: "null",
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.titleLarge,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .background(Color.Transparent)
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
+            FloatingActionButton(
+                onClick = {
+                    showDialogAddPlayer = true
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(Res.drawable.add_24px.painter, null)
+            }
+            IconButton(
+                onClickButtonBack,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(4.dp)
+            ) {
+                Icon(Res.drawable.arrow_back_24px.painter, null)
+            }
         }
-        FloatingActionButton(
-            onClick = {
-                showDialogAddPlayer = true
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Icon(Res.drawable.add_24px.painter, null)
-        }
-        IconButton(
-            onClickButtonBack,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(4.dp)
-        ) {
-            Icon(Res.drawable.arrow_back_24px.painter, null)
+
+        if (showPlayerDetail) {
+            var showDeletePlayerDialog by remember { mutableStateOf(false) }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeChild(playerDetailHazeState) {
+                        style = hazeStyle
+                    }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        showPlayerDetail = false
+                        detailPlayerName = ""
+                    }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .width(IntrinsicSize.Max)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(300.dp)
+                    ) {
+                        PlayerCard(
+                            playerName = detailPlayerName,
+                            expandable = false
+                        )
+                    }
+                    Card {
+                        var loading by remember { mutableStateOf(false) }
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            modifier = Modifier
+                                .clickable {
+                                    if (loading) return@clickable
+                                    showDeletePlayerDialog = !showDeletePlayerDialog
+                                }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .height(48.dp)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    Res.string.title_remove_player_from_whitelist.string(
+                                        detailPlayerName,
+                                        whitelistName ?: "null"
+                                    ),
+                                    maxLines = 1,
+                                    modifier = Modifier.wrapContentSize(),
+                                )
+                                AnimatedVisibility(
+                                    showDeletePlayerDialog,
+                                    enter = expandIn(
+                                        expandFrom = Alignment.CenterEnd,
+                                    ) {
+                                        IntSize(0, it.height)
+                                    },
+                                    exit = shrinkOut(
+                                        shrinkTowards = Alignment.CenterEnd,
+                                    ) {
+                                        IntSize(0, it.height)
+                                    }
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        modifier = Modifier
+                                            .height(48.dp)
+                                    ) {
+                                        Spacer(Modifier.weight(1f).widthIn(min = 32.dp))
+                                        Tooltip({
+                                            Text(
+                                                Res.string.title_remove_player_from_whitelist.string(
+                                                    detailPlayerName,
+                                                    whitelistName ?: "null"
+                                                )
+                                            )
+                                        }) {
+                                            IconButton(
+                                                onClick = {
+                                                    loading = true
+                                                    CoroutineScope(Dispatchers.IO).launch {
+                                                        removePlayerFromWhitelist(
+                                                            AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                                                            whitelistName!!,
+                                                            detailPlayerName
+                                                        ) {
+                                                            CoroutineScope(Dispatchers.Main).launch {
+                                                                loading = false
+                                                                AppContainer.navController
+                                                                    .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                enabled = !loading
+                                            ) {
+                                                Icon(
+                                                    Res.drawable.cancel_24px.painter,
+                                                    Res.string.title_remove_player_from_whitelist.string,
+                                                )
+                                            }
+                                        }
+                                        Tooltip({
+                                            Text(Res.string.cancel.string)
+                                        }) {
+                                            IconButton(
+                                                onClick = { showDeletePlayerDialog = false },
+                                                enabled = !loading
+                                            ) {
+                                                Icon(
+                                                    Res.drawable.close_24px.painter,
+                                                    Res.string.cancel.string
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     if (showDialogAddPlayer) {
@@ -321,7 +481,12 @@ fun DialogAddPlayerToWhitelist(
                                     AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
                                     whitelist,
                                     playerName
-                                ) {}
+                                ) {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        AppContainer.navController
+                                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
+                                    }
+                                }
                             }
                         },
                         enabled = !loading,

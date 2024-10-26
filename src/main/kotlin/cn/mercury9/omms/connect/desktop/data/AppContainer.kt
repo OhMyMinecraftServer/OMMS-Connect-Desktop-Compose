@@ -2,9 +2,7 @@ package cn.mercury9.omms.connect.desktop.data
 
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.WindowState
-import cn.mercury9.omms.connect.desktop.data.configs.AppConfig
-import cn.mercury9.omms.connect.desktop.data.configs.Data
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
+import androidx.navigation.NavHostController
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.component.setupDefaultComponents
 import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
@@ -20,6 +18,9 @@ import java.io.File
 import javax.swing.UIManager.put
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import cn.mercury9.omms.connect.desktop.data.configs.AppConfig
+import cn.mercury9.omms.connect.desktop.data.configs.Data
+import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
 
 object AppContainer {
 
@@ -67,6 +68,8 @@ object AppContainer {
     }
 
     lateinit var mainWindowState: WindowState
+
+    lateinit var navController: NavHostController
 
     val imageLoader: ImageLoader = ImageLoader {
         components {

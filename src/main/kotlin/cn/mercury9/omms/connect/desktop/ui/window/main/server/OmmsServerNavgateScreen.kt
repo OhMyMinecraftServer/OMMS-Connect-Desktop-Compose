@@ -57,6 +57,7 @@ data class NavigationTarget(
 @Composable
 fun OmmsServerNavigateScreen() {
     val navController = rememberNavController()
+    AppContainer.navController = navController
     Column {
         OmmsServerScreenTopBar(navController)
         HorizontalDivider()
