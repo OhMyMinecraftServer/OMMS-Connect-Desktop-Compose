@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -68,6 +69,7 @@ import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
 import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
 import cn.mercury9.utils.compose.CardColorSets
 import cn.mercury9.utils.compose.painter
@@ -178,7 +180,7 @@ fun OmmsWhitelistItem(
     }
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun OmmsWhitelistDetail(
     whitelistName: String?,
@@ -284,7 +286,6 @@ fun OmmsWhitelistDetail(
         }
 
         if (showPlayerDetail) {
-            var showDeletePlayerDialog by remember { mutableStateOf(false) }
 
             Box(
                 modifier = Modifier
@@ -313,104 +314,11 @@ fun OmmsWhitelistDetail(
                     ) {
                         PlayerCard(
                             playerName = detailPlayerName,
-                            expandable = false
+                            expandable = false,
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     }
-                    Card {
-                        var loading by remember { mutableStateOf(false) }
-                        Surface(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            modifier = Modifier
-                                .clickable {
-                                    if (loading) return@clickable
-                                    showDeletePlayerDialog = !showDeletePlayerDialog
-                                }
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .height(48.dp)
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    Res.string.title_remove_player_from_whitelist.string(
-                                        detailPlayerName,
-                                        whitelistName ?: "null"
-                                    ),
-                                    maxLines = 1,
-                                    modifier = Modifier.wrapContentSize(),
-                                )
-                                AnimatedVisibility(
-                                    showDeletePlayerDialog,
-                                    enter = expandIn(
-                                        expandFrom = Alignment.CenterEnd,
-                                    ) {
-                                        IntSize(0, it.height)
-                                    },
-                                    exit = shrinkOut(
-                                        shrinkTowards = Alignment.CenterEnd,
-                                    ) {
-                                        IntSize(0, it.height)
-                                    }
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        modifier = Modifier
-                                            .height(48.dp)
-                                    ) {
-                                        Spacer(Modifier.weight(1f).widthIn(min = 32.dp))
-                                        Tooltip({
-                                            Text(
-                                                Res.string.title_remove_player_from_whitelist.string(
-                                                    detailPlayerName,
-                                                    whitelistName ?: "null"
-                                                )
-                                            )
-                                        }) {
-                                            IconButton(
-                                                onClick = {
-                                                    loading = true
-                                                    CoroutineScope(Dispatchers.IO).launch {
-                                                        removePlayerFromWhitelist(
-                                                            AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
-                                                            whitelistName!!,
-                                                            detailPlayerName
-                                                        ) {
-                                                            CoroutineScope(Dispatchers.Main).launch {
-                                                                loading = false
-                                                                AppContainer.navController
-                                                                    .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                enabled = !loading
-                                            ) {
-                                                Icon(
-                                                    Res.drawable.cancel_24px.painter,
-                                                    Res.string.title_remove_player_from_whitelist.string,
-                                                )
-                                            }
-                                        }
-                                        Tooltip({
-                                            Text(Res.string.cancel.string)
-                                        }) {
-                                            IconButton(
-                                                onClick = { showDeletePlayerDialog = false },
-                                                enabled = !loading
-                                            ) {
-                                                Icon(
-                                                    Res.drawable.close_24px.painter,
-                                                    Res.string.cancel.string
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    DeletePlayerMenu(whitelistName, detailPlayerName)
                 }
             }
         }
@@ -418,6 +326,143 @@ fun OmmsWhitelistDetail(
     if (showDialogAddPlayer) {
         DialogAddPlayerToWhitelist(whitelistName!!) {
             showDialogAddPlayer = false
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun DeletePlayerMenu(
+    whitelistName: String?,
+    detailPlayerName: String,
+) {
+    var showDeletePlayerDialog by remember { mutableStateOf(false) }
+    Card {
+        var loading by remember { mutableStateOf(false) }
+
+        fun removePlayer() {
+            loading = true
+            CoroutineScope(Dispatchers.IO).launch {
+                removePlayerFromWhitelist(
+                    AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                    whitelistName!!,
+                    detailPlayerName
+                ) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        loading = false
+                        AppContainer.navController
+                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
+                    }
+                }
+            }
+        }
+
+        var progress by remember { mutableStateOf(0f) }
+
+        Surface(
+            color = MaterialTheme.colorScheme.errorContainer,
+            modifier = Modifier
+                .height(64.dp)
+                .clickable {
+                    if (loading) return@clickable
+                    showDeletePlayerDialog = !showDeletePlayerDialog
+                }
+        ) {
+            AnimatedVisibility(
+                showDeletePlayerDialog,
+                enter = expandIn(
+                    expandFrom = Alignment.CenterEnd,
+                ) {
+                    IntSize(0, it.height)
+                },
+                exit = shrinkOut(
+                    shrinkTowards = Alignment.CenterEnd,
+                ) {
+                    IntSize(0, it.height)
+                }
+            ) {
+                Row {
+                    if (progress > 0f) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .weight(progress)
+                                .fillMaxHeight()
+                        ) {}
+                    }
+                    if (progress < 1f) {
+                        Spacer(Modifier.weight(1 - progress))
+                    }
+                }
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(
+                    Res.string.title_remove_player_from_whitelist.string(
+                        detailPlayerName,
+                        whitelistName ?: "null"
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier.wrapContentSize(),
+                )
+                AnimatedVisibility(
+                    showDeletePlayerDialog,
+                    enter = expandIn(
+                        expandFrom = Alignment.CenterEnd,
+                    ) {
+                        IntSize(0, it.height)
+                    },
+                    exit = shrinkOut(
+                        shrinkTowards = Alignment.CenterEnd,
+                    ) {
+                        IntSize(0, it.height)
+                    }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier
+                            .height(48.dp)
+                    ) {
+                        Spacer(Modifier.weight(1f).widthIn(min = 32.dp))
+                        Tooltip({
+                            Text(
+                                Res.string.title_remove_player_from_whitelist.string(
+                                    detailPlayerName,
+                                    whitelistName ?: "null"
+                                )
+                            )
+                        }) {
+                            LongPressIconButton(
+                                onClick = { removePlayer() },
+                                onProgressChange = { progress = it }
+                            ) {
+                                Icon(
+                                    Res.drawable.cancel_24px.painter,
+                                    Res.string.title_remove_player_from_whitelist.string,
+                                )
+                            }
+                        }
+                        Tooltip({
+                            Text(Res.string.cancel.string)
+                        }) {
+                            IconButton(
+                                onClick = { showDeletePlayerDialog = false },
+                                enabled = !loading
+                            ) {
+                                Icon(
+                                    Res.drawable.close_24px.painter,
+                                    Res.string.cancel.string
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
