@@ -1,24 +1,48 @@
 package cn.mercury9.omms.connect.desktop
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.window.WindowDraggableArea
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberDialogState
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
+import org.jetbrains.jewel.intui.standalone.theme.createDefaultTextStyle
+import org.jetbrains.jewel.intui.standalone.theme.createEditorTextStyle
+import org.jetbrains.jewel.intui.standalone.theme.darkThemeDefinition
+import org.jetbrains.jewel.intui.standalone.theme.default
+import org.jetbrains.jewel.intui.standalone.theme.lightThemeDefinition
+import org.jetbrains.jewel.intui.window.decoratedWindow
+import org.jetbrains.jewel.intui.window.styling.dark
+import org.jetbrains.jewel.intui.window.styling.light
+import org.jetbrains.jewel.ui.ComponentStyling
+import org.jetbrains.jewel.window.DecoratedWindow
+import org.jetbrains.jewel.window.DecoratedWindowScope
+import org.jetbrains.jewel.window.TitleBar
+import org.jetbrains.jewel.window.defaultTitleBarStyle
+import org.jetbrains.jewel.window.newFullscreenControls
+import org.jetbrains.jewel.window.styling.TitleBarColors
+import org.jetbrains.jewel.window.styling.TitleBarStyle
 import org.jetbrains.skiko.hostOs
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
@@ -49,6 +73,16 @@ fun main() = application {
         }
     ) }
 
+    val textStyle = JewelTheme.createDefaultTextStyle()
+    val editorStyle = JewelTheme.createEditorTextStyle()
+
+    val themeDefinition =
+        if (appTheme.darkTheme) {
+            JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
+        } else {
+            JewelTheme.lightThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
+        }
+
     AppContainer.config.onConfigChange += "Main_AppTheme" to {
         appTheme = AppContainer.config.get().theme.appTheme()
     }
@@ -63,125 +97,139 @@ fun main() = application {
     var showDialogWindowAppUpdate by remember { mutableStateOf(false) }
 
     ThemeProvider(appTheme) {
-        Window(
-            onCloseRequest = ::onCloseRequest,
-            state = windowState,
-            title = stringResource(Res.string.app_name),
-            icon = Res.drawable.ic_launcher.painter,
-            onKeyEvent = {
-                var flag = false
-                for (handler in AppContainer.onKeyEvent.values) {
-                    if (handler(it)) flag = true
-                }
-                return@Window flag
-            },
+        IntUiTheme(
+            theme = themeDefinition,
+            styling = ComponentStyling.default()
+                .decoratedWindow(
+                    titleBarStyle =
+                    if (appTheme.darkTheme) TitleBarStyle.dark()
+                    else TitleBarStyle.light(),
+                )
         ) {
-            setMinimumSize(916.dp, 687.dp)
+            DecoratedWindow(
+                onCloseRequest = ::onCloseRequest,
+                state = windowState,
+                title = stringResource(Res.string.app_name),
+                icon = Res.drawable.ic_launcher.painter,
+                onKeyEvent = {
+                    var flag = false
+                    for (handler in AppContainer.onKeyEvent.values) {
+                        if (handler(it)) flag = true
+                    }
+                    return@DecoratedWindow flag
+                },
+            ) {
+                setMinimumSize(916.dp, 687.dp)
 
-            if (hostOs.isWindows) {     // 移动窗口时吸附屏幕边缘
-                with(LocalDensity.current) {
-                    LaunchedEffect(windowState.position) {
-                        val screenSizePx = Toolkit.getDefaultToolkit().screenSize
+                if (hostOs.isWindows) {     // 移动窗口时吸附屏幕边缘
+                    with(LocalDensity.current) {
+                        LaunchedEffect(windowState.position) {
+                            val screenSizePx = Toolkit.getDefaultToolkit().screenSize
 
-                        // 屏幕空间被系统占用的部分
-                        val screenInsetsPx = Toolkit.getDefaultToolkit().getScreenInsets(
-                            GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.defaultConfiguration
-                        )
-
-                        val windowAbsorbDistance = 20f
-
-                        // position.x = 0 不会贴边，似乎是因为系统加窗口阴影也要算上，除了上边，都有这个问题
-                        val windowPositionOffsetPx = 7f
-
-                        // Left
-                        if ((windowState.position.x.value
-                                    + windowPositionOffsetPx.toDp().value
-                            ) in (
-                                (-windowAbsorbDistance + screenInsetsPx.left.toDp().value)
-                                ..(windowAbsorbDistance + screenInsetsPx.left.toDp().value)
+                            // 屏幕空间被系统占用的部分
+                            val screenInsetsPx = Toolkit.getDefaultToolkit().getScreenInsets(
+                                GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.defaultConfiguration
                             )
-                        ) {
-                            val position = windowState.position as WindowPosition.Absolute
-                            windowState.position = position.copy(x = -windowPositionOffsetPx.toDp())
-                        }
 
-                        // Top
-                        if (windowState.position.y.value
-                            in (
-                                (-windowAbsorbDistance + screenInsetsPx.top.toDp().value)
-                                ..(windowAbsorbDistance + screenInsetsPx.top.toDp().value)
-                            )
-                        ) {
-                            val position = windowState.position as WindowPosition.Absolute
-                            windowState.position = position.copy(y = 0.dp)
-                        }
+                            val windowAbsorbDistance = 20f
 
-                        // Right
-                        if ((windowState.position.x.value
-                                    + windowPositionOffsetPx.toDp().value
-                                    + windowState.size.width.value
-                            ) in (
-                                (-windowAbsorbDistance
-                                    + screenSizePx.width.toDp().value
-                                    - screenInsetsPx.right.toDp().value
-                                )..(windowAbsorbDistance
-                                    + screenSizePx.width.toDp().value
-                                    + screenInsetsPx.right.toDp().value
+                            // position.x = 0 不会贴边，似乎是因为系统加窗口阴影也要算上，除了上边，都有这个问题
+                            val windowPositionOffsetPx = 7f
+
+                            // Left
+                            if ((windowState.position.x.value
+                                        + windowPositionOffsetPx.toDp().value
+                                        ) in (
+                                        (-windowAbsorbDistance + screenInsetsPx.left.toDp().value)
+                                                ..(windowAbsorbDistance + screenInsetsPx.left.toDp().value)
+                                        )
+                            ) {
+                                val position = windowState.position as WindowPosition.Absolute
+                                windowState.position = position.copy(x = -windowPositionOffsetPx.toDp())
+                            }
+
+                            // Top
+                            if (windowState.position.y.value
+                                in (
+                                        (-windowAbsorbDistance + screenInsetsPx.top.toDp().value)
+                                                ..(windowAbsorbDistance + screenInsetsPx.top.toDp().value)
+                                        )
+                            ) {
+                                val position = windowState.position as WindowPosition.Absolute
+                                windowState.position = position.copy(y = 0.dp)
+                            }
+
+                            // Right
+                            if ((windowState.position.x.value
+                                        + windowPositionOffsetPx.toDp().value
+                                        + windowState.size.width.value
+                                        ) in (
+                                        (-windowAbsorbDistance
+                                                + screenSizePx.width.toDp().value
+                                                - screenInsetsPx.right.toDp().value
+                                                )..(windowAbsorbDistance
+                                                + screenSizePx.width.toDp().value
+                                                + screenInsetsPx.right.toDp().value
+                                                )
+                                        )
+                            ) {
+                                val position = windowState.position as WindowPosition.Absolute
+                                windowState.position = position.copy(
+                                    x = screenSizePx.width.toDp() - windowState.size.width
+                                            + windowPositionOffsetPx.toDp()
                                 )
-                            )
-                        ) {
-                            val position = windowState.position as WindowPosition.Absolute
-                            windowState.position = position.copy(
-                                x = screenSizePx.width.toDp() - windowState.size.width
-                                        + windowPositionOffsetPx.toDp()
-                            )
-                        }
+                            }
 
-                        // Bottom
-                        if ((windowState.position.y.value
-                                    + windowPositionOffsetPx.toDp().value
-                                    + windowState.size.height.value
-                            ) in (
-                                (-windowAbsorbDistance
-                                    + screenSizePx.height.toDp().value
-                                    - screenInsetsPx.bottom.toDp().value
-                                )..(windowAbsorbDistance
-                                    + screenSizePx.height.toDp().value
-                                    + screenInsetsPx.bottom.toDp().value
+                            // Bottom
+                            if ((windowState.position.y.value
+                                        + windowPositionOffsetPx.toDp().value
+                                        + windowState.size.height.value
+                                        ) in (
+                                        (-windowAbsorbDistance
+                                                + screenSizePx.height.toDp().value
+                                                - screenInsetsPx.bottom.toDp().value
+                                                )..(windowAbsorbDistance
+                                                + screenSizePx.height.toDp().value
+                                                + screenInsetsPx.bottom.toDp().value
+                                                )
+                                        )
+                            ) {
+                                val position = windowState.position as WindowPosition.Absolute
+                                windowState.position = position.copy(
+                                    y = screenSizePx.height.toDp() - windowState.size.height
+                                            + windowPositionOffsetPx.toDp()
                                 )
-                            )
-                        ) {
-                            val position = windowState.position as WindowPosition.Absolute
-                            windowState.position = position.copy(
-                                y = screenSizePx.height.toDp() - windowState.size.height
-                                        + windowPositionOffsetPx.toDp()
-                            )
+                            }
                         }
                     }
+                } // End: 移动窗口时吸附屏幕边缘
+
+                AppTitleBar()
+
+                AppMenuBar(
+                    appTheme,
+                    onShowWindowAppUpdateRequest = {
+                        showDialogWindowAppUpdate = true
+                    }
+                )
+
+                MainScreen()
+            } // end: Window
+
+            if (showDialogWindowAppUpdate) {
+                DecoratedWindow(
+                    state = rememberWindowState(
+                        size = DpSize(404.dp, 303.dp)
+                    ),
+                    onCloseRequest = { showDialogWindowAppUpdate = false },
+                    title = Res.string.title_check_update.string
+                ) {
+                    setMinimumSize(404.dp, 303.dp)
+
+                    AppTitleBar()
+
+                    AppUpdateScreen()
                 }
-            } // End: 移动窗口时吸附屏幕边缘
-
-            AppMenuBar(
-                appTheme,
-                onShowWindowAppUpdateRequest = {
-                    showDialogWindowAppUpdate = true
-                }
-            )
-
-            MainScreen()
-        } // end: Window
-
-        if (showDialogWindowAppUpdate) {
-            DialogWindow(
-                state = rememberDialogState(
-                    size = DpSize(404.dp, 303.dp)
-                ),
-                onCloseRequest = { showDialogWindowAppUpdate = false },
-                title = Res.string.title_check_update.string
-            ) {
-                setMinimumSize(404.dp, 303.dp)
-
-                AppUpdateScreen()
             }
         }
     }
@@ -260,6 +308,50 @@ fun FrameWindowScope.AppMenuBar(
             Separator()
             Item(Res.string.title_check_update.string) {
                 onShowWindowAppUpdateRequest()
+            }
+        }
+    }
+}
+
+@Composable
+fun DecoratedWindowScope.AppTitleBar() {
+    val backgroundColor by animateColorAsState(MaterialTheme.colorScheme.background)
+    val outlineColor by animateColorAsState(MaterialTheme.colorScheme.outline)
+    TitleBar(
+        style = TitleBarStyle(
+            colors = TitleBarColors(
+                background = backgroundColor,
+                inactiveBackground = backgroundColor,
+                content = backgroundColor,
+                border = outlineColor,
+                fullscreenControlButtonsBackground = backgroundColor,
+                titlePaneButtonHoveredBackground = backgroundColor,
+                titlePaneButtonPressedBackground = backgroundColor,
+                titlePaneCloseButtonHoveredBackground = backgroundColor,
+                titlePaneCloseButtonPressedBackground = backgroundColor,
+                iconButtonHoveredBackground = backgroundColor,
+                iconButtonPressedBackground = backgroundColor,
+                dropdownPressedBackground = backgroundColor,
+                dropdownHoveredBackground = backgroundColor
+            ),
+            metrics = JewelTheme.defaultTitleBarStyle.metrics,
+            icons = JewelTheme.defaultTitleBarStyle.icons,
+            dropdownStyle = JewelTheme.defaultTitleBarStyle.dropdownStyle,
+            iconButtonStyle = JewelTheme.defaultTitleBarStyle.iconButtonStyle,
+            paneButtonStyle = JewelTheme.defaultTitleBarStyle.paneButtonStyle,
+            paneCloseButtonStyle = JewelTheme.defaultTitleBarStyle.paneCloseButtonStyle
+        ),
+        modifier = Modifier
+            .newFullscreenControls(),
+    ) {
+        WindowDraggableArea {
+            Surface(color = MaterialTheme.colorScheme.background) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(title)
+                }
             }
         }
     }

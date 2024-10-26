@@ -535,7 +535,7 @@ fun OmmsServerItem(
         targetValue =  if (server.id == currentServerId) {
                 MaterialTheme.colorScheme.secondary
             } else {
-                MaterialTheme.colorScheme.surface
+                MaterialTheme.colorScheme.surfaceVariant
             }
     )
     ElevatedCard(

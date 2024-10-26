@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -178,6 +179,7 @@ fun OmmsWhitelistDetail(
     var showDialogAddPlayer by remember { mutableStateOf(false) }
 
     val hazeState = remember { HazeState() }
+    val hazeStyle = HazeMaterials.ultraThin()
 
     val playerDetailHazeState = remember { HazeState() }
 
@@ -200,7 +202,7 @@ fun OmmsWhitelistDetail(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .fillMaxSize()
-                        .haze(hazeState, HazeMaterials.ultraThin()),
+                        .haze(hazeState),
                 ) {
                     items(whitelist) {
                         PlayerCard(it, playerDetailHazeState)
@@ -212,11 +214,10 @@ fun OmmsWhitelistDetail(
                         .align(Alignment.TopCenter)
                         .padding(horizontal = 8.dp)
                         .padding(top = 16.dp)
-                        .hazeChild(
-                            state = hazeState,
-                            shape = CardDefaults.shape,
-                            style = HazeMaterials.ultraThin()
-                        )
+                        .clip(CardDefaults.shape)
+                        .hazeChild(hazeState) {
+                            style = hazeStyle
+                        }
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.secondaryContainer.copy(0.1f),

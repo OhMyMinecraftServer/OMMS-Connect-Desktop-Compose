@@ -25,13 +25,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalHazeMaterialsApi::class)
 @Composable
 fun PlayerCard(
     playerName: String,
     hazeState: HazeState,
+    hazeStyle: HazeStyle = HazeMaterials.ultraThin(),
     /** 向api要求的头像尺寸，
      *
      * `size=16` 的实际大小为 `8dp`
@@ -42,8 +46,8 @@ fun PlayerCard(
     var isShowDetails by remember { mutableStateOf(false) }
 
     ElevatedCard(
-        onClick = { isShowDetails = true },
-        enabled = expandable,
+//        onClick = { isShowDetails = true },
+//        enabled = expandable,
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -83,7 +87,9 @@ fun PlayerCard(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .hazeChild(hazeState)
+                        .hazeChild(hazeState) {
+                            style = hazeStyle
+                        }
                     .onClick { isShowDetails = false },
             ) {
                 ElevatedCard(

@@ -13,7 +13,7 @@ version = "1.1.3"
 
 repositories {
     mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://packages.jetbrains.team/maven/p/kpm/public/")
     google()
     maven {
         name = "NekoMaven"
@@ -35,6 +35,9 @@ dependencies {
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.timedate)
+
+    implementation(libs.jewel.intUi)
+    implementation(libs.jewel.decoratedWindow)
 
     api(libs.imageLoader.core)
     api(libs.imageLoader.composeResources)

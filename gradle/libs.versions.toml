@@ -1,5 +1,5 @@
 [versions]
-compose-plugin = "1.6.11"
+compose-plugin = "1.7.0"
 kotlin = "2.0.0"
 
 kotlinx-serialization = "1.7.0"
@@ -8,8 +8,8 @@ kotlinx-timedate = "0.6.0"
 navigationCompose = "2.8.0-alpha02"
 
 image-loader = "1.8.2"
-haze = "0.7.3"
-jewel = "0.23.1"
+haze = "0.9.0-beta04.1"
+jewel = "0.26.2"
 
 omms-client-core = "1.5.0"
 gson = "2.11.0"
@@ -27,8 +27,8 @@ imageLoader-imageio = { group = "io.github.qdsfdhvh", name = "image-loader-exten
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
 
-jewel-intUi = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone-242", version.ref = "jewel" }
-jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window-242", version.ref = "jewel" }
+jewel-intUi = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone-243", version.ref = "jewel" }
+jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window-243", version.ref = "jewel" }
 
 omms-client-core = { module = "icu.takeneko:omms-client-core", version.ref = "omms-client-core"}
 gson = { module = "com.google.code.gson:gson", version.ref = "gson"}
