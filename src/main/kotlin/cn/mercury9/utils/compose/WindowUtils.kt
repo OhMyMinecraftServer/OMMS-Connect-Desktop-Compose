@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowScope
 import org.jetbrains.skiko.hostOs
 import java.awt.Dimension
@@ -28,14 +27,14 @@ fun WindowScope.setMinimumSize(
 }
 
 @Composable
-fun FrameWindowScope.setMinimumSize(size: Dp = Dp.Unspecified): Unit =
+fun WindowScope.setMinimumSize(size: Dp = Dp.Unspecified): Unit =
     setMinimumSize(
         width = size,
         height = size,
     )
 
 @Composable
-fun FrameWindowScope.setMinimumSize(size: DpSize = DpSize.Unspecified): Unit =
+fun WindowScope.setMinimumSize(size: DpSize = DpSize.Unspecified): Unit =
     setMinimumSize(
         width = size.width,
         height = size.height,

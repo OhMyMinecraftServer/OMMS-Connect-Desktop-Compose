@@ -34,6 +34,7 @@
     <string name="title_whitelist">白名单</string>
     <string name="title_broadcast">公告</string>
     <string name="title_activity_whitelist_edit">白名单编辑</string>
+    <string name="title_console">控制台</string>
 
     <string name="label_controller_type">类型：%1$s</string>
     <string name="label_loading">正在加载...</string>
@@ -133,5 +134,8 @@
 
     <string name="error_load_fail">加载失败</string>
     <string name="label_refresh">刷新</string>
+
+<!--  console screen  -->
+    <string name="button_send">发送</string>
 
 </resources>

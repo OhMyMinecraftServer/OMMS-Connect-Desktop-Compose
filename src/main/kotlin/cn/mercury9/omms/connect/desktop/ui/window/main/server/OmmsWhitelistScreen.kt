@@ -16,14 +16,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,10 +56,9 @@ import kotlinx.coroutines.launch
 import cn.mercury9.omms.connect.desktop.client.omms.FetchWhitelistState
 import cn.mercury9.omms.connect.desktop.client.omms.addPlayerToWhitelist
 import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
-import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
 import cn.mercury9.utils.compose.CardColorSets
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
@@ -179,12 +176,16 @@ fun OmmsWhitelistDetail(
     onClickButtonBack: () -> Unit
 ) {
     var showDialogAddPlayer by remember { mutableStateOf(false) }
-    var showDialogRemovePlayer by remember { mutableStateOf(false) }
-    var playerName by remember { mutableStateOf("") }
 
     val hazeState = remember { HazeState() }
 
-    Box(Modifier.fillMaxSize()) {
+    val playerDetailHazeState = remember { HazeState() }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .haze(playerDetailHazeState),
+    ) {
         Surface(
             modifier = Modifier
                 .padding(horizontal = 64.dp)
@@ -192,43 +193,17 @@ fun OmmsWhitelistDetail(
         ) {
             Box {
                 LazyVerticalStaggeredGrid(
-                    StaggeredGridCells.Adaptive(200.dp),
+                    StaggeredGridCells.Adaptive(256.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalItemSpacing = 8.dp,
                     contentPadding = PaddingValues(top = 90.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .fillMaxSize()
-                        .haze(hazeState, HazeMaterials.ultraThin())
+                        .haze(hazeState, HazeMaterials.ultraThin()),
                 ) {
                     items(whitelist) {
-                        ElevatedCard(
-                            onClick = {
-                                showDialogRemovePlayer = true
-                                playerName = it
-                            },
-                            modifier = Modifier
-                                .heightIn(min = 64.dp)
-                        ) {
-                            Box(
-                                Modifier.fillMaxSize(),
-                            ) {
-                                PlayerHeadImage(
-                                    it,
-                                    size = 64,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .padding(16.dp)
-                                )
-                                Text(
-                                    it,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .padding(24.dp)
-                                        .align(Alignment.CenterEnd)
-                                )
-                            }
-                        }
+                        PlayerCard(it, playerDetailHazeState)
                     }
                 }
                 Card(
@@ -282,14 +257,6 @@ fun OmmsWhitelistDetail(
     if (showDialogAddPlayer) {
         DialogAddPlayerToWhitelist(whitelistName!!) {
             showDialogAddPlayer = false
-        }
-    }
-    if (showDialogRemovePlayer) {
-        DialogConfirmRemovePlayer(
-            whitelistName!!,
-            playerName
-        ) {
-            showDialogRemovePlayer = false
         }
     }
 }
@@ -367,41 +334,4 @@ fun DialogAddPlayerToWhitelist(
             }
         }
     }
-}
-
-@Composable
-fun DialogConfirmRemovePlayer(
-    whitelist: String,
-    playerName: String,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button({
-                CoroutineScope(Dispatchers.IO).launch {
-                    removePlayerFromWhitelist(
-                        AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
-                        whitelist,
-                        playerName
-                    ) {
-                    }
-                }
-                onDismiss()
-            }) {
-                Text(Res.string.confirm.string)
-            }
-        },
-        dismissButton = {
-            Button(onDismiss) {
-                Text(Res.string.cancel.string)
-            }
-        },
-        title = {
-            Text(
-                Res.string.title_remove_player_from_whitelist.string(playerName, whitelist)
-                    + "\n"
-                    + Res.string.hint_result_may_need_refresh.string)
-        }
-    )
 }

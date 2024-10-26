@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,7 +25,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -45,9 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
 import icu.takeneko.omms.client.data.system.SystemInfo
@@ -63,7 +62,7 @@ import cn.mercury9.omms.connect.desktop.client.omms.fetchControllersFormServer
 import cn.mercury9.omms.connect.desktop.client.omms.fetchSystemInfoFromServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 
@@ -467,7 +466,7 @@ fun OmmsServerControllerItem(
                         "fabric" ->
                             Res.drawable.ic_server_fabric.painter
                         else ->
-                        Res.drawable.ic_server_default.painter
+                            Res.drawable.ic_server_default.painter
                     },
                     null,
                     modifier = Modifier
@@ -655,10 +654,12 @@ fun OmmsServerControllerPlayerList(
     players: List<String>,
     modifier: Modifier
 ) {
+    val playerDetailHazeState = remember { HazeState() }
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(bottom = 16.dp),
+            .padding(bottom = 16.dp)
+            .haze(playerDetailHazeState),
     ) {
         ElevatedCard(
             Modifier
@@ -684,29 +685,7 @@ fun OmmsServerControllerPlayerList(
                         .wrapContentHeight()
                 ) {
                     items(players) {
-                        Card(
-                            modifier = Modifier
-                                .heightIn(min = 64.dp)
-                        ) {
-                            Box(
-                                Modifier.fillMaxSize(),
-                            ) {
-                                PlayerHeadImage(
-                                    it,
-                                    size = 64,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .padding(16.dp)
-                                )
-                                Text(
-                                    it,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .padding(24.dp)
-                                        .align(Alignment.CenterEnd)
-                                )
-                            }
-                        }
+                        PlayerCard(it, playerDetailHazeState)
                     }
                 }
             }

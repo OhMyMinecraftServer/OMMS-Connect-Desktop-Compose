@@ -1,5 +1,7 @@
 package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +29,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import cn.mercury9.omms.connect.desktop.client.omms.endOmmsServerConnection
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.resources.*
@@ -37,6 +44,7 @@ data object OmmsServerNavRoute {
     const val WHITELIST_SCREEN = "WHITELIST_SCREEN"
     const val CHAT_SCREEN = "CHAT_SCREEN"
     const val ANNOUNCEMENT_SCREEN = "ANNOUNCEMENT_SCREEN"
+    const val CONSOLE_SCREEN = "CONSOLE_SCREEN"
 }
 
 data class NavigationTarget(
@@ -67,6 +75,9 @@ fun OmmsServerNavigateScreen() {
             composable(OmmsServerNavRoute.ANNOUNCEMENT_SCREEN) {
                 OmmsAnnouncementScreen()
             }
+            composable(OmmsServerNavRoute.CONSOLE_SCREEN) {
+                OmmsConsoleScreen()
+            }
         }
     }
 }
@@ -75,7 +86,51 @@ fun OmmsServerNavigateScreen() {
 fun OmmsServerScreenTopBar(
     navController: NavHostController,
 ) {
-    val serverName = AppContainer.sessions[AppContainer.currentOmmsServerId]!!.serverName
+    val serverName = AppContainer.sessions[AppContainer.currentOmmsServerId]?.serverName
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val pressResponseTime = 1.seconds
+    var pressedTime by remember { mutableStateOf(0.milliseconds) }
+    var lastPressedInstant by remember { mutableStateOf(null as Instant?) }
+
+    fun exitServer() {
+        val id = AppContainer.currentOmmsServerId ?: return
+        val session = AppContainer.sessions[id] ?: return
+        endOmmsServerConnection(session) {
+            try {
+                navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
+            } catch (_: Throwable) {}
+            AppContainer.sessions.remove(id)
+            AppContainer.currentOmmsServerId = null
+        }
+    }
+
+    if (isPressed) {
+        val now = Clock.System.now()
+        if (pressedTime < pressResponseTime) {
+            lastPressedInstant?.let {
+                val delta = now - it
+                pressedTime += delta
+            }
+        } else {
+            exitServer()
+        }
+        lastPressedInstant = now
+
+    } else if (pressedTime < 0.milliseconds) {
+        pressedTime = 0.milliseconds
+        lastPressedInstant = null
+    } else if (pressedTime > 0.milliseconds) {
+        val now = Clock.System.now()
+        lastPressedInstant?.let {
+            val delta = now - it
+            pressedTime -= delta * 2
+        }
+        lastPressedInstant = now
+    }
+
     Box(
         modifier = Modifier
             .height(64.dp)
@@ -86,21 +141,23 @@ fun OmmsServerScreenTopBar(
             modifier = Modifier
                 .align(Alignment.CenterStart)
         ) {
-            IconButton({
-                val id = AppContainer.currentOmmsServerId!!
-                val session = AppContainer.sessions[id]!!
-                endOmmsServerConnection(session) {
-                    try {
-                        navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
-                    } catch (_: Throwable) {}
-                    AppContainer.sessions.remove(id)
-                    AppContainer.currentOmmsServerId = null
+            IconButton(
+                onClick = {},
+                interactionSource = interactionSource,
+            ) {
+                Box {
+                    CircularProgressIndicator(
+                        progress = {
+                            (pressedTime / pressResponseTime).toFloat()
+                        }
+                    )
+                    Icon(
+                        Res.drawable.logout_24px.painter,
+                        Res.string.logout.string,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
                 }
-            }) {
-                Icon(
-                    Res.drawable.logout_24px.painter,
-                    Res.string.logout.string
-                )
             }
             Text(
                 text = "${AppContainer.servers.get()[AppContainer.currentOmmsServerId]?.name} ( $serverName )",
@@ -142,6 +199,11 @@ fun OmmsServerScreenTopBarNavigateButtons(
             OmmsServerNavRoute.ANNOUNCEMENT_SCREEN,
             Res.string.title_broadcast.string,
             Res.drawable.notifications_24px.painter
+        ),
+        NavigationTarget(
+            OmmsServerNavRoute.CONSOLE_SCREEN,
+            Res.string.title_console.string,
+            Res.drawable.monitor_24px.painter
         )
     )
     var current by remember { mutableStateOf(OmmsServerNavRoute.CONTROLLERS_SCREEN) }

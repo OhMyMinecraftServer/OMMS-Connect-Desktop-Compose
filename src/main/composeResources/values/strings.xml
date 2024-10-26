@@ -37,6 +37,7 @@
     <string name="title_whitelist">Whitelist</string>
     <string name="title_broadcast">Announcement</string>
     <string name="title_activity_whitelist_edit">Whitelist Edit</string>
+    <string name="title_console">Console</string>
 
     <string name="label_controller_type">Type: %1$s</string>
     <string name="label_loading">Loading ...</string>
@@ -143,5 +144,8 @@
 
     <string name="error_load_fail">Load Failed</string>
     <string name="label_refresh">Refresh</string>
+
+<!--  console screen  -->
+    <string name="button_send">Send</string>
 
 </resources>
