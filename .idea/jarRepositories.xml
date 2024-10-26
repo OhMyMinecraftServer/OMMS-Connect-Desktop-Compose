@@ -31,5 +31,10 @@
       <option name="name" value="NekoMaven" />
       <option name="url" value="https://maven.takeneko.icu/releases" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://packages.jetbrains.team/maven/p/kpm/public/" />
+    </remote-repository>
   </component>
 </project>
