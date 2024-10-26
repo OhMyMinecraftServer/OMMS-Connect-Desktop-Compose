@@ -610,6 +610,7 @@ fun OmmsServerController(
                                 .fillMaxWidth()
                         ) {
                             Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {

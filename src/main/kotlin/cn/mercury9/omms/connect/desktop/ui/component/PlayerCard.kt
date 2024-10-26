@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -22,6 +24,7 @@ fun PlayerCard(
      * */
     playerHeadSize: Int = 64,
     expandable: Boolean = true,
+    containerColor: Color = Color.Transparent,
     onClick: (playerName: String) -> Unit = {}
 ) {
     ElevatedCard(
@@ -32,27 +35,31 @@ fun PlayerCard(
                 .wrapContentWidth()
                 .height((playerHeadSize / 2 + 32).dp),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Surface(
+            color = containerColor,
         ) {
-            PlayerHeadImage(
-                playerName,
-                size = playerHeadSize,
-                modifier =
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PlayerHeadImage(
+                    playerName,
+                    size = playerHeadSize,
+                    modifier =
                     Modifier
                         .padding(vertical = 16.dp)
                         .padding(start = 16.dp),
-            )
-            Text(
-                text = playerName,
-                textAlign = TextAlign.End,
-                modifier =
+                )
+                Text(
+                    text = playerName,
+                    textAlign = TextAlign.End,
+                    modifier =
                     Modifier
                         .weight(1f)
                         .wrapContentWidth()
                         .padding(end = 16.dp),
-            )
+                )
+            }
         }
     }
 }
