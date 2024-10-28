@@ -3,8 +3,9 @@ package cn.mercury9.omms.connect.desktop
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.window.WindowDraggableArea
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +25,28 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.app_name
+import cn.mercury9.omms.connect.desktop.resources.ic_launcher
+import cn.mercury9.omms.connect.desktop.resources.option_setup_by_system_dark_theme
+import cn.mercury9.omms.connect.desktop.resources.option_theme_dark
+import cn.mercury9.omms.connect.desktop.resources.option_theme_light
+import cn.mercury9.omms.connect.desktop.resources.title_check_update
+import cn.mercury9.omms.connect.desktop.resources.title_settings
+import cn.mercury9.omms.connect.desktop.resources.title_settings_contrast
+import cn.mercury9.omms.connect.desktop.resources.title_settings_dark
+import cn.mercury9.omms.connect.desktop.resources.title_settings_theme
+import cn.mercury9.omms.connect.desktop.ui.component.EasyDropdownMenu
+import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
+import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
+import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
+import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.setMinimumSize
+import cn.mercury9.utils.compose.string
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -46,17 +69,6 @@ import org.jetbrains.jewel.window.styling.TitleBarStyle
 import org.jetbrains.skiko.hostOs
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
-import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
-import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
-import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
-import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
-import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.setMinimumSize
-import cn.mercury9.utils.compose.string
 
 fun main() = application {
     val windowState = rememberWindowState(
@@ -206,14 +218,15 @@ fun main() = application {
 
                 AppTitleBar()
 
-                AppMenuBar(
-                    appTheme,
-                    onShowWindowAppUpdateRequest = {
-                        showDialogWindowAppUpdate = true
-                    }
-                )
-
-                MainScreen()
+                Column {
+                    AppMenuBar(
+                        appTheme,
+                        onShowWindowAppUpdateRequest = {
+                            showDialogWindowAppUpdate = true
+                        }
+                    )
+                    MainScreen()
+                }
             } // end: Window
 
             if (showDialogWindowAppUpdate) {
@@ -239,6 +252,23 @@ fun main() = application {
 fun FrameWindowScope.AppMenuBar(
     appTheme: AppTheme,
     onShowWindowAppUpdateRequest: () -> Unit,
+) {
+    if (hostOs.isWindows) {
+        Surface {
+            Column {
+                AppMenuBarWindows(appTheme, onShowWindowAppUpdateRequest)
+                HorizontalDivider()
+            }
+        }
+    } else {
+        AppMenuBarNative(appTheme, onShowWindowAppUpdateRequest)
+    }
+}
+
+@Composable
+private fun FrameWindowScope.AppMenuBarNative(
+    appTheme: AppTheme,
+    onShowWindowAppUpdateRequest: () -> Unit
 ) {
     MenuBar {
         Menu(Res.string.title_settings.string) {
@@ -314,6 +344,98 @@ fun FrameWindowScope.AppMenuBar(
 }
 
 @Composable
+private fun AppMenuBarWindows(
+    appTheme: AppTheme,
+    onShowWindowAppUpdateRequest: () -> Unit,
+) {
+    Row {
+        EasyDropdownMenu({
+            Text(Res.string.title_settings.string)
+        }) {
+            SubMenu({
+                Text(Res.string.title_settings_theme.string)
+            }) {
+                SubMenu({
+                    Text(Res.string.title_settings_theme.string)
+                }) {
+                    for (themeType in ThemeType.entries) {
+                        RadioButtonItem(
+                            text = { Text(themeType.name) },
+                            selected = appTheme.themeType == themeType,
+                        ) {
+                            AppContainer.config.get().apply {
+                                theme.themeType = themeType
+                            }.also {
+                                AppContainer.config.set(it)
+                            }
+                        }
+                    }
+                }
+                SubMenu({
+                    Text(Res.string.title_settings_dark.string)
+                }) {
+                    CheckboxItem(
+                        text = { Text(Res.string.option_setup_by_system_dark_theme.string) },
+                        checked = {
+                            AppContainer.config.get().setupThemeBySystemDarkTheme
+                        },
+                    ) { checked ->
+                        AppContainer.config.get().apply {
+                            setupThemeBySystemDarkTheme = checked
+                        }.also { config ->
+                            AppContainer.config.set(config)
+                        }
+                    }
+                    Divider()
+                    RadioButtonItem(
+                        text = { Text(Res.string.option_theme_light.string) },
+                        selected = !appTheme.darkTheme,
+                    ) {
+                        AppContainer.config.get().apply {
+                            theme.darkTheme = false
+                        }.also {
+                            AppContainer.config.set(it)
+                        }
+                    }
+                    RadioButtonItem(
+                        text = { Text(Res.string.option_theme_dark.string) },
+                        selected = appTheme.darkTheme,
+                    ) {
+                        AppContainer.config.get().apply {
+                            theme.darkTheme = true
+                        }.also {
+                            AppContainer.config.set(it)
+                        }
+                    }
+                }
+                SubMenu({
+                    Text(Res.string.title_settings_contrast.string)
+                }) {
+                    for (contrastType in ContrastType.entries) {
+                        RadioButtonItem(
+                            text = { Text(contrastType.name) },
+                            selected = appTheme.contrastType == contrastType,
+                        ) {
+                            AppContainer.config.get().apply {
+                                theme.contrastType = contrastType
+                            }.also {
+                                AppContainer.config.set(it)
+                            }
+                        }
+                    }
+                }
+            }
+            Divider()
+            ButtonItem(
+                text = { Text(Res.string.title_check_update.string) },
+            ) {
+                onShowWindowAppUpdateRequest()
+            }
+        }
+    }
+}
+
+@Composable
 fun DecoratedWindowScope.AppTitleBar() {
     val backgroundColor by animateColorAsState(MaterialTheme.colorScheme.background)
     val outlineColor by animateColorAsState(MaterialTheme.colorScheme.outline)
@@ -344,14 +466,12 @@ fun DecoratedWindowScope.AppTitleBar() {
         modifier = Modifier
             .newFullscreenControls(),
     ) {
-        WindowDraggableArea {
-            Surface(color = MaterialTheme.colorScheme.background) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(title)
-                }
+        Surface(color = MaterialTheme.colorScheme.background) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(title)
             }
         }
     }
