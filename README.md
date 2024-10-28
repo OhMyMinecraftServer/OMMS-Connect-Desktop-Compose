@@ -9,8 +9,15 @@
 
 <!-- TOC -->
 * [OMMS Connect Desktop Compose](#omms-connect-desktop-compose)
+  * [JVM 说明](#jvm-说明)
   * [版本说明](#版本说明)
 <!-- TOC -->
+
+## JVM 说明
+
+本项目使用了`jbr (JetBrains Runtime)`的特殊功能，因此必须使用`jbr-17`。
+
+或许可以使用`jbr-21`，但未经测试。
 
 ## 版本说明
 |                                                  发布版本                                                  | 核心版本  | 协议版本[^1] | 对应 OMMS Central 版本[^2] |
