@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "cn.mercury9.omms.connect.desktop"
-version = "1.1.3"
+version = "1.1.4"
 
 repositories {
     mavenCentral()
