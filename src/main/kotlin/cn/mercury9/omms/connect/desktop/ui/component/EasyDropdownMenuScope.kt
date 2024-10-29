@@ -19,9 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cn.mercury9.omms.connect.desktop.resources.Res
-import cn.mercury9.omms.connect.desktop.resources.arrow_right_24px
-import cn.mercury9.omms.connect.desktop.resources.check_24px
+import cn.mercury9.omms.connect.desktop.resources.*
 import cn.mercury9.utils.compose.painter
 
 @Composable
@@ -83,7 +81,7 @@ object EasyDropdownMenuScope {
                         onDismissRequest = { state.value = false },
                         offset = submenuOffset + DpOffset(36.dp, (-44).dp),
                     ) {
-                        content()
+                        PassiveItem(content)
                     }
                 }
             },
