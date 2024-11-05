@@ -1,10 +1,10 @@
 package cn.mercury9.omms.connect.desktop.data
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+@Suppress("MemberVisibilityCanBePrivate")
 object Constants {
     object AppInfo {
-        const val VERSION = "1.1.4"
-        const val CORE_VERSION = "1.5.0"
+        const val VERSION = "1.2.0-alpha01"
+        const val CORE_VERSION = "1.6.1"
         object Github {
             const val REPO_NAME = "OMMS-Connect-Desktop-Compose"
             const val REPO_OWNER = "OhMyMinecraftServer"
