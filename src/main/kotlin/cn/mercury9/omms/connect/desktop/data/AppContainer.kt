@@ -1,8 +1,12 @@
 package cn.mercury9.omms.connect.desktop.data
 
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.WindowState
 import androidx.navigation.NavHostController
+import cn.mercury9.omms.connect.desktop.data.configs.AppConfig
+import cn.mercury9.omms.connect.desktop.data.configs.Data
+import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.component.setupDefaultComponents
 import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
@@ -18,9 +22,6 @@ import java.io.File
 import javax.swing.UIManager.put
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
-import cn.mercury9.omms.connect.desktop.data.configs.AppConfig
-import cn.mercury9.omms.connect.desktop.data.configs.Data
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
 
 object AppContainer {
 
@@ -49,13 +50,16 @@ object AppContainer {
         AppConfig.serializer()
     )
 
+    private val serversMap = mutableStateMapOf<String, OmmsServer>()
+
     @Suppress("UNCHECKED_CAST")
-    val servers = Data(
+    private val serversDate = Data(
         dataDir.resolve("servers.json"),
         mutableMapOf(),
         MapSerializer(String.serializer(), OmmsServer.serializer())
                 as KSerializer<MutableMap<String, OmmsServer>>
     ).apply {
+        serversMap.clear()
         val map = get()
         var flag = false
         map.forEach { (k, v) ->
@@ -64,8 +68,15 @@ object AppContainer {
                 put(k, v.apply { id = k })
             }
         }
+        serversMap.putAll(map)
         if (flag) set(map)
     }
+
+    var servers: MutableMap<String, OmmsServer>
+        get() = serversMap
+        set(value) {
+            serversDate.set(value)
+        }
 
     lateinit var mainWindowState: WindowState
 

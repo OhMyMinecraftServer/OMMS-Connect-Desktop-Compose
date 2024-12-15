@@ -62,9 +62,10 @@ class Data<T : Any>(
     fun get(): T {
         return config
     }
-    fun set(value: T) {
+    fun set(value: T): Data<T> {
         config = value
-        write(value)
+        write()
         callOnConfigChange(value)
+        return this
     }
 }

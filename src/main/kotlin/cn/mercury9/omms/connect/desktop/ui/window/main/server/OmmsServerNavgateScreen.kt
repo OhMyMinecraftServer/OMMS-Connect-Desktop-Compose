@@ -25,13 +25,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlin.time.Duration.Companion.seconds
 import cn.mercury9.omms.connect.desktop.client.omms.endOmmsServerConnection
 import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.chat_24px
+import cn.mercury9.omms.connect.desktop.resources.logout
+import cn.mercury9.omms.connect.desktop.resources.logout_24px
+import cn.mercury9.omms.connect.desktop.resources.monitor_24px
+import cn.mercury9.omms.connect.desktop.resources.sensor_window_24px
+import cn.mercury9.omms.connect.desktop.resources.title_chat
+import cn.mercury9.omms.connect.desktop.resources.title_console
+import cn.mercury9.omms.connect.desktop.resources.title_server
+import cn.mercury9.omms.connect.desktop.resources.title_whitelist
 import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
+import kotlin.time.Duration.Companion.seconds
 
 data object OmmsServerNavRoute {
     const val CONTROLLERS_SCREEN = "CONTROLLERS_SCREEN"
@@ -111,7 +120,7 @@ fun OmmsServerScreenTopBar(
                 )
             }
             Text(
-                text = "${AppContainer.servers.get()[AppContainer.currentOmmsServerId]?.name} ( $serverName )",
+                text = "${AppContainer.servers[AppContainer.currentOmmsServerId]?.name} ( $serverName )",
                 style = MaterialTheme.typography.titleLarge,
             )
         }

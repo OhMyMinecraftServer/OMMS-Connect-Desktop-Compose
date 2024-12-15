@@ -37,19 +37,33 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import cn.mercury9.omms.connect.desktop.client.omms.ConnectionState
 import cn.mercury9.omms.connect.desktop.client.omms.connectOmmsServer
 import cn.mercury9.omms.connect.desktop.data.AppContainer
 import cn.mercury9.omms.connect.desktop.data.CodeLegalState
 import cn.mercury9.omms.connect.desktop.data.checkCode
 import cn.mercury9.omms.connect.desktop.data.getHashedCode
-import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.app_name
+import cn.mercury9.omms.connect.desktop.resources.cancel
+import cn.mercury9.omms.connect.desktop.resources.code
+import cn.mercury9.omms.connect.desktop.resources.confirm
+import cn.mercury9.omms.connect.desktop.resources.error_blank
+import cn.mercury9.omms.connect.desktop.resources.error_unknown_error
+import cn.mercury9.omms.connect.desktop.resources.fail
+import cn.mercury9.omms.connect.desktop.resources.hint_choose_omms_server
+import cn.mercury9.omms.connect.desktop.resources.ic_launcher
+import cn.mercury9.omms.connect.desktop.resources.login
+import cn.mercury9.omms.connect.desktop.resources.login_hint
+import cn.mercury9.omms.connect.desktop.resources.success
+import cn.mercury9.omms.connect.desktop.resources.welcome
+import cn.mercury9.omms.connect.desktop.resources.working
 import cn.mercury9.omms.connect.desktop.ui.window.main.server.OmmsServerNavigateScreen
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun OmmsServerScreen() {
@@ -67,11 +81,11 @@ fun OmmsServerScreen() {
     AppContainer.onChangeCurrentOmmsServer += "OmmsServerScreen-OmmsServerId" to {
         serverId = AppContainer.currentOmmsServerId
         it?.let {
-            serverName = AppContainer.servers.get()[it]!!.name
-            serverIp = AppContainer.servers.get()[it]!!.ip
-            serverPort = AppContainer.servers.get()[it]!!.port
+            serverName = AppContainer.servers[it]!!.name
+            serverIp = AppContainer.servers[it]!!.ip
+            serverPort = AppContainer.servers[it]!!.port
         }
-        serverCodeHashed = AppContainer.servers.get()[it]?.codeHashed
+        serverCodeHashed = AppContainer.servers[it]?.codeHashed
         connectionState = ConnectionState.Idle
     }
 
@@ -260,7 +274,7 @@ fun Welcome(
                                 Res.string.hint_choose_omms_server.string
 
                             is ConnectionState.Connecting ->
-                                Res.string.working.string(AppContainer.servers.get()[state.id]?.name.toString())
+                                Res.string.working.string(AppContainer.servers[state.id]?.name.toString())
 
                             is ConnectionState.Error ->
                                 Res.string.error_unknown_error.string
