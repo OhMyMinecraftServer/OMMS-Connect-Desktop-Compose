@@ -55,8 +55,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServerListSortBy
+import cn.mercury9.omms.connect.desktop.data.config.OmmsServer
+import cn.mercury9.omms.connect.desktop.data.config.OmmsServerListSortBy
+import cn.mercury9.omms.connect.desktop.data.config.configState.AppConfigState
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_24px
 import cn.mercury9.omms.connect.desktop.resources.add_omms_server
@@ -231,10 +232,7 @@ fun OmmsServerListTopBar(
 fun OmmsServerList() {
     if (AppContainer.servers.isNotEmpty()) {
 
-        var sortBy by remember { mutableStateOf(AppContainer.config.get().ommsServerListSortBy) }
-        AppContainer.config.onConfigChange += "OmmsServerSelector-ExpandedOmmsServerList-SortBy" to {
-            sortBy = AppContainer.config.get().ommsServerListSortBy
-        }
+        val sortBy by remember { AppConfigState.ommsServerListSortBy }
 
         var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
         AppContainer.onChangeCurrentOmmsServer += "OmmsServerList-CurrentOmmsServerId" to {

@@ -6,15 +6,26 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import org.jetbrains.skiko.hostOs
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.data.config.configState.AppConfigState
+import cn.mercury9.omms.connect.desktop.data.config.configState.ThemeConfigState
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.option_setup_by_system_dark_theme
+import cn.mercury9.omms.connect.desktop.resources.option_theme_dark
+import cn.mercury9.omms.connect.desktop.resources.option_theme_light
+import cn.mercury9.omms.connect.desktop.resources.title_check_update
+import cn.mercury9.omms.connect.desktop.resources.title_settings
+import cn.mercury9.omms.connect.desktop.resources.title_settings_contrast
+import cn.mercury9.omms.connect.desktop.resources.title_settings_dark
+import cn.mercury9.omms.connect.desktop.resources.title_settings_theme
 import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
 import cn.mercury9.omms.connect.desktop.ui.theme.ContrastType
 import cn.mercury9.omms.connect.desktop.ui.theme.ThemeType
 import cn.mercury9.utils.compose.string
+import org.jetbrains.skiko.hostOs
 
 @Composable
 fun FrameWindowScope.AppMenuBar(
@@ -38,6 +49,11 @@ private fun FrameWindowScope.AppMenuBarNative(
     appTheme: AppTheme,
     onShowWindowAppUpdateRequest: () -> Unit
 ) {
+    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    var configThemeType by ThemeConfigState.themeType
+    var configContrastType by ThemeConfigState.contrastType
+    var configDarkTheme by ThemeConfigState.darkTheme
+
     MenuBar {
         Menu(Res.string.title_settings.string) {
             Menu(Res.string.title_settings_theme.string) {
@@ -47,58 +63,43 @@ private fun FrameWindowScope.AppMenuBarNative(
                             themeType.name,
                             themeType == appTheme.themeType
                         ) {
-                            AppContainer.config.get().apply {
-                                theme.themeType = themeType
-                            }.also {
-                                AppContainer.config.set(it)
-                            }
+                            configThemeType = themeType
+                            ThemeConfigState.saveToConfigFile()
                         }
                     }
                 }
                 Menu(Res.string.title_settings_dark.string) {
                     CheckboxItem(
                         Res.string.option_setup_by_system_dark_theme.string,
-                        AppContainer.config.get().setupThemeBySystemDarkTheme
+                        configSetupThemeBySystemDarkTheme
                     ) {
-                        AppContainer.config.get().apply {
-                            setupThemeBySystemDarkTheme = it
-                        }.also {
-                            AppContainer.config.set(it)
-                        }
+                        configSetupThemeBySystemDarkTheme = it
+                        AppConfigState.saveToConfigFile()
                     }
                     Separator()
                     RadioButtonItem(
                         Res.string.option_theme_light.string,
                         !appTheme.darkTheme
                     ) {
-                        AppContainer.config.get().apply {
-                            theme.darkTheme = false
-                        }.also {
-                            AppContainer.config.set(it)
-                        }
+                        configDarkTheme = false
+                        ThemeConfigState.saveToConfigFile()
                     }
                     RadioButtonItem(
                         Res.string.option_theme_dark.string,
                         appTheme.darkTheme
                     ) {
-                        AppContainer.config.get().apply {
-                            theme.darkTheme = true
-                        }.also {
-                            AppContainer.config.set(it)
-                        }
+                        configDarkTheme = true
+                        ThemeConfigState.saveToConfigFile()
                     }
                 }
                 Menu(Res.string.title_settings_contrast.string) {
-                    for (contrast in ContrastType.entries) {
+                    for (contrastType in ContrastType.entries) {
                         RadioButtonItem(
-                            contrast.name,
-                            contrast == appTheme.contrastType
+                            contrastType.name,
+                            contrastType == appTheme.contrastType
                         ) {
-                            AppContainer.config.get().apply {
-                                theme.contrastType = contrast
-                            }.also {
-                                AppContainer.config.set(it)
-                            }
+                            configContrastType = contrastType
+                            ThemeConfigState.saveToConfigFile()
                         }
                     }
                 }
@@ -116,6 +117,11 @@ private fun AppMenuBarWindows(
     appTheme: AppTheme,
     onShowWindowAppUpdateRequest: () -> Unit,
 ) {
+    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    var configThemeType by ThemeConfigState.themeType
+    var configContrastType by ThemeConfigState.contrastType
+    var configDarkTheme by ThemeConfigState.darkTheme
+
     Row {
         EasyDropdownMenu({
             Text(Res.string.title_settings.string)
@@ -131,11 +137,8 @@ private fun AppMenuBarWindows(
                             text = { Text(themeType.name) },
                             selected = appTheme.themeType == themeType,
                         ) {
-                            AppContainer.config.get().apply {
-                                theme.themeType = themeType
-                            }.also {
-                                AppContainer.config.set(it)
-                            }
+                            configThemeType = themeType
+                            ThemeConfigState.saveToConfigFile()
                         }
                     }
                 }
@@ -145,35 +148,26 @@ private fun AppMenuBarWindows(
                     CheckboxItem(
                         text = { Text(Res.string.option_setup_by_system_dark_theme.string) },
                         checked = {
-                            AppContainer.config.get().setupThemeBySystemDarkTheme
+                            configSetupThemeBySystemDarkTheme
                         },
-                    ) { checked ->
-                        AppContainer.config.get().apply {
-                            setupThemeBySystemDarkTheme = checked
-                        }.also { config ->
-                            AppContainer.config.set(config)
-                        }
+                    ) {
+                        configSetupThemeBySystemDarkTheme = it
+                        AppConfigState.saveToConfigFile()
                     }
                     Divider()
                     RadioButtonItem(
                         text = { Text(Res.string.option_theme_light.string) },
                         selected = !appTheme.darkTheme,
                     ) {
-                        AppContainer.config.get().apply {
-                            theme.darkTheme = false
-                        }.also {
-                            AppContainer.config.set(it)
-                        }
+                        configDarkTheme = false
+                        ThemeConfigState.saveToConfigFile()
                     }
                     RadioButtonItem(
                         text = { Text(Res.string.option_theme_dark.string) },
                         selected = appTheme.darkTheme,
                     ) {
-                        AppContainer.config.get().apply {
-                            theme.darkTheme = true
-                        }.also {
-                            AppContainer.config.set(it)
-                        }
+                        configDarkTheme = true
+                        ThemeConfigState.saveToConfigFile()
                     }
                 }
                 SubMenu({
@@ -184,11 +178,8 @@ private fun AppMenuBarWindows(
                             text = { Text(contrastType.name) },
                             selected = appTheme.contrastType == contrastType,
                         ) {
-                            AppContainer.config.get().apply {
-                                theme.contrastType = contrastType
-                            }.also {
-                                AppContainer.config.set(it)
-                            }
+                            configContrastType = contrastType
+                            ThemeConfigState.saveToConfigFile()
                         }
                     }
                 }

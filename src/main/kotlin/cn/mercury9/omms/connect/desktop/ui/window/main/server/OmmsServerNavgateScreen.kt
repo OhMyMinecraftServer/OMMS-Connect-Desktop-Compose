@@ -86,7 +86,7 @@ fun OmmsServerNavigateScreen() {
 fun OmmsServerScreenTopBar(
     navController: NavHostController,
 ) {
-    val serverName = AppContainer.sessions[AppContainer.currentOmmsServerId]?.serverName
+    val serverName = AppContainer.currentOmmsServerSession?.serverName
 
     fun exitServer() {
         val id = AppContainer.currentOmmsServerId ?: return

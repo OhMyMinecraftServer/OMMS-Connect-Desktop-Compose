@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,7 +35,7 @@ import cn.mercury9.omms.connect.desktop.data.PortLegalState
 import cn.mercury9.omms.connect.desktop.data.checkIp
 import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
+import cn.mercury9.omms.connect.desktop.data.config.OmmsServer
 import cn.mercury9.omms.connect.desktop.data.getHashedCode
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.code
@@ -106,22 +107,20 @@ fun DialogEditOmmsServer(
         }
     }
 
-    val onKeyEventName = "OmmsServerSelector-DialogEditOmmsServer-OnConfirm"
-    AppContainer.onKeyEvent += onKeyEventName to {
-        if (it.key == Key.Enter && it.type == KeyEventType.KeyUp) {
-            onConfirm()
-            AppContainer.onKeyEvent.remove(onKeyEventName)
-            true
-        } else false
-    }
-
     Dialog(
         onDismissRequest = {
-            AppContainer.onKeyEvent.remove(onKeyEventName)
             onDismissRequest()
         }
     ) {
-        ElevatedCard {
+        ElevatedCard(
+            modifier = Modifier
+                .onKeyEvent {
+                    if (it.key == Key.Enter && it.type == KeyEventType.KeyUp) {
+                        onConfirm()
+                        true
+                    } else false
+                }
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier

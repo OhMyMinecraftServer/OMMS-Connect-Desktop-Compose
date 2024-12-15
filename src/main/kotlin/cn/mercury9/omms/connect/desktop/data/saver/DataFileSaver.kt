@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.data.configs
+package cn.mercury9.omms.connect.desktop.data.saver
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.StringFormat
@@ -10,32 +10,25 @@ import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-class Data<T : Any>(
-    val filePath: Path,
-    private val defaultConfig: T,
+class DataFileSaver<T>(
+    private val filePath: Path,
+    private val defaultConfig: () -> T,
     private val serializer: KSerializer<T>,
     private val stringFormat: StringFormat = Json {
         encodeDefaults = true
         ignoreUnknownKeys = true
         prettyPrint = true
     },
-) {
+): DataSaver<T> {
 
     private var config: T = load()
 
-    var onConfigChange: MutableMap<String, (T) -> Unit> = mutableMapOf()
-    private fun callOnConfigChange(value: T) {
-        for (func in onConfigChange.values) {
-            func(value)
-        }
-    }
-
-    fun load(): T {
+    override fun load(): T {
         return try {
             if (filePath.notExists()) {
-                defaultConfig.also {
+                defaultConfig().also {
                     config = it
-                    write(it)
+                    save(it)
                 }
             } else {
                 stringFormat.decodeFromString(serializer, filePath.readText()).also {
@@ -43,29 +36,30 @@ class Data<T : Any>(
                 }
             }
         } catch (e: Exception) {
-            defaultConfig.also {
+            defaultConfig().also {
                 config = it
-                write(it)
+                save(it)
             }
         }
     }
 
-    fun write(config: T?) {
+    private fun save(config: T?): DataFileSaver<T> {
         filePath.deleteIfExists()
         filePath.createFile()
-        filePath.writeText(stringFormat.encodeToString(serializer, config?:defaultConfig))
-    }
-    fun write() {
-        write(config)
+        filePath.writeText(stringFormat.encodeToString(serializer, config?:defaultConfig()))
+        println("write data to $filePath:\n\t $config")
+        return this
     }
 
-    fun get(): T {
+    override fun save(): DataFileSaver<T> =
+        save(config)
+
+    override fun get(): T {
         return config
     }
-    fun set(value: T): Data<T> {
-        config = value
-        write()
-        callOnConfigChange(value)
+    override fun set(data: T): DataFileSaver<T> {
+        config = data
+        save()
         return this
     }
 }

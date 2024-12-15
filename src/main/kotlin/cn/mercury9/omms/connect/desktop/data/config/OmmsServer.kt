@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.data.configs
+package cn.mercury9.omms.connect.desktop.data.config
 
 import kotlinx.serialization.Serializable
 

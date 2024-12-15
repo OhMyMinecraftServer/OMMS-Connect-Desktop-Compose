@@ -54,6 +54,29 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import cn.mercury9.omms.connect.desktop.client.omms.FetchWhitelistState
+import cn.mercury9.omms.connect.desktop.client.omms.addPlayerToWhitelist
+import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.add_24px
+import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
+import cn.mercury9.omms.connect.desktop.resources.cancel
+import cn.mercury9.omms.connect.desktop.resources.cancel_24px
+import cn.mercury9.omms.connect.desktop.resources.close_24px
+import cn.mercury9.omms.connect.desktop.resources.confirm
+import cn.mercury9.omms.connect.desktop.resources.error_blank
+import cn.mercury9.omms.connect.desktop.resources.hint_result_may_need_refresh
+import cn.mercury9.omms.connect.desktop.resources.label_whitelist_player_count
+import cn.mercury9.omms.connect.desktop.resources.player_name
+import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
+import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
+import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
+import cn.mercury9.utils.compose.CardColorSets
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.string
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -63,17 +86,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Tooltip
-import cn.mercury9.omms.connect.desktop.client.omms.FetchWhitelistState
-import cn.mercury9.omms.connect.desktop.client.omms.addPlayerToWhitelist
-import cn.mercury9.omms.connect.desktop.client.omms.fetchWhitelistFromServer
-import cn.mercury9.omms.connect.desktop.client.omms.removePlayerFromWhitelist
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
-import cn.mercury9.utils.compose.CardColorSets
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.string
 
 @Composable
 fun OmmsWhitelistScreen() {
@@ -86,7 +98,7 @@ fun OmmsWhitelistScreen() {
         lastFetched = AppContainer.currentOmmsServerId
         CoroutineScope(Dispatchers.IO).launch {
             fetchWhitelistFromServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId]!!
+                AppContainer.currentOmmsServerSession!!
             ) {
                 fetchWhitelistState = it
             }
@@ -344,7 +356,7 @@ private fun DeletePlayerMenu(
             loading = true
             CoroutineScope(Dispatchers.IO).launch {
                 removePlayerFromWhitelist(
-                    AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                    AppContainer.currentOmmsServerSession!!,
                     whitelistName!!,
                     detailPlayerName
                 ) {
@@ -523,7 +535,7 @@ fun DialogAddPlayerToWhitelist(
                             loading = true
                             CoroutineScope(Dispatchers.IO).launch {
                                 addPlayerToWhitelist(
-                                    AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                                    AppContainer.currentOmmsServerSession!!,
                                     whitelist,
                                     playerName
                                 ) {

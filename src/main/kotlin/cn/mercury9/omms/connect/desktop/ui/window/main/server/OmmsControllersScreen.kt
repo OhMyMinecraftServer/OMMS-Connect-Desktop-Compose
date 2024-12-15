@@ -45,6 +45,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import cn.mercury9.omms.connect.desktop.client.omms.FetchControllerStatusState
+import cn.mercury9.omms.connect.desktop.client.omms.FetchControllersState
+import cn.mercury9.omms.connect.desktop.client.omms.FetchSystemInfoState
+import cn.mercury9.omms.connect.desktop.client.omms.fetchControllerStatusFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.fetchControllersFormServer
+import cn.mercury9.omms.connect.desktop.client.omms.fetchSystemInfoFromServer
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
+import cn.mercury9.omms.connect.desktop.resources.cancel_24px
+import cn.mercury9.omms.connect.desktop.resources.check_circle_fill_24px
+import cn.mercury9.omms.connect.desktop.resources.error
+import cn.mercury9.omms.connect.desktop.resources.error_fill_24px
+import cn.mercury9.omms.connect.desktop.resources.ic_server_default
+import cn.mercury9.omms.connect.desktop.resources.ic_server_fabric
+import cn.mercury9.omms.connect.desktop.resources.ic_server_linux
+import cn.mercury9.omms.connect.desktop.resources.ic_server_windows
+import cn.mercury9.omms.connect.desktop.resources.label_controller_type
+import cn.mercury9.omms.connect.desktop.resources.label_loading
+import cn.mercury9.omms.connect.desktop.resources.label_state_running
+import cn.mercury9.omms.connect.desktop.resources.label_state_stopped
+import cn.mercury9.omms.connect.desktop.resources.load_average
+import cn.mercury9.omms.connect.desktop.resources.memory
+import cn.mercury9.omms.connect.desktop.resources.player_count
+import cn.mercury9.omms.connect.desktop.resources.player_list
+import cn.mercury9.omms.connect.desktop.resources.refresh_24px
+import cn.mercury9.omms.connect.desktop.resources.remain
+import cn.mercury9.omms.connect.desktop.resources.server
+import cn.mercury9.omms.connect.desktop.resources.status_waiting
+import cn.mercury9.omms.connect.desktop.resources.swap
+import cn.mercury9.omms.connect.desktop.resources.total
+import cn.mercury9.omms.connect.desktop.resources.unavailable
+import cn.mercury9.omms.connect.desktop.resources.used
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.string
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import icu.takeneko.omms.client.data.controller.Controller
@@ -54,17 +90,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import cn.mercury9.omms.connect.desktop.client.omms.FetchControllerStatusState
-import cn.mercury9.omms.connect.desktop.client.omms.FetchControllersState
-import cn.mercury9.omms.connect.desktop.client.omms.FetchSystemInfoState
-import cn.mercury9.omms.connect.desktop.client.omms.fetchControllerStatusFromServer
-import cn.mercury9.omms.connect.desktop.client.omms.fetchControllersFormServer
-import cn.mercury9.omms.connect.desktop.client.omms.fetchSystemInfoFromServer
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.string
 
 @Composable
 fun OmmsControllersScreen() {
@@ -80,7 +105,7 @@ fun OmmsControllersScreen() {
         lastFetchedController = AppContainer.currentOmmsServerId
         CoroutineScope(Dispatchers.IO).launch {
             fetchControllersFormServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
+                AppContainer.currentOmmsServerSession!!
             ) {
                 fetchControllersState = it
             }
@@ -93,7 +118,7 @@ fun OmmsControllersScreen() {
         lastFetchedServerInfo = AppContainer.currentOmmsServerId
         CoroutineScope(Dispatchers.IO).launch {
             fetchSystemInfoFromServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!
+                AppContainer.currentOmmsServerSession!!
             ) {
                 fetchSystemInfoState = it
             }
@@ -503,7 +528,7 @@ fun OmmsServerController(
     }
     CoroutineScope(Dispatchers.IO).launch {
         fetchControllerStatusFromServer(
-            AppContainer.sessions[AppContainer.currentOmmsServerId!!]!!,
+            AppContainer.currentOmmsServerSession!!,
             controller.id
         ) {
             fetchControllerStatusState = it

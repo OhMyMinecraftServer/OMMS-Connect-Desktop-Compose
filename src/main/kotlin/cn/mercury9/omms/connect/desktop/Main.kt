@@ -10,6 +10,23 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.data.config.configState.AppConfigState
+import cn.mercury9.omms.connect.desktop.data.config.configState.ThemeConfigState
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.app_name
+import cn.mercury9.omms.connect.desktop.resources.ic_launcher
+import cn.mercury9.omms.connect.desktop.resources.title_check_update
+import cn.mercury9.omms.connect.desktop.ui.component.AppMenuBar
+import cn.mercury9.omms.connect.desktop.ui.component.AppTitleBar
+import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
+import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
+import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
+import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
+import cn.mercury9.utils.compose.fitScreenEdge
+import cn.mercury9.utils.compose.painter
+import cn.mercury9.utils.compose.setMinimumSize
+import cn.mercury9.utils.compose.string
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -24,17 +41,6 @@ import org.jetbrains.jewel.intui.window.styling.light
 import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.DecoratedWindow
 import org.jetbrains.jewel.window.styling.TitleBarStyle
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.AppMenuBar
-import cn.mercury9.omms.connect.desktop.ui.component.AppTitleBar
-import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
-import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
-import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
-import cn.mercury9.utils.compose.fitScreenEdge
-import cn.mercury9.utils.compose.painter
-import cn.mercury9.utils.compose.setMinimumSize
-import cn.mercury9.utils.compose.string
 
 fun main() = application {
     val windowState = rememberWindowState(
@@ -43,27 +49,31 @@ fun main() = application {
     AppContainer.mainWindowState = windowState
 
     val isSystemInDarkTheme = isSystemInDarkTheme()
-    var appTheme by remember { mutableStateOf(
-        AppContainer.config.get().theme.appTheme().apply {
-            if (AppContainer.config.get().setupThemeBySystemDarkTheme) {
-                darkTheme = isSystemInDarkTheme
-            }
-        }
-    ) }
+
+    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    var configThemeType by ThemeConfigState.themeType
+    var configContrastType by ThemeConfigState.contrastType
+    var configDarkTheme by ThemeConfigState.darkTheme
+
+    val appTheme = AppTheme(
+        configDarkTheme,
+        configThemeType,
+        configContrastType,
+    )
+
+    if (configSetupThemeBySystemDarkTheme) {
+        configDarkTheme = isSystemInDarkTheme
+    }
 
     val textStyle = JewelTheme.createDefaultTextStyle()
     val editorStyle = JewelTheme.createEditorTextStyle()
 
     val themeDefinition =
-        if (appTheme.darkTheme) {
+        if (configDarkTheme) {
             JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
         } else {
             JewelTheme.lightThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
         }
-
-    AppContainer.config.onConfigChange += "Main_AppTheme" to {
-        appTheme = AppContainer.config.get().theme.appTheme()
-    }
 
     fun onCloseRequest() {
         for (session in AppContainer.sessions.values) {
@@ -80,7 +90,7 @@ fun main() = application {
             styling = ComponentStyling.default()
                 .decoratedWindow(
                     titleBarStyle =
-                    if (appTheme.darkTheme) TitleBarStyle.dark()
+                    if (configDarkTheme) TitleBarStyle.dark()
                     else TitleBarStyle.light(),
                 )
         ) {
@@ -89,13 +99,6 @@ fun main() = application {
                 state = windowState,
                 title = stringResource(Res.string.app_name),
                 icon = Res.drawable.ic_launcher.painter,
-                onKeyEvent = {
-                    var flag = false
-                    for (handler in AppContainer.onKeyEvent.values) {
-                        if (handler(it)) flag = true
-                    }
-                    return@DecoratedWindow flag
-                },
             ) {
                 setMinimumSize(916.dp, 687.dp)
 

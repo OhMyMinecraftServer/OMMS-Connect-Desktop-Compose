@@ -40,6 +40,15 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import cn.mercury9.omms.connect.desktop.client.omms.FetchChatHistoryState
+import cn.mercury9.omms.connect.desktop.client.omms.fetchChatHistoryFromServer
+import cn.mercury9.omms.connect.desktop.client.omms.sendChatMessage
+import cn.mercury9.omms.connect.desktop.data.AppContainer
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
+import cn.mercury9.omms.connect.desktop.resources.send_24px
+import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
+import cn.mercury9.utils.compose.painter
 import icu.takeneko.omms.client.data.chatbridge.Broadcast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,13 +56,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import java.time.Duration
-import cn.mercury9.omms.connect.desktop.client.omms.FetchChatHistoryState
-import cn.mercury9.omms.connect.desktop.client.omms.fetchChatHistoryFromServer
-import cn.mercury9.omms.connect.desktop.client.omms.sendChatMessage
-import cn.mercury9.omms.connect.desktop.data.AppContainer
-import cn.mercury9.omms.connect.desktop.resources.*
-import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
-import cn.mercury9.utils.compose.painter
 
 @Composable
 fun OmmsChatScreen() {
@@ -67,7 +69,7 @@ fun OmmsChatScreen() {
         lastFetched = AppContainer.currentOmmsServerId
         CoroutineScope(Dispatchers.IO).launch {
             fetchChatHistoryFromServer(
-                AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                AppContainer.currentOmmsServerSession!!,
             ) {
                 fetchChatHistoryState = it
             }
@@ -79,7 +81,7 @@ fun OmmsChatScreen() {
             while (true) {
                 delay(Duration.ofSeconds(1))
                 fetchChatHistoryFromServer(
-                    AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                    AppContainer.currentOmmsServerSession!!,
                 ) {
                     if (it is FetchChatHistoryState.Success) {
                         fetchChatHistoryState = it
@@ -109,7 +111,7 @@ fun OmmsChatSpace(
         val message = messageToSend
         CoroutineScope(Dispatchers.IO).launch {
             sendChatMessage(
-                AppContainer.sessions[AppContainer.currentOmmsServerId]!!,
+                AppContainer.currentOmmsServerSession!!,
                 "GLOBAL",
                 message
             )

@@ -33,7 +33,7 @@ import cn.mercury9.omms.connect.desktop.data.PortLegalState
 import cn.mercury9.omms.connect.desktop.data.checkIp
 import cn.mercury9.omms.connect.desktop.data.checkName
 import cn.mercury9.omms.connect.desktop.data.checkPort
-import cn.mercury9.omms.connect.desktop.data.configs.OmmsServer
+import cn.mercury9.omms.connect.desktop.data.config.OmmsServer
 import cn.mercury9.omms.connect.desktop.data.getHashedCode
 import cn.mercury9.omms.connect.desktop.resources.Res
 import cn.mercury9.omms.connect.desktop.resources.add_omms_server
