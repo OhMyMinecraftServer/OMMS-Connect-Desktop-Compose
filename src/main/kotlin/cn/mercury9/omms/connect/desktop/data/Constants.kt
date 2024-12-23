@@ -9,8 +9,8 @@ import kotlin.io.path.pathString
 object Constants {
     object AppInfo {
         const val PACKAGE_NAME = "cn.mercury9.omms.connect.desktop"
-        const val VERSION = "1.2.0-alpha01"
-        const val CORE_VERSION = "1.6.1"
+        const val VERSION = "1.2.0"
+        const val CORE_VERSION = "1.7.0"
         object Github {
             const val REPO_NAME = "OMMS-Connect-Desktop-Compose"
             const val REPO_OWNER = "OhMyMinecraftServer"
@@ -24,7 +24,7 @@ object Constants {
             Path(System.getProperty("user.home"))
                 .resolve(
                     if (hostOs.isMacOS) {
-                        ".config/cn.mercury9.omms.connect.desktop"
+                        ".config/${AppInfo.PACKAGE_NAME}"
                     } else {
                         ".OmmsConnectDesktop"
                     }
@@ -36,11 +36,11 @@ object Constants {
             Path(System.getProperty("user.home"))
                 .resolve(
                     if (hostOs.isMacOS) {
-                        "Library/Caches/cn.mercury9.omms.connect.desktop"
+                        "Library/Caches/${AppInfo.PACKAGE_NAME}"
                     } else if (hostOs.isWindows) {
                         ".OmmsConnectDesktop/.cache"
                     } else {
-                        ".cache/cn.mercury9.omms.connect.desktop"
+                        ".cache/${AppInfo.PACKAGE_NAME}"
                     }
                 )
                 .also {

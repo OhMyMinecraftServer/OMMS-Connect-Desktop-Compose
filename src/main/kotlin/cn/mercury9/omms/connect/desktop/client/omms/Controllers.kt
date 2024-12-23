@@ -23,7 +23,7 @@ suspend fun fetchControllersFormServer(
         try {
             ensureActive()
             future {
-                session.fetchControllersFromServer {
+                session.fetchControllersFromServer().thenApply {
                     try {
                         stateListener(FetchControllersState.Success(it))
                     } catch (e: Throwable) {
@@ -50,18 +50,10 @@ suspend fun fetchControllerStatusFromServer(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            ensureActive()
-            future {
-                try {
-                    session.fetchControllerStatus(
-                        controllerId,
-                        {stateListener(FetchControllerStatusState.Success(it))},
-                        {stateListener(FetchControllerStatusState.Error(Exception(it)))},
-                    )
-                } catch (e: Throwable) {
-                    stateListener(FetchControllerStatusState.Error(e))
-                }
-            }.orTimeout(3, TimeUnit.MINUTES)
+            session.fetchControllerStatus(controllerId)
+                .thenAccept { status ->
+                    stateListener(FetchControllerStatusState.Success(status))
+                }.orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {
             stateListener(FetchControllerStatusState.Error(e))
         }

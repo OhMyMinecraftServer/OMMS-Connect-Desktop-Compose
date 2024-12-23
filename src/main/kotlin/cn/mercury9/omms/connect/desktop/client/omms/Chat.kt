@@ -22,7 +22,7 @@ suspend fun fetchChatHistoryFromServer(
         try {
             ensureActive()
             future {
-                session.getChatHistory {
+                session.chatHistory.thenAccept {
                     try {
                         stateListener(FetchChatHistoryState.Success(it))
                     } catch (e: Throwable) {
@@ -40,9 +40,8 @@ suspend fun sendChatMessage(
     session: ClientSession,
     channel: String,
     message: String,
-    callback: (String, String) -> Unit = { _, _ -> }
 ) {
     withContext(Dispatchers.IO) {
-        session.sendChatbridgeMessage(channel, message, callback)
+        session.sendChatbridgeMessage(channel, message)
     }
 }

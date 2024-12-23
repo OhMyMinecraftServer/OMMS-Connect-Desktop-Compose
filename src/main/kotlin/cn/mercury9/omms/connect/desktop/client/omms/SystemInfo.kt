@@ -3,8 +3,6 @@ package cn.mercury9.omms.connect.desktop.client.omms
 import icu.takeneko.omms.client.data.system.SystemInfo
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.future.future
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
@@ -20,15 +18,8 @@ suspend fun fetchSystemInfoFromServer(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            ensureActive()
-            future {
-                session.fetchSystemInfoFromServer {
-                    try {
-                        stateListener(FetchSystemInfoState.Success(it))
-                    } catch (e: Throwable) {
-                        stateListener(FetchSystemInfoState.Error(e))
-                    }
-                }
+            session.fetchSystemInfoFromServer().thenAccept {
+                stateListener(FetchSystemInfoState.Success(it))
             }.orTimeout(1, TimeUnit.MINUTES)
         } catch (e: Throwable) {
             stateListener(FetchSystemInfoState.Error(e))

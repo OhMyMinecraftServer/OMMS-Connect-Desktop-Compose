@@ -15,13 +15,14 @@
 
 ## JVM 说明
 
-本项目使用了`jbr (JetBrains Runtime)`的特殊功能，因此必须使用`jbr-17`。
+本项目使用了[`jbr (JetBrains Runtime)`](https://github.com/JetBrains/JetBrainsRuntime)的特殊功能，因此必须使用`jbr-17`。
 
 或许可以使用`jbr-21`，但未经测试。
 
 ## 版本说明
 |                                                  发布版本                                                  | 核心版本  | 协议版本[^1] | 对应 OMMS Central 版本[^2] |
 |:------------------------------------------------------------------------------------------------------:|:-----:|:--------:|:----------------------:|
+|   [v1.2.x](https://github.com/OhMyMinecraftServer/OMMS-Connect-Desktop-Compose/releases/tag/v1.2.0)    | 1.7.0 |  0x0012  |         1.7.0+         |
 |   [v1.1.x](https://github.com/OhMyMinecraftServer/OMMS-Connect-Desktop-Compose/releases/tag/v1.1.4)    | 1.5.0 |  0x0011  |     1.5.0 - 1.5.3      |
 | [v1.0.x](https://github.com/OhMyMinecraftServer/OMMS-Connect-Desktop-Compose/releases/tag/v1.0.0-beta) | 1.1.2 |  0x0007  |     0.16.1 - 1.2.0     |
 

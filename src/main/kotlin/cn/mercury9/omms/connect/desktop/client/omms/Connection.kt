@@ -48,7 +48,7 @@ fun endOmmsServerConnection(
     callback: (String) -> Unit
 ) {
     try {
-        session.close(callback)
+        session.close()
     } catch (e: Exception) {
         callback(e.localizedMessage)
     }

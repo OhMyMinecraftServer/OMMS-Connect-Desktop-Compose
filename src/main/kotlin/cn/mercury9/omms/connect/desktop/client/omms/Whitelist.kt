@@ -2,7 +2,6 @@ package cn.mercury9.omms.connect.desktop.client.omms
 
 import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.future.future
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
@@ -18,17 +17,11 @@ suspend fun fetchWhitelistFromServer(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            future {
-                try {
-                    session.fetchWhitelistFromServer {
-                        stateListener(FetchWhitelistState.Success(it))
-                    }
-                } catch (e: Throwable) {
-                    stateListener(FetchWhitelistState.Error(RuntimeException(e)))
-                }
+            session.fetchWhitelistFromServer().thenAccept {
+                stateListener(FetchWhitelistState.Success(it))
             }.orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {
-            stateListener(FetchWhitelistState.Error(e))
+            stateListener(FetchWhitelistState.Error(RuntimeException(e)))
         }
     }
 }
@@ -41,18 +34,10 @@ suspend fun addPlayerToWhitelist(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            future {
-                session.addToWhitelist(
-                    whitelist,
-                    player,
-                    { a, b ->
-                        stateListener("$a\n$b")
-                    },
-                    { a, b ->
-                        stateListener("$a\n$b")
-                    },
-                )
-            }.orTimeout(3, TimeUnit.MINUTES)
+            session.addToWhitelist(
+                whitelist,
+                player,
+            ).orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {
             stateListener(e.toString())
         }
@@ -67,18 +52,10 @@ suspend fun removePlayerFromWhitelist(
 ) {
     withContext(Dispatchers.IO) {
         try {
-            future {
-                session.removeFromWhitelist(
-                    whitelist,
-                    player,
-                    { a, b ->
-                        stateListener("$a\n$b")
-                    },
-                    { a, b ->
-                        stateListener("$a\n$b")
-                    },
-                )
-            }.orTimeout(3, TimeUnit.MINUTES)
+            session.removeFromWhitelist(
+                whitelist,
+                player,
+            ).orTimeout(3, TimeUnit.MINUTES)
         } catch (e: Throwable) {
             stateListener(e.toString())
         }

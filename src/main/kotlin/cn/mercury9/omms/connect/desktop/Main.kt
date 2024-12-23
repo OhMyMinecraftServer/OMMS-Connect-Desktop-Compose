@@ -77,7 +77,7 @@ fun main() = application {
 
     fun onCloseRequest() {
         for (session in AppContainer.sessions.values) {
-            session.close {}
+            session.close()
         }
         exitApplication()
     }

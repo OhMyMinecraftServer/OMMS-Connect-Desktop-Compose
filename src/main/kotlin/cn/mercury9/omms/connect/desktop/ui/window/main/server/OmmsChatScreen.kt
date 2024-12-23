@@ -49,7 +49,7 @@ import cn.mercury9.omms.connect.desktop.resources.arrow_back_24px
 import cn.mercury9.omms.connect.desktop.resources.send_24px
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerHeadImage
 import cn.mercury9.utils.compose.painter
-import icu.takeneko.omms.client.data.chatbridge.Broadcast
+import icu.takeneko.omms.client.data.chatbridge.ChatMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -169,7 +169,7 @@ fun OmmsChatSpace(
 
 @Composable
 fun OmmsChatHistory(
-    history: List<Broadcast>
+    history: List<ChatMessage>
 ) {
     val scrollState = rememberLazyListState()
 //    var isAutoScrollEnable by remember { mutableStateOf(false) }

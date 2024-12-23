@@ -11,7 +11,7 @@ image-loader = "1.8.2"
 haze = "0.9.0-beta04.1"
 jewel = "0.26.2"
 
-omms-client-core = "1.6.1"
+omms-client-core = "1.7.0"
 gson = "2.11.0"
 
 [libraries]
