@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +68,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OmmsServerScreen() {
-    var serverId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
+    var serverId by AppContainer.currentOmmsServerId
 
     var serverName by remember { mutableStateOf("") }
     var serverIp by remember { mutableStateOf("") }
@@ -78,14 +79,13 @@ fun OmmsServerScreen() {
 
     var currentConnectedServerId: String? by remember { mutableStateOf(null) }
 
-    AppContainer.onChangeCurrentOmmsServer += "OmmsServerScreen-OmmsServerId" to {
-        serverId = AppContainer.currentOmmsServerId
-        it?.let {
+    LaunchedEffect(serverId) {
+        serverId?.let {
             serverName = AppContainer.servers[it]!!.name
             serverIp = AppContainer.servers[it]!!.ip
             serverPort = AppContainer.servers[it]!!.port
         }
-        serverCodeHashed = AppContainer.servers[it]?.codeHashed
+        serverCodeHashed = AppContainer.servers[serverId]?.codeHashed
         connectionState = ConnectionState.Idle
     }
 
@@ -94,7 +94,7 @@ fun OmmsServerScreen() {
             DialogInputOmmsServerCode({ code ->
                 serverCodeHashed = getHashedCode(code)
             }) {
-                AppContainer.currentOmmsServerId = null
+                serverId = null
                 serverCodeHashed = null
             }
         } else {
@@ -226,10 +226,11 @@ fun Welcome(
             state.e
         ) {
             flagOpenErrorDialog = false
-            AppContainer.currentOmmsServerId = null
+            AppContainer.currentOmmsServerId.value = null
         }
     }
-    AppContainer.onChangeCurrentOmmsServer += "OmmsServerScreen-DialogInputOmmsServerCode-flagOpenErrorDialog" to {
+
+    LaunchedEffect(AppContainer.currentOmmsServerId) {
         flagOpenErrorDialog = true
     }
 

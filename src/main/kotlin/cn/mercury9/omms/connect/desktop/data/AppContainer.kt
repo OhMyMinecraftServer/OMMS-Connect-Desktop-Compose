@@ -1,6 +1,7 @@
 package cn.mercury9.omms.connect.desktop.data
 
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.window.WindowState
 import androidx.navigation.NavHostController
 import cn.mercury9.omms.connect.desktop.data.config.OmmsServer
@@ -71,17 +72,10 @@ object AppContainer {
         }
     }
 
-    val onChangeCurrentOmmsServer: MutableMap<String, (String?) -> Unit> = mutableMapOf()
-    var currentOmmsServerId: String? = null
-        set(value) {
-            field = value
-            for (func in onChangeCurrentOmmsServer.values) {
-                func(value)
-            }
-        }
+    var currentOmmsServerId = mutableStateOf<String?>(null)
 
     val currentOmmsServerSession: ClientSession?
-        get() = sessions[currentOmmsServerId]
+        get() = sessions[currentOmmsServerId.value]
 
     val sessions: MutableMap<String, ClientSession> = mutableMapOf()
 }

@@ -234,10 +234,7 @@ fun OmmsServerList() {
 
         val sortBy by remember { AppConfigState.ommsServerListSortBy }
 
-        var currentOmmsServerId by remember { mutableStateOf(AppContainer.currentOmmsServerId) }
-        AppContainer.onChangeCurrentOmmsServer += "OmmsServerList-CurrentOmmsServerId" to {
-            currentOmmsServerId = AppContainer.currentOmmsServerId
-        }
+        var currentOmmsServerId by AppContainer.currentOmmsServerId
 
         LazyColumn {
             items(
@@ -336,7 +333,7 @@ fun OmmsServerItem(
                     IconButton(
                         enabled = server.id != currentServerId,
                         onClick = {
-                            AppContainer.currentOmmsServerId = server.id
+                            AppContainer.currentOmmsServerId.value = server.id
                         }
                     ) {
                         Icon(Res.drawable.send_24px.painter, Res.string.login.string)

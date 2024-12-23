@@ -89,14 +89,15 @@ fun OmmsServerScreenTopBar(
     val serverName = AppContainer.currentOmmsServerSession?.serverName
 
     fun exitServer() {
-        val id = AppContainer.currentOmmsServerId ?: return
+        val id by AppContainer.currentOmmsServerId
+        id ?: return
         val session = AppContainer.sessions[id] ?: return
         endOmmsServerConnection(session) {
             try {
                 navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
             } catch (_: Throwable) {}
             AppContainer.sessions.remove(id)
-            AppContainer.currentOmmsServerId = null
+            AppContainer.currentOmmsServerId.value = null
         }
     }
 
@@ -120,7 +121,7 @@ fun OmmsServerScreenTopBar(
                 )
             }
             Text(
-                text = "${AppContainer.servers[AppContainer.currentOmmsServerId]?.name} ( $serverName )",
+                text = "${AppContainer.servers[AppContainer.currentOmmsServerId.value]?.name} ( $serverName )",
                 style = MaterialTheme.typography.titleLarge,
             )
         }
