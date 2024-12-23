@@ -14,7 +14,6 @@ import icu.takeneko.omms.client.session.ClientSession
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import okio.Path.Companion.toOkioPath
-import javax.swing.UIManager.put
 import kotlin.io.path.Path
 
 object AppContainer {
@@ -26,12 +25,12 @@ object AppContainer {
         ::mutableMapOf,
         MapSerializer(String.serializer(), OmmsServer.serializer())
     ).apply {
-        val map = get()
+        val map = get().toMutableMap()
         var flag = false
         map.forEach { (k, v) ->
             if (v.id != k) {
                 flag = true
-                put(k, v.apply { id = k })
+                map[k] = v.apply { id = k }
             }
         }
         serversMap.putAll(map)
