@@ -27,7 +27,6 @@ imageLoader-imageio = { group = "io.github.qdsfdhvh", name = "image-loader-exten
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
 
-jewel-intUi = { group = "org.jetbrains.jewel", name = "jewel-int-ui-standalone-243", version.ref = "jewel" }
 jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window-243", version.ref = "jewel" }
 
 omms-client-core = { module = "icu.takeneko:omms-client-core", version.ref = "omms-client-core"}

@@ -36,7 +36,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.timedate)
 
-    implementation(libs.jewel.intUi)
     implementation(libs.jewel.decoratedWindow)
 
     api(libs.imageLoader.core)

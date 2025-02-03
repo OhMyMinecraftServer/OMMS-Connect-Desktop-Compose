@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.window.main.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server.controller
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.button_send
+import cn.mercury9.omms.connect.desktop.resources.send_24px
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 

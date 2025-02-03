@@ -1,13 +1,11 @@
 package cn.mercury9.omms.connect.desktop.ui.component
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -20,10 +18,11 @@ import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 @Composable
 fun DecoratedWindowScope.AppTitleBar() {
-    val backgroundColor by animateColorAsState(MaterialTheme.colorScheme.background)
-    val outlineColor by animateColorAsState(MaterialTheme.colorScheme.outline)
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val outlineColor = MaterialTheme.colorScheme.outline
     TitleBar(
         style = TitleBarStyle(
+            // region params
             colors = TitleBarColors(
                 background = backgroundColor,
                 inactiveBackground = backgroundColor,
@@ -45,6 +44,7 @@ fun DecoratedWindowScope.AppTitleBar() {
             iconButtonStyle = JewelTheme.defaultTitleBarStyle.iconButtonStyle,
             paneButtonStyle = JewelTheme.defaultTitleBarStyle.paneButtonStyle,
             paneCloseButtonStyle = JewelTheme.defaultTitleBarStyle.paneCloseButtonStyle
+            // endregion
         ),
         modifier = Modifier
             .newFullscreenControls(),

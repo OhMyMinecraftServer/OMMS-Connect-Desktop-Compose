@@ -34,26 +34,55 @@ import cn.mercury9.omms.connect.desktop.resources.logout_24px
 import cn.mercury9.omms.connect.desktop.resources.monitor_24px
 import cn.mercury9.omms.connect.desktop.resources.sensor_window_24px
 import cn.mercury9.omms.connect.desktop.resources.title_chat
-import cn.mercury9.omms.connect.desktop.resources.title_console
 import cn.mercury9.omms.connect.desktop.resources.title_server
 import cn.mercury9.omms.connect.desktop.resources.title_whitelist
 import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
+import cn.mercury9.omms.connect.desktop.ui.window.main.server.chat.OmmsChatScreen
+import cn.mercury9.omms.connect.desktop.ui.window.main.server.controller.OmmsControllersScreen
+import cn.mercury9.omms.connect.desktop.ui.window.main.server.whitelist.OmmsWhitelistScreen
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 import kotlin.time.Duration.Companion.seconds
 
-data object OmmsServerNavRoute {
-    const val CONTROLLERS_SCREEN = "CONTROLLERS_SCREEN"
-    const val WHITELIST_SCREEN = "WHITELIST_SCREEN"
-    const val CHAT_SCREEN = "CHAT_SCREEN"
-    const val CONSOLE_SCREEN = "CONSOLE_SCREEN"
-}
-
 data class NavigationTarget(
-    val navRoute: String,
     val name: String,
     val icon: Painter,
+    val composable: @Composable () -> Unit
 )
+
+enum class OmmsServerNavRoute {
+    CONTROLLERS_SCREEN,
+    WHITELIST_SCREEN,
+    CHAT_SCREEN,
+    ;
+    companion object {
+        @Composable
+        fun getTarget(route: OmmsServerNavRoute): NavigationTarget {
+            return when (route) {
+                CONTROLLERS_SCREEN -> NavigationTarget(
+                    Res.string.title_server.string,
+                    Res.drawable.monitor_24px.painter,
+                ) {
+                    OmmsControllersScreen()
+                }
+
+                WHITELIST_SCREEN -> NavigationTarget(
+                    Res.string.title_whitelist.string,
+                    Res.drawable.sensor_window_24px.painter,
+                ) {
+                    OmmsWhitelistScreen()
+                }
+
+                CHAT_SCREEN -> NavigationTarget(
+                    Res.string.title_chat.string,
+                    Res.drawable.chat_24px.painter,
+                ) {
+                    OmmsChatScreen()
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun OmmsServerNavigateScreen() {
@@ -64,19 +93,12 @@ fun OmmsServerNavigateScreen() {
         HorizontalDivider()
         NavHost(
             navController,
-            startDestination = OmmsServerNavRoute.CONTROLLERS_SCREEN
+            startDestination = OmmsServerNavRoute.CONTROLLERS_SCREEN.name
         ) {
-            composable(OmmsServerNavRoute.CONTROLLERS_SCREEN) {
-                OmmsControllersScreen()
-            }
-            composable(OmmsServerNavRoute.WHITELIST_SCREEN) {
-                OmmsWhitelistScreen()
-            }
-            composable(OmmsServerNavRoute.CHAT_SCREEN) {
-                OmmsChatScreen()
-            }
-            composable(OmmsServerNavRoute.CONSOLE_SCREEN) {
-                OmmsConsoleScreen()
+            OmmsServerNavRoute.entries.forEach { route ->
+                composable(route.name) {
+                    OmmsServerNavRoute.getTarget(route).composable()
+                }
             }
         }
     }
@@ -93,9 +115,7 @@ fun OmmsServerScreenTopBar(
         id ?: return
         val session = AppContainer.sessions[id] ?: return
         endOmmsServerConnection(session) {
-            try {
-                navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN)
-            } catch (_: Throwable) {}
+            navController.clearBackStack(OmmsServerNavRoute.CONTROLLERS_SCREEN.name)
             AppContainer.sessions.remove(id)
             AppContainer.currentOmmsServerId.value = null
         }
@@ -125,7 +145,7 @@ fun OmmsServerScreenTopBar(
                 style = MaterialTheme.typography.titleLarge,
             )
         }
-        OmmsServerScreenTopBarNavigateButtons(
+        OmmsServerScreenNavigationBar(
             navController,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -135,46 +155,25 @@ fun OmmsServerScreenTopBar(
 }
 
 @Composable
-fun OmmsServerScreenTopBarNavigateButtons(
+fun OmmsServerScreenNavigationBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val navigationTargets = listOf(
-        NavigationTarget(
-            OmmsServerNavRoute.CONTROLLERS_SCREEN,
-            Res.string.title_server.string,
-            Res.drawable.monitor_24px.painter
-        ),
-        NavigationTarget(
-            OmmsServerNavRoute.WHITELIST_SCREEN,
-            Res.string.title_whitelist.string,
-            Res.drawable.sensor_window_24px.painter
-        ),
-        NavigationTarget(
-            OmmsServerNavRoute.CHAT_SCREEN,
-            Res.string.title_chat.string,
-            Res.drawable.chat_24px.painter
-        ),
-        NavigationTarget(
-            OmmsServerNavRoute.CONSOLE_SCREEN,
-            Res.string.title_console.string,
-            Res.drawable.monitor_24px.painter
-        )
-    )
     var current by remember { mutableStateOf(OmmsServerNavRoute.CONTROLLERS_SCREEN) }
-    fun navigate(route: String) {
-        navController.navigate(route)
+    fun navigate(route: OmmsServerNavRoute) {
+        navController.navigate(route.name)
         current = route
     }
     Row (
         modifier = modifier
-                .size((80 * navigationTargets.size).dp, 64.dp),
+                .size((80 * OmmsServerNavRoute.entries.size).dp, 64.dp),
     ) {
-        for (target in navigationTargets) {
+        OmmsServerNavRoute.entries.forEach { route ->
+            val target = OmmsServerNavRoute.getTarget(route)
             NavigationBarItem(
-                selected = current == target.navRoute,
+                selected = current == route,
                 onClick = {
-                    navigate(target.navRoute)
+                    navigate(route)
                 },
                 icon = {
                     Icon(

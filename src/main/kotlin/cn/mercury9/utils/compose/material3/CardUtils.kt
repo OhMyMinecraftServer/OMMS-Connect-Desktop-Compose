@@ -1,4 +1,4 @@
-package cn.mercury9.utils.compose
+package cn.mercury9.utils.compose.material3
 
 import androidx.compose.material3.CardColors
 import androidx.compose.ui.graphics.Color

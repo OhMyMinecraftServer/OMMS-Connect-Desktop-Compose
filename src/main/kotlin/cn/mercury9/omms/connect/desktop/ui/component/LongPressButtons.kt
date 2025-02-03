@@ -7,6 +7,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,15 @@ fun LongPressIconButton(
 
     var pressedTime by remember { mutableStateOf(0.milliseconds) }
     var lastPressedInstant by remember { mutableStateOf(null as Instant?) }
+    var progress by remember { mutableStateOf(0f) }
+
+    LaunchedEffect(pressedTime) {
+        progress = (pressedTime / responseTime).toFloat()
+        onProgressChange(progress)
+        if (pressedTime > responseTime) {
+            onClick()
+        }
+    }
 
     if (isPressed) {
         val now = Clock.System.now()
@@ -58,10 +68,6 @@ fun LongPressIconButton(
         }
         lastPressedInstant = now
     }
-
-    var progress by remember { mutableStateOf(0f) }
-    progress = (pressedTime / responseTime).toFloat()
-    onProgressChange(progress)
 
     Box {
         IconButton(

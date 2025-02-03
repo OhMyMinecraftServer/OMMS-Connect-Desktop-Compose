@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.window.main.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server.whitelist
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -74,7 +74,8 @@ import cn.mercury9.omms.connect.desktop.resources.title_add_player_to_whitelist
 import cn.mercury9.omms.connect.desktop.resources.title_remove_player_from_whitelist
 import cn.mercury9.omms.connect.desktop.ui.component.LongPressIconButton
 import cn.mercury9.omms.connect.desktop.ui.component.PlayerCard
-import cn.mercury9.utils.compose.CardColorSets
+import cn.mercury9.omms.connect.desktop.ui.window.main.server.OmmsServerNavRoute
+import cn.mercury9.utils.compose.material3.CardColorSets
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 import dev.chrisbanes.haze.HazeState
@@ -363,7 +364,7 @@ private fun DeletePlayerMenu(
                     CoroutineScope(Dispatchers.Main).launch {
                         loading = false
                         AppContainer.navController
-                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
+                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN.name)
                     }
                 }
             }
@@ -541,7 +542,7 @@ fun DialogAddPlayerToWhitelist(
                                 ) {
                                     CoroutineScope(Dispatchers.Main).launch {
                                         AppContainer.navController
-                                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN)
+                                            .navigate(OmmsServerNavRoute.WHITELIST_SCREEN.name)
                                     }
                                 }
                             }

@@ -30,17 +30,12 @@ import cn.mercury9.utils.compose.string
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
-import org.jetbrains.jewel.intui.standalone.theme.createDefaultTextStyle
-import org.jetbrains.jewel.intui.standalone.theme.createEditorTextStyle
 import org.jetbrains.jewel.intui.standalone.theme.darkThemeDefinition
 import org.jetbrains.jewel.intui.standalone.theme.default
 import org.jetbrains.jewel.intui.standalone.theme.lightThemeDefinition
 import org.jetbrains.jewel.intui.window.decoratedWindow
-import org.jetbrains.jewel.intui.window.styling.dark
-import org.jetbrains.jewel.intui.window.styling.light
 import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.DecoratedWindow
-import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 fun main() = application {
     val windowState = rememberWindowState(
@@ -65,14 +60,11 @@ fun main() = application {
         configDarkTheme = isSystemInDarkTheme
     }
 
-    val textStyle = JewelTheme.createDefaultTextStyle()
-    val editorStyle = JewelTheme.createEditorTextStyle()
-
-    val themeDefinition =
+    val intUiThemeDefinition =
         if (configDarkTheme) {
-            JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
+            JewelTheme.darkThemeDefinition()
         } else {
-            JewelTheme.lightThemeDefinition(defaultTextStyle = textStyle, editorTextStyle = editorStyle)
+            JewelTheme.lightThemeDefinition()
         }
 
     fun onCloseRequest() {
@@ -86,13 +78,9 @@ fun main() = application {
 
     ThemeProvider(appTheme) {
         IntUiTheme(
-            theme = themeDefinition,
+            theme = intUiThemeDefinition,
             styling = ComponentStyling.default()
-                .decoratedWindow(
-                    titleBarStyle =
-                    if (configDarkTheme) TitleBarStyle.dark()
-                    else TitleBarStyle.light(),
-                )
+                .decoratedWindow()
         ) {
             DecoratedWindow(
                 onCloseRequest = ::onCloseRequest,

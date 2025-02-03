@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import cn.mercury9.omms.connect.desktop.ui.theme.amazingOrange.AmazingOrangeTheme
+import cn.mercury9.utils.compose.material3.animatedColorScheme
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -41,7 +42,7 @@ fun ThemeProvider(
         ThemeType.MaterialDefault -> DefaultTheme
         ThemeType.AmazingOrange -> AmazingOrangeTheme
     }
-    val colorScheme = theme.colorScheme(darkTheme, contrastType)
+    val colorScheme = animatedColorScheme(theme.colorScheme(darkTheme, contrastType))
 
     val typography = theme.typography()
 

@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.window.main.server
+package cn.mercury9.omms.connect.desktop.ui.window.main.server.chat
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

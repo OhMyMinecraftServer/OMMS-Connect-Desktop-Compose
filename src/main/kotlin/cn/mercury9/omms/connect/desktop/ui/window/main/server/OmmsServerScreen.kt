@@ -1,4 +1,4 @@
-package cn.mercury9.omms.connect.desktop.ui.window.main
+package cn.mercury9.omms.connect.desktop.ui.window.main.server
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideIn
@@ -59,7 +59,6 @@ import cn.mercury9.omms.connect.desktop.resources.login_hint
 import cn.mercury9.omms.connect.desktop.resources.success
 import cn.mercury9.omms.connect.desktop.resources.welcome
 import cn.mercury9.omms.connect.desktop.resources.working
-import cn.mercury9.omms.connect.desktop.ui.window.main.server.OmmsServerNavigateScreen
 import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 import kotlinx.coroutines.CoroutineScope
@@ -90,6 +89,7 @@ fun OmmsServerScreen() {
     }
 
     if (serverId != null) {
+        serverCodeHashed = AppContainer.servers[serverId]?.codeHashed
         if (serverCodeHashed == null) {
             DialogInputOmmsServerCode({ code ->
                 serverCodeHashed = getHashedCode(code)

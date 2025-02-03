@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cn.mercury9.omms.connect.desktop.ui.window.main.selector.OmmsServerSelector
+import cn.mercury9.omms.connect.desktop.ui.window.main.server.OmmsServerScreen
 
 @Composable
 fun MainScreen() {
