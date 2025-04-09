@@ -81,7 +81,7 @@ fun OmmsChatScreen() {
             while (true) {
                 delay(Duration.ofSeconds(1))
                 fetchChatHistoryFromServer(
-                    AppContainer.currentOmmsServerSession!!,
+                    AppContainer.currentOmmsServerSession ?: return@withContext,
                 ) {
                     if (it is FetchChatHistoryState.Success) {
                         fetchChatHistoryState = it

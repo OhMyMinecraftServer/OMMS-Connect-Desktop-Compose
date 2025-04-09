@@ -9,7 +9,7 @@ import kotlin.io.path.pathString
 object Constants {
     object AppInfo {
         const val PACKAGE_NAME = "cn.mercury9.omms.connect.desktop"
-        const val VERSION = "1.2.0"
+        const val VERSION = "1.2.1"
         const val CORE_VERSION = "1.7.0"
         object Github {
             const val REPO_NAME = "OMMS-Connect-Desktop-Compose"

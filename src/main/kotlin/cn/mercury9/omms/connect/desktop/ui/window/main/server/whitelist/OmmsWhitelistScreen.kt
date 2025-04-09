@@ -81,6 +81,8 @@ import cn.mercury9.utils.compose.string
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.CoroutineScope
@@ -215,7 +217,7 @@ fun OmmsWhitelistDetail(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .haze(playerDetailHazeState),
+                .hazeSource(playerDetailHazeState),
         ) {
             Surface(
                 modifier = Modifier
@@ -231,7 +233,7 @@ fun OmmsWhitelistDetail(
                             .align(Alignment.TopCenter)
                             .fillMaxSize()
                             .padding(horizontal = 16.dp)
-                            .haze(hazeState),
+                            .hazeSource(hazeState),
                     ) {
                         item(
                             span = StaggeredGridItemSpan.FullLine,
@@ -257,7 +259,7 @@ fun OmmsWhitelistDetail(
                             .padding(horizontal = 8.dp)
                             .padding(top = 16.dp)
                             .clip(CardDefaults.shape)
-                            .hazeChild(hazeState) {
+                            .hazeEffect(hazeState) {
                                 style = hazeStyle
                             }
                     ) {
@@ -303,7 +305,7 @@ fun OmmsWhitelistDetail(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeChild(playerDetailHazeState) {
+                    .hazeEffect(playerDetailHazeState) {
                         style = hazeStyle
                     }
                     .clickable(

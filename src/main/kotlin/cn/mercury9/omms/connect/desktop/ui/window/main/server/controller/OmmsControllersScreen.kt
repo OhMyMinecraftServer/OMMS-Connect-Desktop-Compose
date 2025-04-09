@@ -83,6 +83,7 @@ import cn.mercury9.utils.compose.painter
 import cn.mercury9.utils.compose.string
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import icu.takeneko.omms.client.data.controller.Controller
 import icu.takeneko.omms.client.data.system.FileSystemInfo
 import icu.takeneko.omms.client.data.system.SystemInfo
@@ -176,6 +177,7 @@ fun OmmsServerControllerList(
                 ) {
                     Spacer(Modifier.height(8.dp))
                 }
+
                 if (fetchSystemInfoState is FetchSystemInfoState.Success) {
                     item(
                         span = StaggeredGridItemSpan.FullLine
@@ -207,6 +209,7 @@ fun OmmsServerControllerList(
                         Text(Res.string.label_loading.string)
                     }
                 }
+
                 item(
                     span = StaggeredGridItemSpan.FullLine
                 ) {
@@ -214,6 +217,7 @@ fun OmmsServerControllerList(
                 }
             }
         }
+
         AnimatedVisibility(
             visible = showSystemInfo,
             enter = slideIn {
@@ -229,6 +233,7 @@ fun OmmsServerControllerList(
                 showSystemInfo = false
             }
         }
+
         AnimatedVisibility(
             visible = showController,
             enter = slideIn {
@@ -299,7 +304,10 @@ fun OmmsServerInfo(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                item { Spacer(Modifier.height(8.dp)) }
+                item(
+                    span = StaggeredGridItemSpan.FullLine
+                ) { Spacer(Modifier.height(8.dp)) }
+
                 item(
                     span = StaggeredGridItemSpan.FullLine
                 ) {
@@ -421,7 +429,10 @@ fun OmmsServerInfo(
                 items(systemInfo.fileSystemInfo.fileSystemList) {
                     OmmsServerStorageItem(it)
                 }
-                item { Spacer(Modifier.height(8.dp)) }
+
+                item(
+                    span = StaggeredGridItemSpan.FullLine
+                ) { Spacer(Modifier.height(8.dp)) }
             }
         }
         IconButton(
@@ -685,7 +696,7 @@ fun OmmsServerControllerPlayerList(
         modifier = modifier
             .fillMaxSize()
             .padding(bottom = 16.dp)
-            .haze(playerDetailHazeState),
+            .hazeSource(playerDetailHazeState),
     ) {
         ElevatedCard(
             Modifier

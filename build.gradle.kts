@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "cn.mercury9.omms.connect.desktop"
-version = "1.2.0"
+version = "1.2.1"
 
 repositories {
     mavenCentral()
@@ -22,10 +22,6 @@ repositories {
 }
 
 dependencies {
-    // Note, if you develop a library, you should use compose.desktop.common.
-    // compose.desktop.currentOs should be used in launcher-sourceSet
-    // (in a separate module for demo project and in testMain).
-    // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material")
     }
@@ -34,19 +30,17 @@ dependencies {
 
     implementation(libs.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.timedate)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.jewel.decoratedWindow)
 
     api(libs.imageLoader.core)
-    api(libs.imageLoader.composeResources)
-    api(libs.imageLoader.imageio)
 
     implementation(libs.haze)
     implementation(libs.haze.materials)
 
     implementation(libs.omms.client.core)
-    implementation(libs.gson)
+    api(libs.gson)
 
 }
 

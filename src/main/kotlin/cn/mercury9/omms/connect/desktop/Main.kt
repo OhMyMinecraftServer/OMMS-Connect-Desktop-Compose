@@ -45,9 +45,9 @@ fun main() = application {
 
     val isSystemInDarkTheme = isSystemInDarkTheme()
 
-    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
-    var configThemeType by ThemeConfigState.themeType
-    var configContrastType by ThemeConfigState.contrastType
+    val configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    val configThemeType by ThemeConfigState.themeType
+    val configContrastType by ThemeConfigState.contrastType
     var configDarkTheme by ThemeConfigState.darkTheme
 
     val appTheme = AppTheme(
