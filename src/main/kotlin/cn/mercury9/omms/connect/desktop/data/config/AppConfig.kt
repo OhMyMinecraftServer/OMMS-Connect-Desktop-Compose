@@ -9,6 +9,6 @@ enum class OmmsServerListSortBy {
 
 @Serializable
 data class AppConfig(
-    var setupThemeBySystemDarkTheme: Boolean = true,
+    var followSystemDarkTheme: Boolean = true,
     var ommsServerListSortBy: OmmsServerListSortBy = OmmsServerListSortBy.Id
 )

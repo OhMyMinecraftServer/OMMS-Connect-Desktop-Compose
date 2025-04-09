@@ -1,7 +1,7 @@
 package cn.mercury9.omms.connect.desktop
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +20,7 @@ import cn.mercury9.omms.connect.desktop.resources.title_check_update
 import cn.mercury9.omms.connect.desktop.ui.component.AppMenuBar
 import cn.mercury9.omms.connect.desktop.ui.component.AppTitleBar
 import cn.mercury9.omms.connect.desktop.ui.theme.AppTheme
+import cn.mercury9.omms.connect.desktop.ui.theme.DarkThemeDetector
 import cn.mercury9.omms.connect.desktop.ui.theme.ThemeProvider
 import cn.mercury9.omms.connect.desktop.ui.window.about.AppUpdateScreen
 import cn.mercury9.omms.connect.desktop.ui.window.main.MainScreen
@@ -38,26 +39,27 @@ import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.DecoratedWindow
 
 fun main() = application {
-    val windowState = rememberWindowState(
+    val mainWindowState = rememberWindowState(
         size = DpSize(1200.dp, 900.dp)
     )
-    AppContainer.mainWindowState = windowState
+    AppContainer.mainWindowState = mainWindowState
 
-    val isSystemInDarkTheme = isSystemInDarkTheme()
+    var isSystemInDarkTheme by remember { mutableStateOf(DarkThemeDetector.isDarkTheme) }
 
-    val configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    DarkThemeDetector.registerListener {
+        isSystemInDarkTheme = it
+    }
+
+    val configFollowSystemDarkTheme by AppConfigState.followSystemDarkTheme
     val configThemeType by ThemeConfigState.themeType
     val configContrastType by ThemeConfigState.contrastType
     var configDarkTheme by ThemeConfigState.darkTheme
 
-    val appTheme = AppTheme(
-        configDarkTheme,
-        configThemeType,
-        configContrastType,
-    )
-
-    if (configSetupThemeBySystemDarkTheme) {
-        configDarkTheme = isSystemInDarkTheme
+    LaunchedEffect(configFollowSystemDarkTheme, isSystemInDarkTheme) {
+        if (configFollowSystemDarkTheme) {
+            configDarkTheme = isSystemInDarkTheme
+            ThemeConfigState.saveToConfigFile()
+        }
     }
 
     val intUiThemeDefinition =
@@ -76,6 +78,12 @@ fun main() = application {
 
     var showDialogWindowAppUpdate by remember { mutableStateOf(false) }
 
+    val appTheme = AppTheme(
+        configDarkTheme,
+        configThemeType,
+        configContrastType,
+    )
+
     ThemeProvider(appTheme) {
         IntUiTheme(
             theme = intUiThemeDefinition,
@@ -84,14 +92,14 @@ fun main() = application {
         ) {
             DecoratedWindow(
                 onCloseRequest = ::onCloseRequest,
-                state = windowState,
+                state = mainWindowState,
                 title = stringResource(Res.string.app_name),
                 icon = Res.drawable.ic_launcher.painter,
             ) {
                 setMinimumSize(916.dp, 687.dp)
 
-                fitScreenEdge(windowState) {
-                    windowState.position = it.position
+                fitScreenEdge(mainWindowState) {
+                    mainWindowState.position = it.position
                 }
 
                 AppTitleBar()

@@ -14,6 +14,8 @@ jewel = "0.26.2"
 omms-client-core = "1.7.0"
 gson = "2.11.0"
 
+jSystemThemeDetector = "3.6"
+
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime"}
@@ -21,8 +23,6 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose"}
 
 imageLoader-core = { group = "io.github.qdsfdhvh", name = "image-loader", version.ref = "image-loader" }
-imageLoader-composeResources = { group = "io.github.qdsfdhvh", name = "image-loader-extension-compose-resources", version.ref = "image-loader" }
-imageLoader-imageio = { group = "io.github.qdsfdhvh", name = "image-loader-extension-imageio", version.ref = "image-loader" }
 
 haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 haze-materials = { group = "dev.chrisbanes.haze", name = "haze-materials", version.ref = "haze" }
@@ -31,6 +31,8 @@ jewel-decoratedWindow = { group = "org.jetbrains.jewel", name = "jewel-int-ui-de
 
 omms-client-core = { module = "icu.takeneko:omms-client-core", version.ref = "omms-client-core"}
 gson = { module = "com.google.code.gson:gson", version.ref = "gson"}
+
+jSystemThemeDetector = { group = "com.github.Dansoftowner", name = "jSystemThemeDetector", version.ref = "jSystemThemeDetector" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

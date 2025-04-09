@@ -13,7 +13,7 @@ import androidx.compose.ui.window.MenuBar
 import cn.mercury9.omms.connect.desktop.data.config.configState.AppConfigState
 import cn.mercury9.omms.connect.desktop.data.config.configState.ThemeConfigState
 import cn.mercury9.omms.connect.desktop.resources.Res
-import cn.mercury9.omms.connect.desktop.resources.option_setup_by_system_dark_theme
+import cn.mercury9.omms.connect.desktop.resources.option_follow_system_dark_theme
 import cn.mercury9.omms.connect.desktop.resources.option_theme_dark
 import cn.mercury9.omms.connect.desktop.resources.option_theme_light
 import cn.mercury9.omms.connect.desktop.resources.title_check_update
@@ -49,7 +49,7 @@ private fun FrameWindowScope.AppMenuBarNative(
     appTheme: AppTheme,
     onShowWindowAppUpdateRequest: () -> Unit
 ) {
-    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    var configFollowSystemDarkTheme by AppConfigState.followSystemDarkTheme
     var configThemeType by ThemeConfigState.themeType
     var configContrastType by ThemeConfigState.contrastType
     var configDarkTheme by ThemeConfigState.darkTheme
@@ -70,23 +70,25 @@ private fun FrameWindowScope.AppMenuBarNative(
                 }
                 Menu(Res.string.title_settings_dark.string) {
                     CheckboxItem(
-                        Res.string.option_setup_by_system_dark_theme.string,
-                        configSetupThemeBySystemDarkTheme
+                        Res.string.option_follow_system_dark_theme.string,
+                        configFollowSystemDarkTheme
                     ) {
-                        configSetupThemeBySystemDarkTheme = it
+                        configFollowSystemDarkTheme = it
                         AppConfigState.saveToConfigFile()
                     }
                     Separator()
                     RadioButtonItem(
                         Res.string.option_theme_light.string,
-                        !appTheme.darkTheme
+                        !appTheme.darkTheme,
+                        enabled = !configFollowSystemDarkTheme
                     ) {
                         configDarkTheme = false
                         ThemeConfigState.saveToConfigFile()
                     }
                     RadioButtonItem(
                         Res.string.option_theme_dark.string,
-                        appTheme.darkTheme
+                        appTheme.darkTheme,
+                        enabled = !configFollowSystemDarkTheme
                     ) {
                         configDarkTheme = true
                         ThemeConfigState.saveToConfigFile()
@@ -117,7 +119,7 @@ private fun AppMenuBarWindows(
     appTheme: AppTheme,
     onShowWindowAppUpdateRequest: () -> Unit,
 ) {
-    var configSetupThemeBySystemDarkTheme by AppConfigState.setupThemeBySystemDarkTheme
+    var configFollowSystemDarkTheme by AppConfigState.followSystemDarkTheme
     var configThemeType by ThemeConfigState.themeType
     var configContrastType by ThemeConfigState.contrastType
     var configDarkTheme by ThemeConfigState.darkTheme
@@ -146,18 +148,19 @@ private fun AppMenuBarWindows(
                     Text(Res.string.title_settings_dark.string)
                 }) {
                     CheckboxItem(
-                        text = { Text(Res.string.option_setup_by_system_dark_theme.string) },
+                        text = { Text(Res.string.option_follow_system_dark_theme.string) },
                         checked = {
-                            configSetupThemeBySystemDarkTheme
+                            configFollowSystemDarkTheme
                         },
                     ) {
-                        configSetupThemeBySystemDarkTheme = it
+                        configFollowSystemDarkTheme = it
                         AppConfigState.saveToConfigFile()
                     }
                     Divider()
                     RadioButtonItem(
                         text = { Text(Res.string.option_theme_light.string) },
                         selected = !appTheme.darkTheme,
+                        enabled = !configFollowSystemDarkTheme
                     ) {
                         configDarkTheme = false
                         ThemeConfigState.saveToConfigFile()
@@ -165,6 +168,7 @@ private fun AppMenuBarWindows(
                     RadioButtonItem(
                         text = { Text(Res.string.option_theme_dark.string) },
                         selected = appTheme.darkTheme,
+                        enabled = !configFollowSystemDarkTheme
                     ) {
                         configDarkTheme = true
                         ThemeConfigState.saveToConfigFile()

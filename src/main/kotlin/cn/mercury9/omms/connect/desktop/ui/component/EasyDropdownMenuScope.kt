@@ -142,11 +142,12 @@ object EasyDropdownMenuScope {
         text: @Composable () -> Unit,
         selected: Boolean,
         leadingIcon: @Composable (() -> Unit)? = null,
+        enabled: Boolean = true,
         onClick: () -> Unit,
     ) {
         ButtonItem(
             text = text,
-            enabled = !selected,
+            enabled = !selected && enabled,
             leadingIcon = leadingIcon,
             trailingIcon = {
                 if (selected) {

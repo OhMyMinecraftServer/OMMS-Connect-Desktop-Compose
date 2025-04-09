@@ -15,7 +15,7 @@ object AppConfigState: SavableData<AppConfig> {
         AppConfig.serializer()
     )
 
-    lateinit var setupThemeBySystemDarkTheme: MutableState<Boolean>
+    lateinit var followSystemDarkTheme: MutableState<Boolean>
     lateinit var ommsServerListSortBy: MutableState<OmmsServerListSortBy>
 
     init {
@@ -25,13 +25,13 @@ object AppConfigState: SavableData<AppConfig> {
     override fun loadFromConfigFile() {
         val appConfig = dataSaver.get()
 
-        setupThemeBySystemDarkTheme = mutableStateOf(appConfig.setupThemeBySystemDarkTheme)
+        this@AppConfigState.followSystemDarkTheme = mutableStateOf(appConfig.followSystemDarkTheme)
         ommsServerListSortBy = mutableStateOf(appConfig.ommsServerListSortBy)
     }
 
     override fun asConfigData(): AppConfig =
         AppConfig(
-            setupThemeBySystemDarkTheme = setupThemeBySystemDarkTheme.value,
+            followSystemDarkTheme = this@AppConfigState.followSystemDarkTheme.value,
             ommsServerListSortBy = ommsServerListSortBy.value,
         )
 

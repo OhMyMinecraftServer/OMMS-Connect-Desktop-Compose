@@ -19,6 +19,10 @@ repositories {
         name = "NekoMaven"
         url = uri("https://maven.takeneko.icu/releases")
     }
+    maven {
+        name = "JitPack"
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -42,6 +46,7 @@ dependencies {
     implementation(libs.omms.client.core)
     api(libs.gson)
 
+    implementation(libs.jSystemThemeDetector)
 }
 
 compose.desktop {
