@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -127,7 +128,7 @@ fun OmmsChatSpace(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            ElevatedCard(
+            Card(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),

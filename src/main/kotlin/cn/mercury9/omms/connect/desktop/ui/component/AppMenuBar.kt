@@ -3,6 +3,7 @@ package cn.mercury9.omms.connect.desktop.ui.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -126,7 +127,10 @@ private fun AppMenuBarWindows(
 
     Row {
         EasyDropdownMenu({
-            Text(Res.string.title_settings.string)
+            Text(
+                Res.string.title_settings.string,
+                style = MaterialTheme.typography.labelLarge
+            )
         }) {
             SubMenu({
                 Text(Res.string.title_settings_theme.string)

@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cn.mercury9.omms.connect.desktop.resources.*
+import cn.mercury9.omms.connect.desktop.resources.Res
+import cn.mercury9.omms.connect.desktop.resources.arrow_right_24px
+import cn.mercury9.omms.connect.desktop.resources.check_24px
 import cn.mercury9.utils.compose.painter
 
 @Composable
@@ -40,11 +42,12 @@ fun EasyDropdownMenu(
         trailingIcon = trailingIcon,
         modifier = Modifier
             .width(IntrinsicSize.Min)
+            .height(32.dp)
     )
     DropdownMenu(
         expanded = state.value,
         onDismissRequest = { state.value = false },
-        offset = menuOffset,
+        offset = menuOffset + DpOffset(4.dp, 4.dp),
     ) {
         EasyDropdownMenuScope.PassiveItem(content)
     }
@@ -79,7 +82,7 @@ object EasyDropdownMenuScope {
                     DropdownMenu(
                         expanded = state.value,
                         onDismissRequest = { state.value = false },
-                        offset = submenuOffset + DpOffset(36.dp, (-44).dp),
+                        offset = submenuOffset + DpOffset(36.dp, (-44).dp) + DpOffset(4.dp, 0.dp),
                     ) {
                         PassiveItem(content)
                     }
