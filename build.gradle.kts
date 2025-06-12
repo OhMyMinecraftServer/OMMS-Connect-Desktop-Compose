@@ -77,7 +77,7 @@ compose.desktop {
             }
 
             macOS {
-                iconFile.set(project.file("icon.icns"))
+                iconFile.set(project.file("OMMS.icns"))
             }
 
             linux {
